@@ -11,7 +11,7 @@ module Keen
         :use_ssl => true,
         :verify_mode => OpenSSL::SSL::VERIFY_PEER,
         :verify_depth => 5,
-        :ca_file => File.expand_path("../../../../config/cacert.pem", __FILE__) },
+        :ca_file => File.expand_path("../../../config/cacert.pem", __FILE__) },
       :api_async_http_options => {},
       :api_headers => {
         "Content-Type" => "application/json",
