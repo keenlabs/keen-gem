@@ -9,11 +9,9 @@ rvm:
 
 env:
   global:
-    - CI=true
     - KEEN_API_KEY=f806128f31c349fda124b62d1f4cf4b2
     - KEEN_PROJECT_ID=50e5ffa6897a2c319b000000
-  matrix:
-    - INTEGRATED=true
-    - INTEGRATED=false
 
-script: "./script/travis"
+script:
+  - bundle exec rake spec
+  - bundle exec rake integration

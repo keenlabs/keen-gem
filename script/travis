@@ -1,7 +1,0 @@
-#! /usr/bin/env ruby
-
-if ENV['INTEGRATED'] == 'true'
-  exec "bundle exec rake integration"
-else
-  exec "bundle exec rake spec"
-end
