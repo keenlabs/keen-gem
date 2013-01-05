@@ -1,0 +1,19 @@
+language: ruby
+bundler_args: --without development
+
+rvm:
+  - 1.8.7
+  - 1.9.3
+  - jruby-19mode
+  - rbx-19mode
+
+env:
+  global:
+    - CI=true
+    - KEEN_API_KEY=f806128f31c349fda124b62d1f4cf4b2
+    - KEEN_PROJECT_ID=50e5ffa6897a2c319b000000
+  matrix:
+    - INTEGRATED=true
+    - INTEGRATED=false
+
+script: "./script/travis"
