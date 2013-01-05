@@ -1,5 +1,7 @@
 source :rubygems
 
+gemspec
+
 group :development do
   gem 'rb-readline' # or compile ruby w/ readline
   gem 'rb-inotify', :require => false
@@ -8,5 +10,3 @@ group :development do
   gem 'ruby-debug', :platforms => :mri_18
   gem 'debugger', :platforms => :mri_19
 end
-
-gemspec
