@@ -4,7 +4,6 @@ gemspec
 
 group :development, :test do
   gem 'rake'
-  gem 'oj'
   gem 'rspec'
   gem 'em-http-request'
   gem 'webmock'
