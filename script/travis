@@ -1,7 +1,7 @@
 #! /usr/bin/env ruby
 
 if ENV['INTEGRATED'] == true
-  exec "rake spec"
+  exec "bundle exec rake spec"
 else
-  exec "rake integration"
+  exec "bundle exec rake integration"
 end
