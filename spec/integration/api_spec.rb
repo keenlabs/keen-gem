@@ -48,9 +48,8 @@ describe "Keen IO API" do
   describe "async" do
     it "should publish the event and trigger callbacks" do
       EM.run {
-        Keen.publish_async(collection, event_properties).callback { |status_code, response_body|
-          status_code.should == 201
-          response_body.should == api_success
+        Keen.publish_async(collection, event_properties).callback { |response|
+          response.should == api_success
           EM.stop
         }
       }
