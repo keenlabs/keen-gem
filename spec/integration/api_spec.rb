@@ -46,13 +46,18 @@ describe "Keen IO API" do
   end
 
   describe "async" do
-    it "should publish the event and trigger callbacks" do
-      EM.run {
-        Keen.publish_async(collection, event_properties).callback { |response|
-          response.should == api_success
-          EM.stop
+    # no TLS support in EventMachine on jRuby
+    unless defined?(JRUBY_VERSION)
+
+      it "should publish the event and trigger callbacks" do
+        EM.run {
+          Keen.publish_async(collection, event_properties).callback { |response|
+            response.should == api_success
+            EM.stop
+          }
         }
-      }
+      end
+
     end
   end
 end

@@ -99,44 +99,49 @@ describe Keen::Client do
     end
 
     describe "#publish_async" do
-      it "should require a running event loop" do
-        expect {
-          @client.publish_async(collection, event_properties)
-        }.to raise_error(Keen::Error)
-      end
 
-      it "should post the event data" do
-        stub_api(api_url(collection), 201, api_success)
-        EM.run {
-          @client.publish_async(collection, event_properties).callback {
-            expect_post(api_url(collection), event_properties, api_key)
-            EM.stop
-          }
-        }
-      end
+      # no TLS support in EventMachine on jRuby
+      unless defined?(JRUBY_VERSION)
+        it "should require a running event loop" do
+          expect {
+            @client.publish_async(collection, event_properties)
+          }.to raise_error(Keen::Error)
+        end
 
-      describe "deferrable callbacks" do
-        it "should trigger callbacks" do
+        it "should post the event data" do
           stub_api(api_url(collection), 201, api_success)
           EM.run {
-            @client.publish_async(collection, event_properties).callback { |response|
-              response.should == api_success
+            @client.publish_async(collection, event_properties).callback {
+              expect_post(api_url(collection), event_properties, api_key)
               EM.stop
             }
           }
         end
 
-        it "should trigger errbacks" do
-          stub_request(:post, api_url(collection)).to_timeout
-          EM.run {
-            @client.publish_async(collection, event_properties).errback { |error|
-              error.should_not be_nil
-              error.message.should == "Couldn't connect to Keen IO: WebMock timeout error"
-              EM.stop
+        describe "deferrable callbacks" do
+          it "should trigger callbacks" do
+            stub_api(api_url(collection), 201, api_success)
+            EM.run {
+              @client.publish_async(collection, event_properties).callback { |response|
+                response.should == api_success
+                EM.stop
+              }
             }
-          }
+          end
+
+          it "should trigger errbacks" do
+            stub_request(:post, api_url(collection)).to_timeout
+            EM.run {
+              @client.publish_async(collection, event_properties).errback { |error|
+                error.should_not be_nil
+                error.message.should == "Couldn't connect to Keen IO: WebMock timeout error"
+                EM.stop
+              }
+            }
+          end
         end
       end
+
     end
 
     describe "response handling" do
