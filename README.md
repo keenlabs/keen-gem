@@ -19,7 +19,7 @@ keen is tested with Ruby 1.8 and 1.9 on:
 
 * MRI
 * Rubinius
-* jRuby
+* jRuby (except for asynchronous methods - no TLS support for EM on jRuby)
 
 ### Usage
 
