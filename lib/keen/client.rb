@@ -41,8 +41,8 @@ module Keen
             :path => api_path(event_name),
             :headers => api_headers_with_auth,
             :body => MultiJson.encode(properties))
-      rescue => e
-        raise Error, "Couldn't connect to Keen IO: #{e.inspect}"
+      rescue Exception => http_error
+        raise HttpError.new("Couldn't connect to Keen IO: #{http_error.message}", http_error)
       end
       process_response(response.code, response.body.chomp)
     end
@@ -50,19 +50,28 @@ module Keen
     def publish_async(event_name, properties)
       check_configuration!
 
+      deferrable = EventMachine::DefaultDeferrable.new
+
       http_client = Keen::HTTP::Async.new(api_host, api_port, api_async_http_options)
       http = http_client.post({
         :path => api_path(event_name),
         :headers => api_headers_with_auth,
         :body => MultiJson.encode(properties)
       })
-      http.callback { |status_code, response_body|
-        process_response(status_code, response_body)
+      http.callback {
+        begin
+          response = process_response(http.response_header.status, http.response.chomp)
+          deferrable.succeed(response)
+        rescue Exception => e
+          deferrable.fail(e)
+        end
       }
-      http.errback { |http, error|
-        Keen.logger.error("Couldn't connect to Keen IO")
+      http.errback {
+        Keen.logger.warn("Couldn't connect to Keen IO: #{http.error}")
+        deferrable.fail(Error.new("Couldn't connect to Keen IO: #{http.error}"))
       }
-      http
+
+      deferrable
     end
 
     # deprecated
@@ -72,8 +81,8 @@ module Keen
 
     private
 
-    def process_response(status_code, body)
-      body = MultiJson.decode(body)
+    def process_response(status_code, response_body)
+      body = MultiJson.decode(response_body)
       case status_code.to_i
       when 200..201
         return body

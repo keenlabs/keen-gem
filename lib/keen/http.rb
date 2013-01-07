@@ -28,23 +28,12 @@ module Keen
       def post(options)
         path, headers, body = options.values_at(
           :path, :headers, :body)
-
         uri = "https://#{@host}:#{@port}#{path}"
-
         http_client = EventMachine::HttpRequest.new(uri, @http_options)
-        deferrable = EventMachine::DefaultDeferrable.new
-
-        http = http_client.post(
+        http_client.post(
           :body => body,
           :head => headers
         )
-        http.callback {
-          deferrable.succeed(http.response_header.status, http.response.chomp)
-        }
-        http.errback {
-          deferrable.fail(Error.new("Couldn't connect to Keen IO"))
-        }
-        deferrable
       end
     end
   end

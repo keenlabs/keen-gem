@@ -6,13 +6,12 @@ describe "Keen IO API" do
 
   let(:collection) { "users" }
   let(:event_properties) { { "name" => "Bob" } }
+  let(:api_success) { { "created" => true } }
 
   describe "success" do
-    let(:expected_api_response) { { "created" => true } }
 
     it "should return a created status for a valid post" do
-      Keen.publish(collection, event_properties).should ==
-        expected_api_response
+      Keen.publish(collection, event_properties).should == api_success
     end
   end
 
@@ -47,14 +46,14 @@ describe "Keen IO API" do
   end
 
   describe "async" do
-    it "should work" do
-      deferrable = Keen.publish_async(collection, event_properties)
-      callback = double("callback")
-      callback.should_receive("hit")
-      deferrable.callback {
-        callback.hit
+    it "should publish the event and trigger callbacks" do
+      EM.run {
+        Keen.publish_async(collection, event_properties).callback { |status_code, response_body|
+          status_code.should == 201
+          response_body.should == api_success
+          EM.stop
+        }
       }
-      sleep 2
     end
   end
 end

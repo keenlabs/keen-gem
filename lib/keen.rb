@@ -5,7 +5,14 @@ require 'multi_json'
 require 'keen/client'
 
 module Keen
-  class Error < RuntimeError; end
+  class Error < RuntimeError
+    attr_accessor :original_error
+    def initialize(message, _original_error=nil)
+      self.original_error = _original_error
+      super(message)
+    end
+  end
+
   class ConfigurationError < Error; end
   class HttpError < Error; end
   class BadRequestError < HttpError; end

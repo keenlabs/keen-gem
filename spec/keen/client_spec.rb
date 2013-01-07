@@ -5,6 +5,7 @@ describe Keen::Client do
   let(:api_key) { "abcde" }
   let(:collection) { "users" }
   let(:event_properties) { { "name" => "Bob" } }
+  let(:api_success) { { "created" => true } }
 
   def stub_api(url, status, json_body)
     stub_request(:post, url).to_return(
@@ -81,37 +82,59 @@ describe Keen::Client do
         stub_api(api_url(collection), 201, api_response)
         @client.publish(collection, event_properties).should == api_response
       end
+
+      it "should wrap exceptions" do
+        stub_request(:post, api_url(collection)).to_timeout
+        e = nil
+        begin
+          @client.publish(collection, event_properties)
+        rescue Exception => exception
+          e = exception
+        end
+
+        e.class.should == Keen::HttpError
+        e.original_error.class.should == Timeout::Error
+        e.message.should == "Couldn't connect to Keen IO: execution expired"
+      end
     end
 
     describe "#publish_async" do
+      it "should require a running event loop" do
+        expect {
+          @client.publish_async(collection, event_properties)
+        }.to raise_error(Keen::Error)
+      end
+
       it "should post the event data" do
-        stub_api(api_url(collection), 201, "")
-        @client.publish_async(collection, event_properties)
-        expect_post(api_url(collection), event_properties, api_key)
+        stub_api(api_url(collection), 201, api_success)
+        EM.run {
+          @client.publish_async(collection, event_properties).callback {
+            expect_post(api_url(collection), event_properties, api_key)
+            EM.stop
+          }
+        }
       end
 
       describe "deferrable callbacks" do
         it "should trigger callbacks" do
-          stub_api(api_url(collection), 201, "")
-          deferrable = @client.publish_async(collection, event_properties)
-          callback = double("callback")
-          callback.should_receive("hit")
-          deferrable.callback {
-            callback.hit
+          stub_api(api_url(collection), 201, api_success)
+          EM.run {
+            @client.publish_async(collection, event_properties).callback { |response|
+              response.should == api_success
+              EM.stop
+            }
           }
-          sleep 0.1
         end
 
-        xit "should trigger errbacks" do
-          # pending: can't get errback to trigger
-          stub_request(:post, api_url(collection)).to_raise(StandardError)
-          deferrable = @client.publish_async(collection, event_properties)
-          errback = double("errback")
-          errback.should_receive("hit")
-          deferrable.errback {
-            errback.hit
+        it "should trigger errbacks" do
+          stub_request(:post, api_url(collection)).to_timeout
+          EM.run {
+            @client.publish_async(collection, event_properties).errback { |error|
+              error.should_not be_nil
+              error.message.should == "Couldn't connect to Keen IO: WebMock timeout error"
+              EM.stop
+            }
           }
-          sleep 0.1
         end
       end
     end
