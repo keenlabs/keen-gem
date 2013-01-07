@@ -1,3 +1,4 @@
+require 'keen/version'
 require 'keen/http'
 
 module Keen
