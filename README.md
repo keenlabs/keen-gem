@@ -47,7 +47,7 @@ If it doesn't exist, Keen IO will create it on the first request.
 
 You can learn more about data modeling with Keen IO with the [Data Modeling Guide](https://keen.io/docs/event-data-modeling/event-data-intro/).
 
-### Asynchronous vs synchronous publishing
+### Asynchronous publishing
 
 Publishing events shouldn't slow your application down. It shouldn't make your
 users wait longer for their request to finish.
@@ -68,6 +68,15 @@ thin or goliath you're already doing this. Otherwise, you'll need to start an Ev
 
 The best place for this is in an initializer, or anywhere that runs when your app boots up.
 Here's a good blog article that explains more about this approach - [EventMachine and Passenger](http://railstips.org/blog/archives/2011/05/04/eventmachine-and-passenger/).
+
+Now, in your code, replace `publish` with `publish_async`. Bind callbacks if you require them.
+
+    http = Keen.publish_async("sign_ups", { :username => "lloyd", :referred_by => "harry" })
+    http.callback { |response| puts "Success: #{response}"}
+    http.errback { puts "was a failurrr :,(" }
+
+This will schedule the network call into the event loop and allow your request thread
+to resume processing immediately.
 
 ### Other code examples
 
