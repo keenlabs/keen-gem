@@ -90,7 +90,7 @@ To configure the keen gem credentials in code, do as follows:
 You can also configure individual client instances as follows:
 
     keen = new Keen::Client.new(:project_id => 'your-project-id',
-                                :api_key => 'your-api'key)
+                                :api_key => 'your-api-key')
 
 ##### On keen.io
 
