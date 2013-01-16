@@ -14,7 +14,7 @@ describe Keen do
         client.project_id.should == "12345"
       end
 
-      it "should set a project id from the environment" do
+      it "should set an api key from the environment" do
         client.api_key.should == "abcde"
       end
 
@@ -22,6 +22,17 @@ describe Keen do
         ENV["KEEN_PROJECT_ID"] = nil
         ENV["KEEN_API_KEY"] = nil
       end
+    end
+  end
+
+  describe "Keen delegation" do
+    it "should memoize the default client, retaining settings" do
+      Keen.project_id = "new-abcde"
+      Keen.project_id.should == "new-abcde"
+    end
+
+    after do
+      Keen.instance_variable_set(:@default_client, nil)
     end
   end
 

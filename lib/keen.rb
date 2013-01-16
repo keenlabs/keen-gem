@@ -38,7 +38,7 @@ module Keen
     private
 
     def default_client
-      @default_client || Keen::Client.new(
+      @default_client ||= Keen::Client.new(
         :project_id => ENV['KEEN_PROJECT_ID'],
         :api_key => ENV['KEEN_API_KEY']
       )
