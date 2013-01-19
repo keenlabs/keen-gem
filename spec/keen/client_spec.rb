@@ -1,29 +1,13 @@
 require File.expand_path("../spec_helper", __FILE__)
 
 describe Keen::Client do
+  include Keen::SpecHelpers
+
   let(:project_id) { "12345" }
   let(:api_key) { "abcde" }
   let(:collection) { "users" }
   let(:event_properties) { { "name" => "Bob" } }
   let(:api_success) { { "created" => true } }
-
-  def stub_api(url, status, json_body)
-    stub_request(:post, url).to_return(
-      :status => status,
-      :body => MultiJson.encode(json_body))
-  end
-
-  def expect_post(url, event_properties, api_key)
-    WebMock.should have_requested(:post, url).with(
-      :body => MultiJson.encode(event_properties),
-      :headers => { "Content-Type" => "application/json",
-                    "User-Agent" => "keen-gem v#{Keen::VERSION}",
-                    "Authorization" => api_key })
-  end
-
-  def api_url(collection)
-    "https://api.keen.io/3.0/projects/#{project_id}/events/#{collection}"
-  end
 
   describe "#initialize" do
     context "deprecated" do
