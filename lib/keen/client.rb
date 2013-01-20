@@ -59,20 +59,30 @@ module Keen
         :headers => api_headers_with_auth,
         :body => MultiJson.encode(properties)
       })
-      http.callback {
-        begin
-          response = process_response(http.response_header.status, http.response.chomp)
-          deferrable.succeed(response)
-        rescue Exception => e
-          deferrable.fail(e)
-        end
-      }
-      http.errback {
-        Keen.logger.warn("Couldn't connect to Keen IO: #{http.error}")
-        deferrable.fail(Error.new("Couldn't connect to Keen IO: #{http.error}"))
-      }
 
-      deferrable
+      if defined?(EM::Synchrony)
+        if http.error
+          Keen.logger.warn("Couldn't connect to Keen IO: #{http.error}")
+          raise "Couldn't connect ot Keen IO: #{http.error}"
+        else
+          process_response(http.response_header.status, http.response.chomp)
+        end
+      else
+        http.callback {
+          begin
+            response = process_response(http.response_header.status, http.response.chomp)
+            deferrable.succeed(response)
+          rescue Exception => e
+            deferrable.fail(e)
+          end
+        }
+        http.errback {
+          Keen.logger.warn("Couldn't connect to Keen IO: #{http.error}")
+          deferrable.fail(Error.new("Couldn't connect to Keen IO: #{http.error}"))
+        }
+
+        deferrable
+      end
     end
 
     # deprecated
