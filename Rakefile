@@ -11,9 +11,13 @@ RSpec::Core::RakeTask.new(:integration) do |t|
   t.pattern = "spec/integration/**/*_spec.rb"
 end
 
-desc "Run Rspec integration tests"
+desc "Run Rspec em-synchrony tests"
 RSpec::Core::RakeTask.new(:synchrony) do |t|
-  t.pattern = "spec/synchrony/**/*_spec.rb"
+  if defined?(Fiber)
+    t.pattern = "spec/synchrony/**/*_spec.rb"
+  else
+    exit
+  end
 end
 
 task :default => :spec
