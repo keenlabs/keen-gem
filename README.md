@@ -110,8 +110,8 @@ The `beacon_url` method found on the `Keen::Client` does this for you. Here's an
                             :api_key => 'abcde')
 
     keen.beacon_url("sign_ups", :recipient => "foo@foo.com")
-    # => "https://api.keen.io/3.0/projects/50e5ffa6897a2c319b000000/events/ \
-          email_opens?api_key=f806128f31c349fda124b62d1f4cf4b2&data=eyJyZWNpcGllbnQiOiJmb29AZm9vLmNvbSJ9"
+    # => "https://api.keen.io/3.0/projects/12345/events/ \
+          email_opens?api_key=abcde&data=eyJyZWNpcGllbnQiOiJmb29AZm9vLmNvbSJ9"
 
 To track email opens, simply add an image to your email template that points to this URL.
 
