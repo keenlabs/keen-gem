@@ -1,4 +1,8 @@
 require 'keen/http'
+require 'keen/version'
+require 'openssl'
+require 'json'
+require 'base64'
 
 module Keen
   class Client
