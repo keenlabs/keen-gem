@@ -25,7 +25,8 @@ module Keen
     }
 
     def beacon_url(event_name, properties)
-      data = Base64.urlsafe_encode64(MultiJson.encode(properties))
+      json = MultiJson.encode(properties)
+      data = [json].pack("m0").tr("+/", "-_").gsub("\n", "")
       "https://#{api_host}/#{api_version}/projects/#{@project_id}/events/#{event_name}?api_key=#{@api_key}&data=#{data}"
     end
 
