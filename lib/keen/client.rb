@@ -1,7 +1,7 @@
 require 'keen/http'
 require 'keen/version'
 require 'openssl'
-require 'json'
+require 'multi_json'
 require 'base64'
 
 module Keen
@@ -25,7 +25,7 @@ module Keen
     }
 
     def beacon_url(event_name, properties)
-      data = Base64.urlsafe_encode64(JSON.dump(properties))
+      data = Base64.urlsafe_encode64(MultiJson.encode(properties))
       "https://#{api_host}/#{api_version}/projects/#{@project_id}/events/#{event_name}?api_key=#{@api_key}&data=#{data}"
     end
 

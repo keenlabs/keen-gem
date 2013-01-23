@@ -1,6 +1,5 @@
 require 'logger'
 require 'forwardable'
-require 'multi_json'
 
 require 'keen/client'
 
