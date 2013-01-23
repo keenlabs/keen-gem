@@ -8,12 +8,9 @@ rvm:
   - rbx-19mode
 
 env:
-  global:
-    - KEEN_API_KEY=f806128f31c349fda124b62d1f4cf4b2
-    - KEEN_PROJECT_ID=50e5ffa6897a2c319b000000
   env:
     - PATTERN=keen
-    - PATTERN=integration
+    - PATTERN=integration KEEN_API_KEY=f806128f31c349fda124b62d1f4cf4b2 KEEN_PROJECT_ID=50e5ffa6897a2c319b000000
     - PATTERN=synchrony
 
 matrix:
