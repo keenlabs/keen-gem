@@ -80,7 +80,7 @@ to resume processing immediately.
 
 ### Other code examples
 
-##### Authentication
+#### Authentication
 
 To configure the keen gem credentials in code, do as follows:
 
@@ -89,13 +89,32 @@ To configure the keen gem credentials in code, do as follows:
 
 You can also configure individual client instances as follows:
 
-    keen = new Keen::Client.new(:project_id => 'your-project-id',
-                                :api_key => 'your-api-key')
+    keen = Keen::Client.new(:project_id => 'your-project-id',
+                            :api_key => 'your-api-key')
 
-##### On keen.io
+#### em-synchrony
 
-For more information and examples visit the
-Keen IO [Ruby Usage Guide](https://keen.io/docs/clients/ruby/usage-guide/).
+The keen gem can be used with [em-synchrony](https://github.com/igrigorik/em-synchrony).
+If you call `publish_async` and `EM::Synchrony` is defined the method will return the response
+directly. (It will not the deferrable on which to register callbacks.) Likewise, it will raise
+exceptions 'synchronously' should they happen.
+
+#### Beacon URL's
+
+It's possible to publish events to your Keen IO project using the HTTP GET method.
+This is useful for situations like tracking email opens using [image beacons](http://en.wikipedia.org/wiki/Web_bug).
+
+In this situation, the JSON event data is passed by encoding it base-64 and adding it as a request parameter called `data`.
+The `beacon_url` method found on the `Keen::Client` does this for you. Here's an example:
+
+    keen = Keen::Client.new(:project_id => '12345',
+                            :api_key => 'abcde')
+
+    keen.beacon_url("sign_ups", :recipient => "foo@foo.com")
+    # => "https://api.keen.io/3.0/projects/50e5ffa6897a2c319b000000/events/ \
+          email_opens?api_key=f806128f31c349fda124b62d1f4cf4b2&data=eyJyZWNpcGllbnQiOiJmb29AZm9vLmNvbSJ9"
+
+To track email opens, simply add an image to your email template that points to this URL.
 
 ### Questions & Support
 
