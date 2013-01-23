@@ -170,4 +170,12 @@ describe Keen::Client do
       end
     end
   end
+
+  describe "beacon_url" do
+    it "should return a url with a base-64 encoded json param" do
+      client = Keen::Client.new(project_id, api_key)
+      client.beacon_url("sign_ups", { name: "Bob" }).should ==
+        "https://api.keen.io/3.0/projects/12345/events/sign_ups?api_key=abcde&data=eyJuYW1lIjoiQm9iIn0="
+    end
+  end
 end

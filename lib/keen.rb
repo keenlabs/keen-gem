@@ -23,7 +23,8 @@ module Keen
     extend Forwardable
 
     def_delegators :default_client, :project_id, :api_key,
-                   :project_id=, :api_key=, :publish, :publish_async
+                   :project_id=, :api_key=, :publish, :publish_async,
+                   :beacon_url
 
     attr_writer :logger
 

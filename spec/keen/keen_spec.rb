@@ -4,6 +4,7 @@ describe Keen do
   describe "default client" do
     describe "configuring from the environment" do
       before do
+        Keen.instance_variable_set(:@default_client, nil)
         ENV["KEEN_PROJECT_ID"] = "12345"
         ENV["KEEN_API_KEY"] = "abcde"
       end
@@ -16,11 +17,6 @@ describe Keen do
 
       it "should set an api key from the environment" do
         client.api_key.should == "abcde"
-      end
-
-      after do
-        ENV["KEEN_PROJECT_ID"] = nil
-        ENV["KEEN_API_KEY"] = nil
       end
     end
   end

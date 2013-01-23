@@ -7,6 +7,7 @@ module Keen
     CONFIG = {
       :api_host => "api.keen.io",
       :api_port => 443,
+      :api_version => "3.0",
       :api_sync_http_options => {
         :use_ssl => true,
         :verify_mode => OpenSSL::SSL::VERIFY_PEER,
@@ -18,6 +19,11 @@ module Keen
         "User-Agent" => "keen-gem v#{Keen::VERSION}"
       }
     }
+
+    def beacon_url(event_name, properties)
+      data = Base64.urlsafe_encode64(JSON.dump(properties))
+      "https://#{api_host}/#{api_version}/projects/#{@project_id}/events/#{event_name}?api_key=#{@api_key}&data=#{data}"
+    end
 
     def initialize(*args)
       options = args[0]
@@ -107,7 +113,7 @@ module Keen
     end
 
     def api_path(collection)
-      "/3.0/projects/#{project_id}/events/#{collection}"
+      "/#{api_version}/projects/#{project_id}/events/#{collection}"
     end
 
     def api_headers_with_auth
