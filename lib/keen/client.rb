@@ -1,4 +1,3 @@
-require 'keen/version'
 require 'keen/http'
 
 module Keen
@@ -63,7 +62,7 @@ module Keen
       if defined?(EM::Synchrony)
         if http.error
           Keen.logger.warn("Couldn't connect to Keen IO: #{http.error}")
-          raise "Couldn't connect ot Keen IO: #{http.error}"
+          raise HttpError.new("Couldn't connect to Keen IO: #{http.error}")
         else
           process_response(http.response_header.status, http.response.chomp)
         end
@@ -80,7 +79,6 @@ module Keen
           Keen.logger.warn("Couldn't connect to Keen IO: #{http.error}")
           deferrable.fail(Error.new("Couldn't connect to Keen IO: #{http.error}"))
         }
-
         deferrable
       end
     end

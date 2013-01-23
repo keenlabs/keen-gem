@@ -1,11 +1,6 @@
-require 'em-synchrony'
-require 'em-synchrony/em-http'
-
-require File.expand_path("../../keen/spec_helper", __FILE__)
+require File.expand_path("../spec_helper", __FILE__)
 
 describe Keen::HTTP::Async do
-  include Keen::SpecHelpers
-
   let(:project_id) { "12345" }
   let(:api_key) { "abcde" }
   let(:collection) { "users" }
@@ -19,13 +14,40 @@ describe Keen::HTTP::Async do
         :api_key => api_key)
     end
 
-    it "should post the event data" do
-      stub_api(api_url(collection), 201, api_success)
-      EM.synchrony {
-        @client.publish_async(collection, event_properties)
-        expect_post(api_url(collection), event_properties, api_key)
-        EM.stop
-      }
+    describe "success" do
+      it "should post the event data" do
+        stub_api(api_url(collection), 201, api_success)
+        EM.synchrony {
+          @client.publish_async(collection, event_properties)
+          expect_post(api_url(collection), event_properties, api_key)
+          EM.stop
+        }
+      end
+
+      it "should recieve the right response 'synchronously'" do
+        stub_api(api_url(collection), 201, api_success)
+        EM.synchrony {
+          @client.publish_async(collection, event_properties).should == api_success
+          EM.stop
+        }
+      end
+    end
+
+    describe "failure" do
+      it "should raise an exception" do
+        stub_request(:post, api_url(collection)).to_timeout
+        e = nil
+        EM.synchrony {
+          begin
+            @client.publish_async(collection, event_properties).should == api_success
+          rescue Exception => exception
+            e = exception
+          end
+          e.class.should == Keen::HttpError
+          e.message.should == "Couldn't connect to Keen IO: WebMock timeout error"
+          EM.stop
+        }
+      end
     end
   end
 end

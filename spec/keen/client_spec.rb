@@ -1,8 +1,6 @@
 require File.expand_path("../spec_helper", __FILE__)
 
 describe Keen::Client do
-  include Keen::SpecHelpers
-
   let(:project_id) { "12345" }
   let(:api_key) { "abcde" }
   let(:collection) { "users" }
