@@ -11,8 +11,17 @@ env:
   global:
     - KEEN_API_KEY=f806128f31c349fda124b62d1f4cf4b2
     - KEEN_PROJECT_ID=50e5ffa6897a2c319b000000
+  env:
+    - PATTERN=keen
+    - PATTERN=integration
+    - PATTERN=synchrony
+
+matrix:
+  exclude:
+    - rvm: 1.8.7
+      env: PATTERN=synchrony
+    - rvm: jruby-19mode
+      env: PATTERN=synchrony
 
 script:
-  - bundle exec rake spec
-  - bundle exec rake integration
-  - bundle exec rake synchrony
+  - bundle exec rake pattern
