@@ -23,7 +23,7 @@ keen is tested with Ruby 1.8 and 1.9 on:
 
 ### Usage
 
-Before making any API calls, you must supply the keen gem with a Project ID and an API Key.
+Before making any API calls, you must supply keen-gem with a Project ID and an API Key.
 (If you need a Keen IO account, [sign up here](https://keen.io/) - it's free.)
 
 The recommended way to do this is to set `KEEN_PROJECT_ID` and `KEEN_API_KEY` in your
@@ -82,7 +82,7 @@ to resume processing immediately.
 
 #### Authentication
 
-To configure the keen gem credentials in code, do as follows:
+To configure keen-gem credentials in code, do as follows:
 
     Keen.project_id = 'your-project-id'
     Keen.api_key = 'your-api-key'
@@ -93,10 +93,9 @@ You can also configure individual client instances as follows:
                             :api_key => 'your-api-key')
 
 #### em-synchrony
-
-The keen gem can be used with [em-synchrony](https://github.com/igrigorik/em-synchrony).
+keen-gem can be used with [em-synchrony](https://github.com/igrigorik/em-synchrony).
 If you call `publish_async` and `EM::Synchrony` is defined the method will return the response
-directly. (It will not the deferrable on which to register callbacks.) Likewise, it will raise
+directly. (It does not return the deferrable on which to register callbacks.) Likewise, it will raise
 exceptions 'synchronously' should they happen.
 
 #### Beacon URL's
@@ -122,3 +121,6 @@ If you have any questions, bugs, or suggestions, please
 report them via Github Issues. Or, come chat with us anytime
 at [users.keen.io](http://users.keen.io). We'd love to hear your feedback and ideas!
 
+### Contributing
+keen-gem is an open source project and we welcome your contributions.
+Fire away with issues and pull requests!
