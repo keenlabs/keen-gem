@@ -14,3 +14,11 @@ group :integration do
     watch(%r{^spec/integration/.+_spec\.rb$})
   end
 end
+
+group :synchrony do
+  guard 'rspec', :spec_paths => "spec/synchrony" do
+    watch('spec/spec_helper.rb')  { "spec" }
+    watch('spec/synchrony/spec_helper.rb')  { "spec" }
+    watch(%r{^spec/synchrony/.+_spec\.rb$})
+  end
+end
