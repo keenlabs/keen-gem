@@ -24,10 +24,10 @@ module Keen
       }
     }
 
-    def beacon_url(event_name, properties)
+    def beacon_url(event_collection, properties)
       json = MultiJson.encode(properties)
       data = [json].pack("m0").tr("+/", "-_").gsub("\n", "")
-      "https://#{api_host}/#{api_version}/projects/#{@project_id}/events/#{event_name}?api_key=#{@api_key}&data=#{data}"
+      "https://#{api_host}/#{api_version}/projects/#{@project_id}/events/#{event_collection}?api_key=#{@api_key}&data=#{data}"
     end
 
     def initialize(*args)
@@ -44,12 +44,12 @@ module Keen
         :project_id, :api_key)
     end
 
-    def publish(event_name, properties)
+    def publish(event_collection, properties)
       check_configuration!
       begin
         response = Keen::HTTP::Sync.new(
           api_host, api_port, api_sync_http_options).post(
-            :path => api_path(event_name),
+            :path => api_path(event_collection),
             :headers => api_headers_with_auth,
             :body => MultiJson.encode(properties))
       rescue Exception => http_error
@@ -58,14 +58,14 @@ module Keen
       process_response(response.code, response.body.chomp)
     end
 
-    def publish_async(event_name, properties)
+    def publish_async(event_collection, properties)
       check_configuration!
 
       deferrable = EventMachine::DefaultDeferrable.new
 
       http_client = Keen::HTTP::Async.new(api_host, api_port, api_async_http_options)
       http = http_client.post({
-        :path => api_path(event_name),
+        :path => api_path(event_collection),
         :headers => api_headers_with_auth,
         :body => MultiJson.encode(properties)
       })
@@ -95,8 +95,8 @@ module Keen
     end
 
     # deprecated
-    def add_event(event_name, properties, options={})
-      self.publish(event_name, properties, options)
+    def add_event(event_collection, properties, options={})
+      self.publish(event_collection, properties, options)
     end
 
     private
