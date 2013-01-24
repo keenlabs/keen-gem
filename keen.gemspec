@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.email       = "josh@keen.io"
   s.homepage    = "https://github.com/keenlabs/keen-gem"
   s.summary     = "Keen IO API Client"
-  s.description = "Batch and send events to the Keen IO API. Supports asychronous requests."
+  s.description = "Send events and build analytics features into your Ruby applications."
 
   s.add_dependency "multi_json", "~> 1.0"
   s.add_dependency "jruby-openssl" if defined?(JRUBY_VERSION)
