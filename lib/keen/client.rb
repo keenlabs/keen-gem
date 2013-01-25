@@ -20,7 +20,7 @@ module Keen
       :api_async_http_options => {},
       :api_headers => lambda { |sync_or_async|
         { "Content-Type" => "application/json",
-          "User-Agent" => "keen-gem, v#{Keen::VERSION}, #{sync_or_async}, #{RUBY_VERSION}, #{RUBY_PLATFORM}, #{RUBY_PATCHLEVEL}, #{RUBY_ENGINE}" }
+          "User-Agent" => "keen-gem, v#{Keen::VERSION}, #{sync_or_async}, #{RUBY_VERSION}, #{RUBY_PLATFORM}, #{RUBY_PATCHLEVEL}, #{RUBY_ENGINE if defined?(RUBY_ENGINE)}" }
       }
     }
 
