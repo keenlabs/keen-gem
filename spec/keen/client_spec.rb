@@ -56,7 +56,7 @@ describe Keen::Client do
       it "should post using the collection and properties" do
         stub_api(api_url(collection), 201, "")
         @client.publish(collection, event_properties)
-        expect_post(api_url(collection), event_properties, api_key)
+        expect_post(api_url(collection), event_properties, api_key, "sync")
       end
 
       it "should return the proper response" do
@@ -95,7 +95,7 @@ describe Keen::Client do
           EM.run {
             @client.publish_async(collection, event_properties).callback {
               begin
-                expect_post(api_url(collection), event_properties, api_key)
+                expect_post(api_url(collection), event_properties, api_key, "async")
               ensure
                 EM.stop
               end

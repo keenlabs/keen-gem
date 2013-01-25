@@ -19,7 +19,7 @@ describe Keen::HTTP::Async do
         stub_api(api_url(collection), 201, api_success)
         EM.synchrony {
           @client.publish_async(collection, event_properties)
-          expect_post(api_url(collection), event_properties, api_key)
+          expect_post(api_url(collection), event_properties, api_key, "async")
           EM.stop
         }
       end

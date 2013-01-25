@@ -18,9 +18,9 @@ module Keen
         :verify_depth => 5,
         :ca_file => File.expand_path("../../../config/cacert.pem", __FILE__) },
       :api_async_http_options => {},
-      :api_headers => {
-        "Content-Type" => "application/json",
-        "User-Agent" => "keen-gem v#{Keen::VERSION}"
+      :api_headers => lambda { |sync_or_async|
+        { "Content-Type" => "application/json",
+          "User-Agent" => "keen-gem, v#{Keen::VERSION}, #{sync_or_async}, #{RUBY_VERSION}, #{RUBY_PLATFORM}, #{RUBY_PATCHLEVEL}, #{RUBY_ENGINE}" }
       }
     }
 
@@ -50,7 +50,7 @@ module Keen
         response = Keen::HTTP::Sync.new(
           api_host, api_port, api_sync_http_options).post(
             :path => api_path(event_collection),
-            :headers => api_headers_with_auth,
+            :headers => api_headers_with_auth("sync"),
             :body => MultiJson.encode(properties))
       rescue Exception => http_error
         raise HttpError.new("Couldn't connect to Keen IO: #{http_error.message}", http_error)
@@ -66,7 +66,7 @@ module Keen
       http_client = Keen::HTTP::Async.new(api_host, api_port, api_async_http_options)
       http = http_client.post({
         :path => api_path(event_collection),
-        :headers => api_headers_with_auth,
+        :headers => api_headers_with_auth("async"),
         :body => MultiJson.encode(properties)
       })
 
@@ -121,8 +121,8 @@ module Keen
       "/#{api_version}/projects/#{project_id}/events/#{collection}"
     end
 
-    def api_headers_with_auth
-      api_headers.merge("Authorization" => api_key)
+    def api_headers_with_auth(sync_or_async)
+      api_headers(sync_or_async).merge("Authorization" => api_key)
     end
 
     def check_configuration!
@@ -131,7 +131,15 @@ module Keen
     end
 
     def method_missing(_method, *args, &block)
-      CONFIG[_method.to_sym] || super
+      if config = CONFIG[_method.to_sym]
+        if config.is_a?(Proc)
+          config.call(*args)
+        else
+          config
+        end
+      else
+        super
+      end
     end
   end
 end
