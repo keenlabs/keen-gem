@@ -18,10 +18,16 @@ module Keen::SpecHelpers
   end
 
   def expect_post(url, event_properties, api_key, sync_or_async_ua)
+    user_agent = "keen-gem, v#{Keen::VERSION}, #{sync_or_async_ua}"
+    user_agent += ", #{RUBY_VERSION}, #{RUBY_PLATFORM}, #{RUBY_PATCHLEVEL}"
+    if defined?(RUBY_ENGINE)
+      user_agent += ", #{RUBY_ENGINE}"
+    end
+
     WebMock.should have_requested(:post, url).with(
       :body => MultiJson.encode(event_properties),
       :headers => { "Content-Type" => "application/json",
-                    "User-Agent" => "keen-gem, v#{Keen::VERSION}, #{sync_or_async_ua}, #{RUBY_VERSION}, #{RUBY_PLATFORM}, #{RUBY_PATCHLEVEL},#{RUBY_ENGINE if defined?(RUBY_ENGINE)}",
+                    "User-Agent" => user_agent,
                     "Authorization" => api_key })
   end
 
