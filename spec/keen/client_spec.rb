@@ -94,8 +94,11 @@ describe Keen::Client do
           stub_api(api_url(collection), 201, api_success)
           EM.run {
             @client.publish_async(collection, event_properties).callback {
-              expect_post(api_url(collection), event_properties, api_key)
-              EM.stop
+              begin
+                expect_post(api_url(collection), event_properties, api_key)
+              ensure
+                EM.stop
+              end
             }
           }
         end
@@ -105,8 +108,11 @@ describe Keen::Client do
             stub_api(api_url(collection), 201, api_success)
             EM.run {
               @client.publish_async(collection, event_properties).callback { |response|
-                response.should == api_success
-                EM.stop
+                begin
+                  response.should == api_success
+                ensure
+                  EM.stop
+                end
               }
             }
           end
@@ -115,9 +121,12 @@ describe Keen::Client do
             stub_request(:post, api_url(collection)).to_timeout
             EM.run {
               @client.publish_async(collection, event_properties).errback { |error|
-                error.should_not be_nil
-                error.message.should == "Couldn't connect to Keen IO: WebMock timeout error"
-                EM.stop
+                begin
+                  error.should_not be_nil
+                  error.message.should == "Couldn't connect to Keen IO: WebMock timeout error"
+                ensure
+                  EM.stop
+                end
               }
             }
           end
