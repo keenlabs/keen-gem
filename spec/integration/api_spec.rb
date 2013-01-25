@@ -32,16 +32,8 @@ describe "Keen IO API" do
       }.to raise_error(Keen::AuthenticationError)
     end
 
-    it "should raise bad request if no JSON is supplied" do
-      expect {
-        Keen.publish(collection, nil)
-      }.to raise_error(Keen::BadRequestError)
-    end
-
-    it "should return not found for an invalid collection name" do
-      expect {
-        Keen.publish(nil, event_properties)
-      }.to raise_error(Keen::NotFoundError)
+    it "should success if a non-url-safe event collection is specified" do
+      Keen.publish("infinite possibilities", event_properties).should == api_success
     end
   end
 
@@ -58,6 +50,14 @@ describe "Keen IO API" do
         }
       end
 
+      it "should publish to non-url-safe collections" do
+        EM.run {
+          Keen.publish_async("foo bar", event_properties).callback { |response|
+            response.should == api_success
+            EM.stop
+          }
+        }
+      end
     end
   end
 end

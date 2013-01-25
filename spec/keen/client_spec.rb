@@ -65,6 +65,24 @@ describe Keen::Client do
         @client.publish(collection, event_properties).should == api_response
       end
 
+      it "should raise an argument error if no event collection is specified" do
+        expect {
+          @client.publish(nil, {})
+        }.to raise_error(ArgumentError)
+      end
+
+      it "should raise an argument error if no properties are specified" do
+        expect {
+          @client.publish(collection, nil)
+        }.to raise_error(ArgumentError)
+      end
+
+      it "should url encode the event collection" do
+        stub_api(api_url("foo%20bar"), 201, "")
+        @client.publish("foo bar", event_properties)
+        expect_post(api_url("foo%20bar"), event_properties, api_key, "sync")
+      end
+
       it "should wrap exceptions" do
         stub_request(:post, api_url(collection)).to_timeout
         e = nil
@@ -101,6 +119,31 @@ describe Keen::Client do
               end
             }
           }
+        end
+
+        it "should uri encode the event collection" do
+          stub_api(api_url("foo%20bar"), 201, api_success)
+          EM.run {
+            @client.publish_async("foo bar", event_properties).callback {
+              begin
+                expect_post(api_url("foo%20bar"), event_properties, api_key, "async")
+              ensure
+                EM.stop
+              end
+            }
+          }
+        end
+
+        it "should raise an argument error if no event collection is specified" do
+          expect {
+            @client.publish_async(nil, {})
+          }.to raise_error(ArgumentError)
+        end
+
+        it "should raise an argument error if no properties are specified" do
+          expect {
+            @client.publish_async(collection, nil)
+          }.to raise_error(ArgumentError)
         end
 
         describe "deferrable callbacks" do

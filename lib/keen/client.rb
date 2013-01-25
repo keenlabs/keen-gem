@@ -3,6 +3,7 @@ require 'keen/version'
 require 'openssl'
 require 'multi_json'
 require 'base64'
+require 'uri'
 
 module Keen
   class Client
@@ -32,7 +33,7 @@ module Keen
     def beacon_url(event_collection, properties)
       json = MultiJson.encode(properties)
       data = [json].pack("m0").tr("+/", "-_").gsub("\n", "")
-      "https://#{api_host}/#{api_version}/projects/#{@project_id}/events/#{event_collection}?api_key=#{@api_key}&data=#{data}"
+      "https://#{api_host}#{api_path(event_collection)}?api_key=#{@api_key}&data=#{data}"
     end
 
     def initialize(*args)
@@ -51,6 +52,8 @@ module Keen
 
     def publish(event_collection, properties)
       check_configuration!
+      check_event_data!(event_collection, properties)
+
       begin
         response = Keen::HTTP::Sync.new(
           api_host, api_port, api_sync_http_options).post(
@@ -65,6 +68,7 @@ module Keen
 
     def publish_async(event_collection, properties)
       check_configuration!
+      check_event_data!(event_collection, properties)
 
       deferrable = EventMachine::DefaultDeferrable.new
 
@@ -122,8 +126,8 @@ module Keen
       end
     end
 
-    def api_path(collection)
-      "/#{api_version}/projects/#{project_id}/events/#{collection}"
+    def api_path(event_collection)
+      "/#{api_version}/projects/#{project_id}/events/#{URI.escape(event_collection)}"
     end
 
     def api_headers_with_auth(sync_or_async)
@@ -133,6 +137,11 @@ module Keen
     def check_configuration!
       raise ConfigurationError, "Project ID must be set" unless project_id
       raise ConfigurationError, "API Key must be set" unless api_key
+    end
+
+    def check_event_data!(event_collection, properties)
+      raise ArgumentError, "Event collection can not be nil" unless event_collection
+      raise ArgumentError, "Event properties can not be nil" unless properties
     end
 
     def method_missing(_method, *args, &block)
