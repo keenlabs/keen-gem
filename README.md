@@ -89,8 +89,7 @@ To configure keen-gem credentials in code, do as follows:
 
 You can also configure individual client instances as follows:
 
-    keen = Keen::Client.new(:project_id => 'your-project-id',
-                            :api_key => 'your-api-key')
+    keen = Keen::Client.new(:project_id => 'your-project-id', :api_key => 'your-api-key')
 
 #### em-synchrony
 keen-gem can be used with [em-synchrony](https://github.com/igrigorik/em-synchrony).
@@ -106,14 +105,23 @@ This is useful for situations like tracking email opens using [image beacons](ht
 In this situation, the JSON event data is passed by encoding it base-64 and adding it as a request parameter called `data`.
 The `beacon_url` method found on the `Keen::Client` does this for you. Here's an example:
 
-    keen = Keen::Client.new(:project_id => '12345',
-                            :api_key => 'abcde')
+    keen = Keen::Client.new(:project_id => '12345', :api_key => 'abcde')
 
     keen.beacon_url("sign_ups", :recipient => "foo@foo.com")
-    # => "https://api.keen.io/3.0/projects/12345/events/ \
-          email_opens?api_key=abcde&data=eyJyZWNpcGllbnQiOiJmb29AZm9vLmNvbSJ9"
+    # => "https://api.keen.io/3.0/projects/12345/events/email_opens?api_key=abcde&data=eyJyZWNpcGllbnQiOiJmb29AZm9vLmNvbSJ9"
 
 To track email opens, simply add an image to your email template that points to this URL.
+
+### Changelog
+
+##### 0.4.4
++ Event collections are URI escaped to account for spaces.
++ User agent of API calls made more granular to aid in support cases.
++ Throw arguments error for nil event_collection and properties arguments.
+
+##### 0.4.3
++ Added beacon_url support
++ Add support for using em-synchrony with asynchronous calls
 
 ### Questions & Support
 
