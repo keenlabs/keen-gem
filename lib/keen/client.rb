@@ -33,7 +33,7 @@ module Keen
     def beacon_url(event_collection, properties)
       json = MultiJson.encode(properties)
       data = [json].pack("m0").tr("+/", "-_").gsub("\n", "")
-      "https://#{api_host}#{api_path(event_collection)}?api_key=#{@api_key}&data=#{data}"
+      "https://#{api_host}#{api_path(event_collection)}?data=#{data}"
     end
 
     def initialize(*args)
@@ -131,12 +131,11 @@ module Keen
     end
 
     def api_headers_with_auth(sync_or_async)
-      api_headers(sync_or_async).merge("Authorization" => api_key)
+      api_headers(sync_or_async)
     end
 
     def check_configuration!
       raise ConfigurationError, "Project ID must be set" unless project_id
-      raise ConfigurationError, "API Key must be set" unless api_key
     end
 
     def check_event_data!(event_collection, properties)

@@ -34,29 +34,20 @@ describe Keen::Client do
               send(_method, collection, event_properties)
           }.to raise_error(Keen::ConfigurationError)
         end
-
-        it "should raise an exception if no api_key" do
-          expect {
-            Keen::Client.new(:project_id => project_id).
-              send(_method, collection, event_properties)
-          }.to raise_error(Keen::ConfigurationError)
-        end
       end
     end
   end
 
   describe "with a configured client" do
     before do
-      @client = Keen::Client.new(
-        :project_id => project_id,
-        :api_key => api_key)
+      @client = Keen::Client.new(:project_id => project_id)
     end
 
     describe "#publish" do
       it "should post using the collection and properties" do
         stub_api(api_url(collection), 201, "")
         @client.publish(collection, event_properties)
-        expect_post(api_url(collection), event_properties, api_key, "sync")
+        expect_post(api_url(collection), event_properties, "sync")
       end
 
       it "should return the proper response" do
@@ -80,7 +71,7 @@ describe Keen::Client do
       it "should url encode the event collection" do
         stub_api(api_url("foo%20bar"), 201, "")
         @client.publish("foo bar", event_properties)
-        expect_post(api_url("foo%20bar"), event_properties, api_key, "sync")
+        expect_post(api_url("foo%20bar"), event_properties, "sync")
       end
 
       it "should wrap exceptions" do
@@ -113,7 +104,7 @@ describe Keen::Client do
           EM.run {
             @client.publish_async(collection, event_properties).callback {
               begin
-                expect_post(api_url(collection), event_properties, api_key, "async")
+                expect_post(api_url(collection), event_properties, "async")
               ensure
                 EM.stop
               end
@@ -126,7 +117,7 @@ describe Keen::Client do
           EM.run {
             @client.publish_async("foo bar", event_properties).callback {
               begin
-                expect_post(api_url("foo%20bar"), event_properties, api_key, "async")
+                expect_post(api_url("foo%20bar"), event_properties, "async")
               ensure
                 EM.stop
               end
@@ -225,9 +216,9 @@ describe Keen::Client do
 
   describe "beacon_url" do
     it "should return a url with a base-64 encoded json param" do
-      client = Keen::Client.new(project_id, api_key)
+      client = Keen::Client.new(project_id)
       client.beacon_url("sign_ups", { :name => "Bob" }).should ==
-        "https://api.keen.io/3.0/projects/12345/events/sign_ups?api_key=abcde&data=eyJuYW1lIjoiQm9iIn0="
+        "https://api.keen.io/3.0/projects/12345/events/sign_ups?data=eyJuYW1lIjoiQm9iIn0="
     end
   end
 end

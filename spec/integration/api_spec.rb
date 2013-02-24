@@ -2,7 +2,6 @@ require File.expand_path("../spec_helper", __FILE__)
 
 describe "Keen IO API" do
   let(:project_id) { ENV['KEEN_PROJECT_ID'] }
-  let(:api_key) { ENV['KEEN_API_KEY'] }
 
   let(:collection) { "users" }
   let(:event_properties) { { "name" => "Bob" } }
@@ -17,19 +16,10 @@ describe "Keen IO API" do
 
   describe "failure" do
     it "should raise a not found error if an invalid project id" do
-      client = Keen::Client.new(
-        :api_key => api_key, :project_id => "riker")
+      client = Keen::Client.new(:project_id => "riker")
       expect {
         client.publish(collection, event_properties)
       }.to raise_error(Keen::NotFoundError)
-    end
-
-    it "should raise authentication error if invalid API Key" do
-      client = Keen::Client.new(
-        :api_key => "wrong", :project_id => project_id)
-      expect {
-        client.publish(collection, event_properties)
-      }.to raise_error(Keen::AuthenticationError)
     end
 
     it "should success if a non-url-safe event collection is specified" do
