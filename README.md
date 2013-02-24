@@ -23,18 +23,17 @@ keen is tested with Ruby 1.8 and 1.9 on:
 
 ### Usage
 
-Before making any API calls, you must supply keen-gem with a Project ID and an API Key.
+Before making any API calls, you must supply keen-gem with a Project ID.
 (If you need a Keen IO account, [sign up here](https://keen.io/) - it's free.)
 
-The recommended way to do this is to set `KEEN_PROJECT_ID` and `KEEN_API_KEY` in your
+The recommended way to do this is to set `KEEN_PROJECT_ID` in your
 environment. If you're using [foreman](http://ddollar.github.com/foreman/), add this to your `.env` file:
 
     KEEN_PROJECT_ID=your-project-id
-    KEEN_API_KEY=your-api-key
 
 When you deploy, make sure your production environment variables are also set. For example,
 set [config vars](https://devcenter.heroku.com/articles/config-vars) on Heroku. (We recommend this
-environment-based approach because it keeps sensitive credentials out of the codebase. If you can't do this, see the alternatives below.)
+environment-based approach because it keeps sensitive information out of the codebase. If you can't do this, see the alternatives below.)
 
 If your environment is set up property, `Keen` is ready go immediately. Publish an event like this:
 
@@ -82,14 +81,13 @@ to resume processing immediately.
 
 #### Authentication
 
-To configure keen-gem credentials in code, do as follows:
+To configure keen-gem in code, do as follows:
 
     Keen.project_id = 'your-project-id'
-    Keen.api_key = 'your-api-key'
 
 You can also configure individual client instances as follows:
 
-    keen = Keen::Client.new(:project_id => 'your-project-id', :api_key => 'your-api-key')
+    keen = Keen::Client.new(:project_id => 'your-project-id')
 
 #### em-synchrony
 keen-gem can be used with [em-synchrony](https://github.com/igrigorik/em-synchrony).
@@ -105,14 +103,19 @@ This is useful for situations like tracking email opens using [image beacons](ht
 In this situation, the JSON event data is passed by encoding it base-64 and adding it as a request parameter called `data`.
 The `beacon_url` method found on the `Keen::Client` does this for you. Here's an example:
 
-    keen = Keen::Client.new(:project_id => '12345', :api_key => 'abcde')
+    keen = Keen::Client.new(:project_id => '12345')
 
     keen.beacon_url("sign_ups", :recipient => "foo@foo.com")
-    # => "https://api.keen.io/3.0/projects/12345/events/email_opens?api_key=abcde&data=eyJyZWNpcGllbnQiOiJmb29AZm9vLmNvbSJ9"
+    # => "https://api.keen.io/3.0/projects/12345/events/email_opens?data=eyJyZWNpcGllbnQiOiJmb29AZm9vLmNvbSJ9"
 
 To track email opens, simply add an image to your email template that points to this URL.
 
 ### Changelog
+
+##### 0.5.0
++ Removed API Key as a required field on Keen::Client. Only the Project ID is required to publish events.
++ You can continue to provide the API Key. Future features planned for this gem will require it. But for now,
+  there is no keen-gem functionality that uses it.
 
 ##### 0.4.4
 + Event collections are URI escaped to account for spaces.
