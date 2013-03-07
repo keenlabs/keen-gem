@@ -68,6 +68,8 @@ thin or goliath you're already doing this. Otherwise, you'll need to start an Ev
 The best place for this is in an initializer, or anywhere that runs when your app boots up.
 Here's a good blog article that explains more about this approach - [EventMachine and Passenger](http://railstips.org/blog/archives/2011/05/04/eventmachine-and-passenger/).
 
+And here's a gist that shows an example of [Eventmachine with Unicorn](https://gist.github.com/jonkgrimes/5103321). Thanks to [jonkgrimes](https://github.com/jonkgrimes) for sharing this with us!
+
 Now, in your code, replace `publish` with `publish_async`. Bind callbacks if you require them.
 
     http = Keen.publish_async("sign_ups", { :username => "lloyd", :referred_by => "harry" })
