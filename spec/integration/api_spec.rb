@@ -22,7 +22,7 @@ describe "Keen IO API" do
       }.to raise_error(Keen::NotFoundError)
     end
 
-    it "should success if a non-url-safe event collection is specified" do
+    it "should succeed if a non-url-safe event collection is specified" do
       Keen.publish("infinite possibilities", event_properties).should == api_success
     end
   end
