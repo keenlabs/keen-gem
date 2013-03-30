@@ -79,6 +79,23 @@ Now, in your code, replace `publish` with `publish_async`. Bind callbacks if you
 This will schedule the network call into the event loop and allow your request thread
 to resume processing immediately.
 
+### Querying
+
+The Keen IO API can also be queried to retrieve various metrics about your data. An overview of the functionalities can be found on the data analysis documentation page: https://keen.io/docs/data-analysis/
+
+An example of querying for the count of a particular attribute:
+
+`ruby
+ > Keen.api_key = '12345'
+ > # You may also specify Keen.project_id = "project_id" here if you did not do so in the environment variables
+ > Keen.count( { :event_collection => "my_app_events", :target_property => "clicks" } )
+ => {"result"=>2}
+`
+
+The above snippet returned a Hash with the "result" key giving you the number of times the "click" property appears in any of the Keen events in the "my_app_events" event collection. In this case, it occurs a total of 2 times.
+
+Detailed information on accepted parameters for each API resource can be found on the technical reference: https://keen.io/docs/api/reference/
+
 ### Other code examples
 
 #### Authentication
@@ -92,6 +109,7 @@ You can also configure individual client instances as follows:
     keen = Keen::Client.new(:project_id => 'your-project-id')
 
 #### em-synchrony
+
 keen-gem can be used with [em-synchrony](https://github.com/igrigorik/em-synchrony).
 If you call `publish_async` and `EM::Synchrony` is defined the method will return the response
 directly. (It does not return the deferrable on which to register callbacks.) Likewise, it will raise
