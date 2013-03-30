@@ -109,7 +109,8 @@ module Keen
     #
     # @param params [Hash] params is a hash take takes in:
     #   event_collection (required) [String]
-    #   filters (optional) [Hash] - The hash will be turned into JSON string
+    #   target_property (required) [String] - The property that needs to be counted
+    #   filters (optional) [Hash] - The hash will be transformed into JSON string
     #   timeframe (optional)
     #   timezone (optional)
     #   group_by (optional) [Array]
@@ -124,15 +125,43 @@ module Keen
     end
 
     # Returns the number of UNIQUE resources in the event collection matching the given criteria.
+    # See detailed documentation here:
+    # https://keen.io/docs/api/reference/#count-unique-resource
+    #
     # @param params [Hash] params is a hash that takes in:
     #   event_collection (required) [String]
-    #   filters (optional) [Hash] - The hash will be turned into JSON string
+    #   target_property (required) [String] - The property that needs to be counted
+    #   filters (optional) [Hash] - The hash will be transformed into JSON string
+    #   timeframe (optional)
+    #   timezone (optional)
+    #   group_by (optional) [Array]
+    # @param cache [Object] (Optional) See description on #keen_query.
+    # @param from_cache [Boolean] (Optional) See description on #keen_query. 
+    #   from_cache defaults to true. When false, it will still save results to cache.
+    # @param cache_expiration [Integer] (Optional) See descripton on #keen_query.
     #
     # @return [Hash] Returns a Hash of the decoded JSON string.
     def count_unique(params, cache=nil, from_cache=true, cache_expiration=nil)
       keen_query(__method__, params, cache, from_cache)
     end
 
+    # Returns the minimum numeric value for the target property in the event collection matching the given criteria. Non-numeric values are ignored.
+    # See detailed documentation here:
+    # https://keen.io/docs/api/reference/#minimum-resource
+    #
+    # @param params [Hash] params is a hash that takes in:
+    #   event_collection (required) [String]
+    #   target_property (required) [String] - The property that needs to be counted
+    #   filters (optional) [Hash] - The hash will be transformed into JSON string
+    #   timeframe (optional)
+    #   timezone (optional)
+    #   group_by (optional) [Array]
+    # @param cache [Object] (Optional) See description on #keen_query.
+    # @param from_cache [Boolean] (Optional) See description on #keen_query. 
+    #   from_cache defaults to true. When false, it will still save results to cache.
+    # @param cache_expiration [Integer] (Optional) See descripton on #keen_query.
+    #
+    # @return [Hash] Returns a Hash of the decoded JSON string.
     def minimum(params, cache=nil, from_cache=true, cache_expiration=nil)
       keen_query(__method__, params, cache, from_cache)
     end
