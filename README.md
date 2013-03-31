@@ -85,12 +85,12 @@ The Keen IO API can also be queried to retrieve various metrics about your data.
 
 An example of querying for the count of a particular attribute:
 
-`ruby
+```ruby
  > Keen.api_key = '12345'
  > # You may also specify Keen.project_id = "project_id" here if you did not do so in the environment variables
  > Keen.count( { :event_collection => "my_app_events", :target_property => "clicks" } )
  => {"result"=>2}
-`
+```
 
 The above snippet returned a Hash with the "result" key giving you the number of times the "click" property appears in any of the Keen events in the "my_app_events" event collection. In this case, it occurs a total of 2 times.
 
