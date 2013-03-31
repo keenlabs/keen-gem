@@ -178,27 +178,57 @@ describe Keen::Client do
     describe "#count" do
       context "with proper parameters" do
         let(:query_name) { "count" }
-        let(:query_params) { "?api_key=abcde&event_collection=my_app_events&target_property=action" }
+        let(:query_params) { "?api_key=abcde&event_collection=my_app_events" }
         let(:api_response) { { :status => 200, :body => "{\"result\":1}" } }
         before(:each) {
           @client.api_key = api_key
           stub_http_request(:get, query_url(query_name, query_params)).to_return(api_response )
-          @response = @client.count( { :event_collection => "my_app_events", :target_property => "action" } )
+          @response = @client.count( { :event_collection => "my_app_events" } )
         }
         it "should return a hash with result key being the count." do
           @response.should == { "result" => 1 }
         end
       end
 
-      context "without proper parameters" do
+      context "without proper parameters (missing event_collection)" do
         let(:query_params) { "?api_key=abcde" }
         let(:query_name) { "count" }
+        let(:api_response) { { :status => 400, :body => "{\"error_code\":\"MissingRequiredRequestFieldError\",\"message\":\"Your request is missing a required field. Field: 'event_collection'.\"}" } }
         before(:each) {
           @client.api_key = api_key
-          stub_http_request(:get, "https://#{api_host}/#{api_version}/projects/#{project_id}/queries/#{query_name}#{query_params}").to_return( { :status => 400, :body => "{\"error_code\":\"MissingRequiredRequestFieldError\",\"message\":\"Your request is missing a required field. Field: 'event_collection'.\"}" } )
+          stub_http_request(:get, query_url(query_name, query_params)).to_return(api_response )
         }
         it "should raise Keen::BadRequestError" do
           expect { @client.count({}) }.to raise_error(Keen::BadRequestError)
+        end
+      end
+    end
+
+    describe "#count_unique" do
+      context "with proper parameters" do
+        let(:query_name) { "count_unique" }
+        let(:query_params) { "?api_key=abcde&event_collection=my_app_events&target_property=action" }
+        let(:api_response) { { :status => 200, :body => "{\"result\":1}" } }
+        before(:each) {
+          @client.api_key = api_key
+          stub_http_request(:get, query_url(query_name, query_params)).to_return(api_response)
+          @response = @client.count_unique( { :event_collection => "my_app_events", :target_property => "action" } )
+        }
+        it "should return a hash with result key being the count." do
+          @response.should == { "result" => 1 }
+        end
+      end
+
+      context "without proper parameters (missing target_property)" do
+        let(:query_name) { "count_unique" }
+        let(:query_params) { "?api_key=abcde&event_collection=my_app_events" }
+        let(:api_response) { { :status => 400, :body => "{\"error_code\":\"MissingRequiredRequestFieldError\",\"message\":\"Your request is missing a required field. Field: 'target_property'.\"}"} }
+        before(:each) {
+          @client.api_key = api_key
+          stub_http_request(:get, query_url(query_name, query_params)).to_return(api_response)
+        }
+        it "should raise Keen::BadRequestError" do
+          expect { @client.count_unique( { :event_collection => "my_app_events" } ) }.to raise_error(Keen::BadRequestError)
         end
       end
     end
