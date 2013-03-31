@@ -3,9 +3,15 @@ require File.expand_path("../spec_helper", __FILE__)
 describe Keen::Client do
   let(:project_id) { "12345" }
   let(:api_key) { "abcde" }
+  let(:api_host) { "api.keen.io" }
+  let(:api_version) { "3.0" }
   let(:collection) { "users" }
   let(:event_properties) { { "name" => "Bob" } }
   let(:api_success) { { "created" => true } }
+
+  def query_url(query_name, query_params)
+    "https://#{api_host}/#{api_version}/projects/#{project_id}/queries/#{query_name}#{query_params}"
+  end
 
   describe "#initialize" do
     context "deprecated" do
@@ -167,6 +173,34 @@ describe Keen::Client do
         end
       end
 
+    end
+
+    describe "#count" do
+      context "with proper parameters" do
+        let(:query_name) { "count" }
+        let(:query_params) { "?api_key=abcde&event_collection=my_app_events&target_property=action" }
+        let(:api_response) { { :status => 200, :body => "{\"result\":1}" } }
+        before(:each) {
+          @client.api_key = api_key
+          stub_http_request(:get, query_url(query_name, query_params)).to_return(api_response )
+          @response = @client.count( { :event_collection => "my_app_events", :target_property => "action" } )
+        }
+        it "should return a hash with result key being the count." do
+          @response.should == { "result" => 1 }
+        end
+      end
+
+      context "without proper parameters" do
+        let(:query_params) { "?api_key=abcde" }
+        let(:query_name) { "count" }
+        before(:each) {
+          @client.api_key = api_key
+          stub_http_request(:get, "https://#{api_host}/#{api_version}/projects/#{project_id}/queries/#{query_name}#{query_params}").to_return( { :status => 400, :body => "{\"error_code\":\"MissingRequiredRequestFieldError\",\"message\":\"Your request is missing a required field. Field: 'event_collection'.\"}" } )
+        }
+        it "should raise Keen::BadRequestError" do
+          expect { @client.count({}) }.to raise_error(Keen::BadRequestError)
+        end
+      end
     end
 
     describe "response handling" do
