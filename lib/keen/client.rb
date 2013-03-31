@@ -109,7 +109,6 @@ module Keen
     #
     # @param params [Hash] params is a hash take takes in:
     #   event_collection (required) [String]
-    #   target_property (required) [String] - The property that needs to be counted
     #   filters (optional) [Hash] - The hash will be transformed into JSON string
     #   timeframe (optional)
     #   timezone (optional)
@@ -151,7 +150,7 @@ module Keen
     #
     # @param params [Hash] params is a hash that takes in:
     #   event_collection (required) [String]
-    #   target_property (required) [String] - The property that needs to be counted
+    #   target_property (required) [String] - The property to find the minimum value for
     #   filters (optional) [Hash] - The hash will be transformed into JSON string
     #   timeframe (optional)
     #   timezone (optional)
