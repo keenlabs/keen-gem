@@ -4,3 +4,6 @@ tmp
 .env
 log
 *.gem
+.rvmrc
+*.swp
+*.so
