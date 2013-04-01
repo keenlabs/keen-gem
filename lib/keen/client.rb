@@ -248,9 +248,16 @@ module Keen
       if params.key? :group_by and not params[:group_by].class == String
         params[:group_by] = MultiJson.encode(params[:group_by])
       end
-
-      query_params = URI.encode_www_form(params).gsub('%5B%5D','')
-      return "?#{query_params}"
+      query_params = "?"
+      if URI.respond_to?(:encode_www_form)
+        query_params << URI.encode_www_form(params).gsub('%5B%5D','')
+      else
+        params.each do |param, value|
+          query_params << param.to_s << '=' << value.to_s << '&'
+        end
+        query_params.chop! # Get rid of the extra '&' at the end
+      end
+      return query_params
     end
 
     def process_response(status_code, response_body)
