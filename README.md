@@ -88,7 +88,7 @@ An example of querying for the count of a particular attribute:
 ```ruby
  > Keen.api_key = '12345'
  > # You may also specify Keen.project_id = "project_id" here if you did not do so in the environment variables
- > Keen.count( { :event_collection => "my_app_events", :target_property => "clicks" } )
+ > Keen.count( { :event_collection => "my_app_events" } )
  => {"result"=>2}
 ```
 
