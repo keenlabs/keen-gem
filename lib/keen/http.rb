@@ -12,6 +12,12 @@ module Keen
           :path, :headers, :body)
         @http.post(path, body, headers)
       end
+
+      def get(options)
+        path, headers = options.values_at(
+          :path, :headers)
+        @http.get(path, headers)
+      end
     end
 
     class Async
