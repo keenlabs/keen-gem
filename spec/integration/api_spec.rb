@@ -55,8 +55,9 @@ describe "Keen IO API" do
   describe "queries" do
     let(:api_key) { ENV['KEEN_API_KEY'] }
     let(:event_collection) { "purchases_" + rand(100000).to_s }
+    let(:returns_event_collection) { "returns_" + rand(100000).to_s }
 
-    before do
+    before(:all) do
       Keen.publish(event_collection, {
         username: "bob",
         price: 10
@@ -65,49 +66,66 @@ describe "Keen IO API" do
         username: "ted",
         price: 20
       })
+      Keen.publish(returns_event_collection, {
+        username: "bob",
+        price: 10
+      })
+      sleep(1)
     end
 
     it "should return a valid count" do
-      Keen.count(:event_collection => event_collection).should == 2
+      Keen.count(event_collection).should == 2
     end
 
     it "should return a valid count_unique" do
-      Keen.count_unique(:event_collection => event_collection, :target_property => "price").should == 2
+      Keen.count_unique(event_collection, :target_property => "price").should == 2
     end
 
     it "should return a valid sum" do
-      Keen.sum(:event_collection => event_collection, :target_property => "price").should == 30
+      Keen.sum(event_collection, :target_property => "price").should == 30
     end
 
     it "should return a valid minimum" do
-      Keen.minimum(:event_collection => event_collection, :target_property => "price").should == 10
+      Keen.minimum(event_collection, :target_property => "price").should == 10
     end
 
     it "should return a valid maximum" do
-      Keen.maximum(:event_collection => event_collection, :target_property => "price").should == 20
+      Keen.maximum(event_collection, :target_property => "price").should == 20
     end
 
     it "should return a valid average" do
-      Keen.average(:event_collection => event_collection, :target_property => "price").should == 15
+      Keen.average(event_collection, :target_property => "price").should == 15
     end
 
     it "should return a valid select_unique" do
-      results = Keen.select_unique(:event_collection => event_collection, :target_property => "price")
+      results = Keen.select_unique(event_collection, :target_property => "price")
       results.sort.should == [10, 20].sort
     end
 
     it "should return a valid extraction" do
-      results = Keen.extraction(:event_collection => event_collection)
+      results = Keen.extraction(event_collection)
       results.length.should == 2
       results.all? { |result| result["keen"] }.should be_true
     end
 
+    it "should return a valid funnel" do
+      steps = [{
+        event_collection: event_collection,
+        actor_property: "username"
+      }, {
+        event_collection: returns_event_collection,
+        actor_property: "username"
+      }]
+      results = Keen.funnel(:steps => steps)
+      results.should == [2, 1]
+    end
+
     it "should apply filters" do
-      Keen.count({ :event_collection => event_collection, :filters => [{
+      Keen.count(event_collection, :filters => [{
         :property_name => "username",
         :operator => "eq",
         :property_value => "ted"
-      }]}).should == 1
+      }]).should == 1
     end
 
   end
