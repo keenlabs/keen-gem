@@ -37,7 +37,9 @@ environment-based approach because it keeps sensitive information out of the cod
 
 If your environment is set up property, `Keen` is ready go immediately. Publish an event like this:
 
-    Keen.publish("sign_ups", { :username => "lloyd", :referred_by => "harry" })
+```ruby
+Keen.publish("sign_ups", { :username => "lloyd", :referred_by => "harry" })
+```
 
 This will publish an event to the 'sign_ups' collection with the `username` and `referred_by` properties set.
 
@@ -63,7 +65,9 @@ To publish asynchronously, first add
 Next, run an instance of EventMachine. If you're using an EventMachine-based web server like
 thin or goliath you're already doing this. Otherwise, you'll need to start an EventMachine loop manually as follows:
 
-    Thread.new { EventMachine.run }
+```ruby
+Thread.new { EventMachine.run }
+```
 
 The best place for this is in an initializer, or anywhere that runs when your app boots up.
 Here's a good blog article that explains more about this approach - [EventMachine and Passenger](http://railstips.org/blog/archives/2011/05/04/eventmachine-and-passenger/).
@@ -72,29 +76,48 @@ And here's a gist that shows an example of [Eventmachine with Unicorn](https://g
 
 Now, in your code, replace `publish` with `publish_async`. Bind callbacks if you require them.
 
-    http = Keen.publish_async("sign_ups", { :username => "lloyd", :referred_by => "harry" })
-    http.callback { |response| puts "Success: #{response}"}
-    http.errback { puts "was a failurrr :,(" }
+```ruby
+http = Keen.publish_async("sign_ups", { :username => "lloyd", :referred_by => "harry" })
+http.callback { |response| puts "Success: #{response}"}
+http.errback { puts "was a failurrr :,(" }
+```
 
 This will schedule the network call into the event loop and allow your request thread
 to resume processing immediately.
 
-### Querying
+### Running queries
 
-The Keen IO API can also be queried to retrieve various metrics about your data. An overview of the functionalities can be found on the data analysis documentation page: https://keen.io/docs/data-analysis/
+The Keen IO API provides rich querying capabilities against your event data set. For more information, see the [Data Analysis API Guide](https://keen.io/docs/data-analysis/).
 
-An example of querying for the count of a particular attribute:
+Unlike event publishing, queries require that an API Key is provided. Just like project ID, we encourage that you set this as an environment variable:
+
+    KEEN_API_KEY=your-api-key
+
+Here's are some examples of querying with the Ruby gem. Let's assume you've added some events to the "purchases" collection.
 
 ```ruby
- > Keen.api_key = '12345'
- > # You may also specify Keen.project_id = "project_id" here if you did not do so in the environment variables
- > Keen.count( { :event_collection => "my_app_events" } )
- => {"result"=>2}
+Keen.count("purchases") # => 100
+Keen.sum("purchases", :target_property => "price")  # => 10000
+Keen.minimum("purchases", :target_property => "price")  # => 20
+Keen.maximum("purchases", :target_property => "price")  # => 100
+Keen.average("purchases", :target_property => "price")  # => 60
+
+Keen.sum("purchases", :target_property => "price", :group_by => "item.id")  # => [{ "item.id": 123, "result": 240 }, { ... }]
+
+Keen.count_unique("purchases", :target_property => "username")  # => 3
+Keen.select_unique("purchases", :target_property => "username")  # => ["bob", "linda", "travis"]
+
+Keen.extraction("purchases")  # => [{ "price" => 20, ... }, { ... }]
+
+Keen.funnel(:steps => [
+  { :actor_property => "username", "event_collection" => "purchases" },
+  { :actor_property => "username", "event_collection" => "referrals" },
+  { ... }])  # => [20, 15 ...]
 ```
 
-The above snippet returned a Hash with the "result" key giving you the number of times the "click" property appears in any of the Keen events in the "my_app_events" event collection. In this case, it occurs a total of 2 times.
+Many of there queries can be performed with group by, filters, series and intervals. The API response for these is converted directly into Ruby Hash or Array.
 
-Detailed information on accepted parameters for each API resource can be found on the technical reference: https://keen.io/docs/api/reference/
+Detailed information on available parameters for each API resource can be found on the [API Technical Reference](https://keen.io/docs/api/reference/).
 
 ### Other code examples
 
@@ -102,11 +125,15 @@ Detailed information on accepted parameters for each API resource can be found o
 
 To configure keen-gem in code, do as follows:
 
-    Keen.project_id = 'your-project-id'
+```ruby
+Keen.project_id = 'your-project-id'
+```
 
 You can also configure individual client instances as follows:
 
-    keen = Keen::Client.new(:project_id => 'your-project-id')
+```ruby
+keen = Keen::Client.new(:project_id => 'your-project-id')
+```
 
 #### em-synchrony
 
@@ -123,14 +150,17 @@ This is useful for situations like tracking email opens using [image beacons](ht
 In this situation, the JSON event data is passed by encoding it base-64 and adding it as a request parameter called `data`.
 The `beacon_url` method found on the `Keen::Client` does this for you. Here's an example:
 
-    keen = Keen::Client.new(:project_id => '12345')
-
-    keen.beacon_url("sign_ups", :recipient => "foo@foo.com")
-    # => "https://api.keen.io/3.0/projects/12345/events/email_opens?data=eyJyZWNpcGllbnQiOiJmb29AZm9vLmNvbSJ9"
+```ruby
+Keen.beacon_url("sign_ups", :recipient => "foo@foo.com")
+  # => "https://api.keen.io/3.0/projects/12345/events/email_opens?data=eyJyZWNpcGllbnQiOiJmb29AZm9vLmNvbSJ9"
+```
 
 To track email opens, simply add an image to your email template that points to this URL.
 
 ### Changelog
+
+##### 0.6.0
++ Added querying capabilities. A big thanks to [ifeelgoods](http://www.ifeelgoods.com/) for contributing!
 
 ##### 0.5.0
 + Removed API Key as a required field on Keen::Client. Only the Project ID is required to publish events.
