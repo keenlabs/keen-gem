@@ -44,6 +44,10 @@ module Keen::SpecHelpers
   def expect_keen_post(url, event_properties, sync_or_async_ua)
     expect_keen_request(:post, url, MultiJson.encode(event_properties), sync_or_async_ua)
   end
+
+  def api_event_resource_url(collection)
+    "https://api.keen.io/3.0/projects/#{project_id}/events/#{collection}"
+  end
 end
 
 RSpec.configure do |config|

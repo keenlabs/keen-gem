@@ -8,10 +8,6 @@ describe Keen::Client::PublishingMethods do
   let(:api_success) { { "created" => true } }
   let(:client) { Keen::Client.new(:project_id => project_id) }
 
-  def api_event_resource_url(collection)
-    "https://api.keen.io/3.0/projects/#{project_id}/events/#{collection}"
-  end
-
   describe "publish" do
     it "should post using the collection and properties" do
       stub_keen_post(api_event_resource_url(collection), 201, "")
