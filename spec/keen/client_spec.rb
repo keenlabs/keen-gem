@@ -3,15 +3,7 @@ require File.expand_path("../spec_helper", __FILE__)
 describe Keen::Client do
   let(:project_id) { "12345" }
   let(:api_key) { "abcde" }
-  let(:api_host) { "api.keen.io" }
-  let(:api_version) { "3.0" }
-  let(:collection) { "users" }
-  let(:event_properties) { { "name" => "Bob" } }
-  let(:api_success) { { "created" => true } }
-
-  def query_url(query_name, query_params)
-    "https://#{api_host}/#{api_version}/projects/#{project_id}/queries/#{query_name}#{query_params}"
-  end
+  let(:client) { Keen::Client.new(:project_id => project_id) }
 
   describe "#initialize" do
     context "deprecated" do
@@ -31,258 +23,36 @@ describe Keen::Client do
     end
   end
 
-  describe "with a unconfigured client" do
-    [:publish, :publish_async].each do |_method|
-      describe "##{_method}" do
-        it "should raise an exception if no project_id" do
-          expect {
-            Keen::Client.new(:api_key => api_key).
-              send(_method, collection, event_properties)
-          }.to raise_error(Keen::ConfigurationError)
-        end
-      end
-    end
-  end
+  describe "process_response" do
+    let (:body) { "{ \"wazzup\": 1 }" }
+    let (:process_response) { client.method(:process_response) }
 
-  describe "with a configured client" do
-    before do
-      @client = Keen::Client.new(:project_id => project_id)
+    it "should raise a bad request error for a 400" do
+      process_response.call(200, body).should == { "wazzup" => 1 }
     end
 
-    describe "#publish" do
-      it "should post using the collection and properties" do
-        stub_api(api_url(collection), 201, "")
-        @client.publish(collection, event_properties)
-        expect_post(api_url(collection), event_properties, "sync")
-      end
-
-      it "should return the proper response" do
-        api_response = { "created" => true }
-        stub_api(api_url(collection), 201, api_response)
-        @client.publish(collection, event_properties).should == api_response
-      end
-
-      it "should raise an argument error if no event collection is specified" do
-        expect {
-          @client.publish(nil, {})
-        }.to raise_error(ArgumentError)
-      end
-
-      it "should raise an argument error if no properties are specified" do
-        expect {
-          @client.publish(collection, nil)
-        }.to raise_error(ArgumentError)
-      end
-
-      it "should url encode the event collection" do
-        stub_api(api_url("foo%20bar"), 201, "")
-        @client.publish("foo bar", event_properties)
-        expect_post(api_url("foo%20bar"), event_properties, "sync")
-      end
-
-      it "should wrap exceptions" do
-        stub_request(:post, api_url(collection)).to_timeout
-        e = nil
-        begin
-          @client.publish(collection, event_properties)
-        rescue Exception => exception
-          e = exception
-        end
-
-        e.class.should == Keen::HttpError
-        e.original_error.class.should == Timeout::Error
-        e.message.should == "Couldn't connect to Keen IO: execution expired"
-      end
+    it "should raise a bad request error for a 400" do
+      expect {
+        process_response.call(400, body)
+      }.to raise_error(Keen::BadRequestError)
     end
 
-    describe "#publish_async" do
-
-      # no TLS support in EventMachine on jRuby
-      unless defined?(JRUBY_VERSION)
-        it "should require a running event loop" do
-          expect {
-            @client.publish_async(collection, event_properties)
-          }.to raise_error(Keen::Error)
-        end
-
-        it "should post the event data" do
-          stub_api(api_url(collection), 201, api_success)
-          EM.run {
-            @client.publish_async(collection, event_properties).callback {
-              begin
-                expect_post(api_url(collection), event_properties, "async")
-              ensure
-                EM.stop
-              end
-            }
-          }
-        end
-
-        it "should uri encode the event collection" do
-          stub_api(api_url("foo%20bar"), 201, api_success)
-          EM.run {
-            @client.publish_async("foo bar", event_properties).callback {
-              begin
-                expect_post(api_url("foo%20bar"), event_properties, "async")
-              ensure
-                EM.stop
-              end
-            }
-          }
-        end
-
-        it "should raise an argument error if no event collection is specified" do
-          expect {
-            @client.publish_async(nil, {})
-          }.to raise_error(ArgumentError)
-        end
-
-        it "should raise an argument error if no properties are specified" do
-          expect {
-            @client.publish_async(collection, nil)
-          }.to raise_error(ArgumentError)
-        end
-
-        describe "deferrable callbacks" do
-          it "should trigger callbacks" do
-            stub_api(api_url(collection), 201, api_success)
-            EM.run {
-              @client.publish_async(collection, event_properties).callback { |response|
-                begin
-                  response.should == api_success
-                ensure
-                  EM.stop
-                end
-              }
-            }
-          end
-
-          it "should trigger errbacks" do
-            stub_request(:post, api_url(collection)).to_timeout
-            EM.run {
-              @client.publish_async(collection, event_properties).errback { |error|
-                begin
-                  error.should_not be_nil
-                  error.message.should == "Couldn't connect to Keen IO: WebMock timeout error"
-                ensure
-                  EM.stop
-                end
-              }
-            }
-          end
-        end
-      end
-
+    it "should raise a authentication error for a 401" do
+      expect {
+        process_response.call(401, body)
+      }.to raise_error(Keen::AuthenticationError)
     end
 
-    describe "#count" do
-      context "with proper parameters" do
-        let(:query_name) { "count" }
-        let(:query_params) { "?api_key=abcde&event_collection=my_app_events" }
-        let(:api_response) { { :status => 200, :body => "{\"result\":1}" } }
-        before(:each) {
-          @client.api_key = api_key
-          stub_http_request(:get, query_url(query_name, query_params)).to_return(api_response )
-          @response = @client.count( { :event_collection => "my_app_events" } )
-        }
-        it "should return a hash with result key being the count." do
-          @response.should == { "result" => 1 }
-        end
-      end
-
-      context "without proper parameters (missing event_collection)" do
-        let(:query_params) { "?api_key=abcde" }
-        let(:query_name) { "count" }
-        let(:api_response) { { :status => 400, :body => "{\"error_code\":\"MissingRequiredRequestFieldError\",\"message\":\"Your request is missing a required field. Field: 'event_collection'.\"}" } }
-        before(:each) {
-          @client.api_key = api_key
-          stub_http_request(:get, query_url(query_name, query_params)).to_return(api_response )
-        }
-        it "should raise Keen::BadRequestError" do
-          expect { @client.count({}) }.to raise_error(Keen::BadRequestError)
-        end
-      end
+    it "should raise a not found error for a 404" do
+      expect {
+        process_response.call(404, body)
+      }.to raise_error(Keen::NotFoundError)
     end
 
-    describe "#count_unique" do
-      context "with proper parameters" do
-        let(:query_name) { "count_unique" }
-        let(:query_params) { "?api_key=abcde&event_collection=my_app_events&target_property=action" }
-        let(:api_response) { { :status => 200, :body => "{\"result\":1}" } }
-        before(:each) {
-          @client.api_key = api_key
-          stub_http_request(:get, query_url(query_name, query_params)).to_return(api_response)
-          @response = @client.count_unique( { :event_collection => "my_app_events", :target_property => "action" } )
-        }
-        it "should return a hash with result key being the count." do
-          @response.should == { "result" => 1 }
-        end
-      end
-
-      context "without proper parameters (missing target_property)" do
-        let(:query_name) { "count_unique" }
-        let(:query_params) { "?api_key=abcde&event_collection=my_app_events" }
-        let(:api_response) { { :status => 400, :body => "{\"error_code\":\"MissingRequiredRequestFieldError\",\"message\":\"Your request is missing a required field. Field: 'target_property'.\"}"} }
-        before(:each) {
-          @client.api_key = api_key
-          stub_http_request(:get, query_url(query_name, query_params)).to_return(api_response)
-        }
-        it "should raise Keen::BadRequestError" do
-          expect { @client.count_unique( { :event_collection => "my_app_events" } ) }.to raise_error(Keen::BadRequestError)
-        end
-      end
-    end
-
-    describe "response handling" do
-      def stub_status_and_publish(code, api_response=nil)
-        stub_api(api_url(collection), code, api_response)
-        @client.publish(collection, event_properties)
-      end
-
-      it "should return the json body for a 200-201" do
-        api_response = { "created" => "true" }
-        stub_status_and_publish(200, api_response).should == api_response
-        stub_status_and_publish(201, api_response).should == api_response
-      end
-
-      it "should raise a bad request error for a 400" do
-        expect {
-          stub_status_and_publish(400)
-        }.to raise_error(Keen::BadRequestError)
-      end
-
-      it "should raise a authentication error for a 401" do
-        expect {
-          stub_status_and_publish(401)
-        }.to raise_error(Keen::AuthenticationError)
-      end
-
-      it "should raise a not found error for a 404" do
-        expect {
-          stub_status_and_publish(404)
-        }.to raise_error(Keen::NotFoundError)
-      end
-
-      it "should raise an http error otherwise" do
-        expect {
-          stub_status_and_publish(420)
-        }.to raise_error(Keen::HttpError)
-      end
-    end
-
-    describe "#add_event" do
-      it "should alias to publish" do
-        @client.should_receive(:publish).with("users", {:a => 1}, {:b => 2})
-        @client.add_event("users", {:a => 1}, {:b => 2})
-      end
-    end
-  end
-
-  describe "beacon_url" do
-    it "should return a url with a base-64 encoded json param" do
-      client = Keen::Client.new(project_id)
-      client.beacon_url("sign_ups", { :name => "Bob" }).should ==
-        "https://api.keen.io/3.0/projects/12345/events/sign_ups?data=eyJuYW1lIjoiQm9iIn0="
+    it "should raise an http error otherwise" do
+      expect {
+        process_response.call(420, body)
+      }.to raise_error(Keen::HttpError)
     end
   end
 end

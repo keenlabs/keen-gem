@@ -15,7 +15,7 @@ module Keen
       #
       # @return [Hash] Returns a Hash of the decoded JSON string.
       def count(params)
-        keen_query(__method__, params)
+        query(__method__, params)
       end
 
       # Returns the number of UNIQUE resources in the event collection matching the given criteria.
@@ -32,7 +32,7 @@ module Keen
       #
       # @return [Hash] Returns a Hash of the decoded JSON string.
       def count_unique(params)
-        keen_query(__method__, params)
+        query(__method__, params)
       end
 
       # Returns the minimum numeric value for the target property in the event collection matching the given criteria. Non-numeric values are ignored.
@@ -49,36 +49,36 @@ module Keen
       #
       # @return [Hash] Returns a Hash of the decoded JSON string.
       def minimum(params)
-        keen_query(__method__, params)
+        query(__method__, params)
       end
 
       def maximum(params)
-        keen_query(__method__, params)
+        query(__method__, params)
       end
 
       def sum(params)
-        keen_query(__method__, params)
+        query(__method__, params)
       end
 
       def average(params)
-        keen_query(__method__, params)
+        query(__method__, params)
       end
 
       def select_unique(params)
-        keen_query(__method__, params)
+        query(__method__, params)
+      end
+
+      def extraction(params)
+        query(__method__, params)
       end
 
       def funnel(params)
-        keen_query(__method__, params)
+        query(__method__, params)
       end
 
-      # The underlying private method that all querying methods call to perform the query.
-      #
-      # @param query_name [String] The name of the query to perform, this will be passed in by the public query method itself.
-      # @param params [Hash] The parameters for the particular given query.
-      #
-      # @return [Hash] Returns a Hash of the decoded JSON string.
-      def keen_query(query_name, params)
+      private
+
+      def query(query_name, params)
         ensure_project_id!
         ensure_api_key!
 
@@ -88,42 +88,36 @@ module Keen
         begin
           response = Keen::HTTP::Sync.new(
             api_host, api_port, api_sync_http_options).get(
-              :path => "#{api_query_resource_path(query_name)}#{query_params}",
-              :headers => api_headers_with_auth("sync"))
+              :path => "#{api_query_resource_path(query_name)}?#{query_params}",
+              :headers => api_headers("sync"))
         rescue Exception => http_error
           raise HttpError.new("Couldn't perform #{query_name} on Keen IO: #{http_error.message}", http_error)
         end
-        response_body = response.body.chomp
-        processed_response = process_response(response.code, response_body)
 
-        return processed_response
+        response_body = response.body.chomp
+        process_response(response.code, response_body)
       end
 
-      # This transform some parameters into json as required by Keen
-      # @param params [Hash] all the parameters
       def preprocess_params(params)
-        # JSON encode filter hash if it exists
-        if params.key? :filters
+        if params.key?(:filters)
           params[:filters] = MultiJson.encode(params[:filters])
         end
 
-        if params.key? :timeframe and not params[:timeframe].class == String
+        if params.key?(:steps)
+          params[:steps] = MultiJson.encode(params[:steps])
+        end
+
+        if params.key?(:timeframe) && params[:timeframe].is_a?(Hash)
           params[:timeframe] = MultiJson.encode(params[:timeframe])
         end
 
-        if params.key? :group_by and not params[:group_by].class == String
-          params[:group_by] = MultiJson.encode(params[:group_by])
+        query_params = ""
+        params.each do |param, value|
+          query_params << "#{param}=#{URI.escape(value)}&"
         end
-        query_params = "?"
-        if URI.respond_to?(:encode_www_form)
-          query_params << URI.encode_www_form(params).gsub('%5B%5D','')
-        else
-          params.each do |param, value|
-            query_params << param.to_s << '=' << value.to_s << '&'
-          end
-          query_params.chop! # Get rid of the extra '&' at the end
-        end
-        return query_params
+
+        query_params.chop!
+        query_params
       end
 
       def api_query_resource_path(analysis_type)

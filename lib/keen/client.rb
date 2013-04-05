@@ -68,10 +68,6 @@ module Keen
       end
     end
 
-    def api_headers_with_auth(sync_or_async)
-      api_headers(sync_or_async)
-    end
-
     def ensure_project_id!
       raise ConfigurationError, "Project ID must be set" unless self.project_id
     end

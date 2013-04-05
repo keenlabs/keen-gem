@@ -15,7 +15,7 @@ module Keen
           response = Keen::HTTP::Sync.new(
             api_host, api_port, api_sync_http_options).post(
               :path => api_event_resource_path(event_collection),
-              :headers => api_headers_with_auth("sync"),
+              :headers => api_headers("sync"),
               :body => MultiJson.encode(properties))
         rescue Exception => http_error
           raise HttpError.new("Couldn't connect to Keen IO: #{http_error.message}", http_error)
@@ -32,7 +32,7 @@ module Keen
         http_client = Keen::HTTP::Async.new(api_host, api_port, api_async_http_options)
         http = http_client.post({
           :path => api_event_resource_path(event_collection),
-          :headers => api_headers_with_auth("async"),
+          :headers => api_headers("async"),
           :body => MultiJson.encode(properties)
         })
 
