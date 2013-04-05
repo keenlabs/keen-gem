@@ -59,16 +59,16 @@ describe "Keen IO API" do
 
     before(:all) do
       Keen.publish(event_collection, {
-        username: "bob",
-        price: 10
+        :username => "bob",
+        :price => 10
       })
       Keen.publish(event_collection, {
-        username: "ted",
-        price: 20
+        :username => "ted",
+        :price => 20
       })
       Keen.publish(returns_event_collection, {
-        username: "bob",
-        price: 10
+        :username => "bob",
+        :price => 30
       })
       sleep(1)
     end
@@ -110,11 +110,11 @@ describe "Keen IO API" do
 
     it "should return a valid funnel" do
       steps = [{
-        event_collection: event_collection,
-        actor_property: "username"
+        :event_collection => event_collection,
+        :actor_property => "username"
       }, {
-        event_collection: returns_event_collection,
-        actor_property: "username"
+        :event_collection => returns_event_collection,
+        :actor_property => "username"
       }]
       results = Keen.funnel(:steps => steps)
       results.should == [2, 1]
@@ -127,6 +127,5 @@ describe "Keen IO API" do
         :property_value => "ted"
       }]).should == 1
     end
-
   end
 end
