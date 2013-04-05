@@ -2,11 +2,25 @@ module Keen
   class Client
     module PublishingMethods
 
-      # deprecated
+      # @deprecated
+      #
+      # Publishes a synchronous event
+      # @param event_collection
+      # @param [Hash] event properties
+      #
+      # @return the JSON response from the API
       def add_event(event_collection, properties, options={})
         self.publish(event_collection, properties, options)
       end
 
+      # Publishes a synchronous event
+      # See detailed documentation here
+      # https://keen.io/docs/api/reference/#event-collection-resource
+      #
+      # @param event_collection
+      # @param [Hash] event properties
+      #
+      # @return the JSON response from the API
       def publish(event_collection, properties)
         ensure_project_id!
         check_event_data!(event_collection, properties)
@@ -23,6 +37,14 @@ module Keen
         process_response(response.code, response.body.chomp)
       end
 
+      # Publishes an asynchronous event
+      # See detailed documentation here
+      # https://keen.io/docs/api/reference/#event-collection-resource
+      #
+      # @param event_collection
+      # @param [Hash] event properties
+      #
+      # @return a deferrable to apply callbacks to
       def publish_async(event_collection, properties)
         ensure_project_id!
         check_event_data!(event_collection, properties)
@@ -60,6 +82,14 @@ module Keen
         end
       end
 
+      # Returns an encoded URL that will record an event. Useful in email situations.
+      # See detailed documentation here
+      # https://keen.io/docs/api/reference/#event-collection-resource
+      #
+      # @param event_collection
+      # @param [Hash] event properties
+      #
+      # @return a URL that will track an event when hit
       def beacon_url(event_collection, properties)
         json = MultiJson.encode(properties)
         data = [json].pack("m0").tr("+/", "-_").gsub("\n", "")

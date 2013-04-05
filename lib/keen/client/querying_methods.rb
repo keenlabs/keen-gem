@@ -2,76 +2,141 @@ module Keen
   class Client
     module QueryingMethods
 
-      # Returns the number of resources in the event collection matching the given criteria.
+      # Runs a count query.
       # See detailed documentation here:
       # https://keen.io/docs/api/reference/#count-resource
       #
-      # @param params [Hash] params is a hash take takes in:
-      #   event_collection (required) [String]
-      #   filters (optional) [Hash] - The hash will be transformed into JSON string
+      # @param event_collection
+      # @param params [Hash] (optional)
+      #   group_by (optional)
       #   timeframe (optional)
+      #   interval (optional)
+      #   filters (optional) [Array]
       #   timezone (optional)
-      #   group_by (optional) [Array]
-      #
-      # @return [Hash] Returns a Hash of the decoded JSON string.
       def count(event_collection, params={})
         query(__method__, event_collection, params)
       end
 
-      # Returns the number of UNIQUE resources in the event collection matching the given criteria.
+      # Runs a count unique query.
       # See detailed documentation here:
       # https://keen.io/docs/api/reference/#count-unique-resource
       #
-      # @param params [Hash] params is a hash that takes in:
-      #   event_collection (required) [String]
-      #   target_property (required) [String] - The property that needs to be counted
-      #   filters (optional) [Hash] - The hash will be transformed into JSON string
+      # @param event_collection
+      # @param params [Hash] (optional)
+      #   target_property (required)
+      #   group_by (optional)
       #   timeframe (optional)
+      #   interval (optional)
+      #   filters (optional) [Array]
       #   timezone (optional)
-      #   group_by (optional) [Array]
-      #
-      # @return [Hash] Returns a Hash of the decoded JSON string.
       def count_unique(event_collection, params)
         query(__method__, event_collection, params)
       end
 
-      # Returns the minimum numeric value for the target property in the event collection matching the given criteria. Non-numeric values are ignored.
+      # Runs a minimum query.
       # See detailed documentation here:
       # https://keen.io/docs/api/reference/#minimum-resource
       #
-      # @param params [Hash] params is a hash that takes in:
-      #   event_collection (required) [String]
-      #   target_property (required) [String] - The property to find the minimum value for
-      #   filters (optional) [Hash] - The hash will be transformed into JSON string
+      # @param event_collection
+      # @param params [Hash] (optional)
+      #   target_property (required)
+      #   group_by (optional)
       #   timeframe (optional)
+      #   interval (optional)
+      #   filters (optional) [Array]
       #   timezone (optional)
-      #   group_by (optional) [Array]
-      #
-      # @return [Hash] Returns a Hash of the decoded JSON string.
       def minimum(event_collection, params)
         query(__method__, event_collection, params)
       end
 
+      # Runs a maximum query.
+      # See detailed documentation here:
+      # https://keen.io/docs/api/reference/#maximum-resource
+      #
+      # @param event_collection
+      # @param params [Hash] (optional)
+      #   target_property (required)
+      #   group_by (optional)
+      #   timeframe (optional)
+      #   interval (optional)
+      #   filters (optional) [Array]
+      #   timezone (optional)
       def maximum(event_collection, params)
         query(__method__, event_collection, params)
       end
 
+      # Runs a sum query.
+      # See detailed documentation here:
+      # https://keen.io/docs/api/reference/#sum-resource
+      #
+      # @param event_collection
+      # @param params [Hash] (optional)
+      #   target_property (required)
+      #   group_by (optional)
+      #   timeframe (optional)
+      #   interval (optional)
+      #   filters (optional) [Array]
+      #   timezone (optional)
       def sum(event_collection, params)
         query(__method__, event_collection, params)
       end
 
+      # Runs a average query.
+      # See detailed documentation here:
+      # https://keen.io/docs/api/reference/#average-resource
+      #
+      # @param event_collection
+      # @param params [Hash] (optional)
+      #   target_property (required)
+      #   group_by (optional)
+      #   timeframe (optional)
+      #   interval (optional)
+      #   filters (optional) [Array]
+      #   timezone (optional)
       def average(event_collection, params)
         query(__method__, event_collection, params)
       end
 
+      # Runs a select_unique query.
+      # See detailed documentation here:
+      # https://keen.io/docs/api/reference/#select-unique-resource
+      #
+      # @param event_collection
+      # @param params [Hash] (optional)
+      #   target_property (required)
+      #   group_by (optional)
+      #   timeframe (optional)
+      #   interval (optional)
+      #   filters (optional) [Array]
+      #   timezone (optional)
       def select_unique(event_collection, params)
         query(__method__, event_collection, params)
       end
 
+      # Runs a extraction query.
+      # See detailed documentation here:
+      # https://keen.io/docs/api/reference/#extraction-resource
+      #
+      # @param event_collection
+      # @param params [Hash] (optional)
+      #   target_property (required)
+      #   group_by (optional)
+      #   timeframe (optional)
+      #   interval (optional)
+      #   filters (optional) [Array]
+      #   timezone (optional)
+      #   latest (optional)
       def extraction(event_collection, params={})
         query(__method__, event_collection, params)
       end
 
+      # Runs a funnel query.
+      # See detailed documentation here:
+      # https://keen.io/docs/api/reference/#funnel-resource
+      #
+      # @param event_collection
+      # @param params [Hash] (optional)
+      #   steps (required)
       def funnel(params)
         query(__method__, nil, params)
       end
