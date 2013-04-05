@@ -14,8 +14,8 @@ module Keen
       #   group_by (optional) [Array]
       #
       # @return [Hash] Returns a Hash of the decoded JSON string.
-      def count(params)
-        query(__method__, params)
+      def count(event_collection, params={})
+        query(__method__, event_collection, params)
       end
 
       # Returns the number of UNIQUE resources in the event collection matching the given criteria.
@@ -31,8 +31,8 @@ module Keen
       #   group_by (optional) [Array]
       #
       # @return [Hash] Returns a Hash of the decoded JSON string.
-      def count_unique(params)
-        query(__method__, params)
+      def count_unique(event_collection, params)
+        query(__method__, event_collection, params)
       end
 
       # Returns the minimum numeric value for the target property in the event collection matching the given criteria. Non-numeric values are ignored.
@@ -48,41 +48,46 @@ module Keen
       #   group_by (optional) [Array]
       #
       # @return [Hash] Returns a Hash of the decoded JSON string.
-      def minimum(params)
-        query(__method__, params)
+      def minimum(event_collection, params)
+        query(__method__, event_collection, params)
       end
 
-      def maximum(params)
-        query(__method__, params)
+      def maximum(event_collection, params)
+        query(__method__, event_collection, params)
       end
 
-      def sum(params)
-        query(__method__, params)
+      def sum(event_collection, params)
+        query(__method__, event_collection, params)
       end
 
-      def average(params)
-        query(__method__, params)
+      def average(event_collection, params)
+        query(__method__, event_collection, params)
       end
 
-      def select_unique(params)
-        query(__method__, params)
+      def select_unique(event_collection, params)
+        query(__method__, event_collection, params)
       end
 
-      def extraction(params)
-        query(__method__, params)
+      def extraction(event_collection, params={})
+        query(__method__, event_collection, params)
       end
 
       def funnel(params)
-        query(__method__, params)
+        query(__method__, nil, params)
       end
 
       private
 
-      def query(query_name, params)
+      def query(query_name, event_collection, params)
         ensure_project_id!
         ensure_api_key!
 
         params[:api_key] = self.api_key
+
+        if event_collection
+          params[:event_collection] = event_collection
+        end
+
         query_params = preprocess_params(params)
 
         begin
@@ -95,7 +100,7 @@ module Keen
         end
 
         response_body = response.body.chomp
-        process_response(response.code, response_body)
+        process_response(response.code, response_body)["result"]
       end
 
       def preprocess_params(params)

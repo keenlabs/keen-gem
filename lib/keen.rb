@@ -24,7 +24,7 @@ module Keen
     def_delegators :default_client, :project_id, :api_key,
                    :project_id=, :api_key=, :publish, :publish_async,
                    :beacon_url, :count, :count_unique, :minimum, :maximum,
-                   :sum, :average, :select_unique, :funnel
+                   :sum, :average, :select_unique, :funnel, :extraction
 
     attr_writer :logger
 

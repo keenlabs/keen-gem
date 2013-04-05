@@ -14,10 +14,18 @@ describe Keen::Client do
 
   describe "querying names" do
     let(:params) { { :event_collection => "signups" } }
-    ["minimum", "maximum", "sum", "average", "count", "count_unique", "select_unique", "extraction", "funnel"].each do |query_name|
+
+    ["minimum", "maximum", "sum", "average", "count", "count_unique", "select_unique", "extraction"].each do |query_name|
       it "should call keen query passing the query name" do
-        client.should_receive(:query).with(query_name.to_sym, params)
-        client.send(query_name, params)
+        client.should_receive(:query).with(query_name.to_sym, event_collection, params)
+        client.send(query_name, event_collection, params)
+      end
+    end
+
+    describe "funnel" do
+      it "should call keen query w/o event collection" do
+        client.should_receive(:query).with(:funnel, nil, params)
+        client.funnel(params)
       end
     end
   end
@@ -26,13 +34,13 @@ describe Keen::Client do
     describe "with an improperly configured client" do
       it "should require a project id" do
         expect {
-          Keen::Client.new(:api_key => api_key).count({})
+          Keen::Client.new(:api_key => api_key).count("users", {})
         }.to raise_error(Keen::ConfigurationError)
       end
 
       it "should require an api key" do
         expect {
-          Keen::Client.new(:project_id => project_id).count({})
+          Keen::Client.new(:project_id => project_id).count("users", {})
         }.to raise_error(Keen::ConfigurationError)
       end
     end
@@ -47,8 +55,8 @@ describe Keen::Client do
         expected_query_params += extra_query_params
         expected_url = query_url(query_name, expected_query_params)
         stub_keen_get(expected_url, 200, :result => 1)
-        response = query.call(query_name, { :event_collection => event_collection }.merge(extra_query_hash))
-        response.should == api_response
+        response = query.call(query_name, event_collection, extra_query_hash)
+        response.should == api_response["result"]
         expect_keen_get(expected_url, "sync")
       end
 
@@ -95,10 +103,30 @@ describe Keen::Client do
 
         stub_keen_get(url, 401, :error => {})
         expect {
-          query.call(query_name, :event_collection => event_collection)
+          query.call(query_name, event_collection, {})
         }.to raise_error(Keen::AuthenticationError)
         expect_keen_get(url, "sync")
       end
+    end
+  end
+
+  describe "#count" do
+    it "should not require params" do
+      query_params = "?api_key=#{api_key}&event_collection=#{event_collection}"
+      url = query_url("count", query_params)
+      stub_keen_get(url, 200, :result => 10)
+      client.count(event_collection).should == 10
+      expect_keen_get(url, "sync")
+    end
+  end
+
+  describe "#extraction" do
+    it "should not require params" do
+      query_params = "?api_key=#{api_key}&event_collection=#{event_collection}"
+      url = query_url("extraction", query_params)
+      stub_keen_get(url, 200, :result => { "a" => 1 } )
+      client.extraction(event_collection).should == { "a" => 1 }
+      expect_keen_get(url, "sync")
     end
   end
 end
