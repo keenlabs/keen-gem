@@ -93,7 +93,7 @@ Unlike event publishing, queries require that an API Key is provided. Just like 
 
     KEEN_API_KEY=your-api-key
 
-Here's are some examples of querying with the Ruby gem. Let's assume you've added some events to the "purchases" collection.
+Here's are some examples of querying with keen-gem. Let's assume you've added some events to the "purchases" collection.
 
 ```ruby
 Keen.count("purchases") # => 100
@@ -110,8 +110,8 @@ Keen.select_unique("purchases", :target_property => "username")  # => ["bob", "l
 Keen.extraction("purchases")  # => [{ "price" => 20, ... }, { ... }]
 
 Keen.funnel(:steps => [
-  { :actor_property => "username", "event_collection" => "purchases" },
-  { :actor_property => "username", "event_collection" => "referrals" },
+  { :actor_property => "username", :event_collection => "purchases" },
+  { :actor_property => "username", :event_collection => "referrals" },
   { ... }])  # => [20, 15 ...]
 ```
 
