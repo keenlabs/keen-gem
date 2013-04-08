@@ -115,9 +115,9 @@ Keen.funnel(:steps => [
   { ... }])  # => [20, 15 ...]
 
 Keen.multi_analysis("purchases", analyses: {
-  gross:        { analysis_type: "sum", target_property: "price" },
-  customers:    { analysis_type: "count_unique", target_property: "username" } },
-  timeframe: 'today', group_by: "item.id") # => [{"item.id"=>2, "gross"=>314.49, "customers"=> 8}, { ... }]
+  :gross =>      { :analysis_type => "sum", :target_property => "price" },
+  :customers =>  { :analysis_type => "count_unique", :target_property => "username" } },
+  :timeframe => 'today', :group_by => "item.id") # => [{"item.id"=>2, "gross"=>314.49, "customers"=> 8}, { ... }]
 ```
 
 Many of there queries can be performed with group by, filters, series and intervals. The API response for these is converted directly into Ruby Hash or Array.
