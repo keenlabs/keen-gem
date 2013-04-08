@@ -190,3 +190,10 @@ at [users.keen.io](http://users.keen.io). We'd love to hear your feedback and id
 ### Contributing
 keen-gem is an open source project and we welcome your contributions.
 Fire away with issues and pull requests!
+
+### Community Contributors
++ [alexkwolfe](https://github.com/alexkwolfe)
++ [peteygao](https://github.com/peteygao)
++ [obieq](https://github.com/obieq)
+ 
+Thanks everyone, you rock!
