@@ -60,7 +60,11 @@ method to send events.
 To compare asychronous vs. synchronous performance, check out the [keen-gem-example](http://keen-gem-example.herokuapp.com/) app.
 
 To publish asynchronously, first add
-[em-http-request](https://github.com/igrigorik/em-http-request) to your Gemfile.
+[em-http-request](https://github.com/igrigorik/em-http-request) to your Gemfile. Make sure it's version 1.0 or above.
+
+```ruby
+gem "em-http-request", "~> 1.0"
+```
 
 Next, run an instance of EventMachine. If you're using an EventMachine-based web server like
 thin or goliath you're already doing this. Otherwise, you'll need to start an EventMachine loop manually as follows:
