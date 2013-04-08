@@ -15,7 +15,7 @@ describe Keen::Client do
   describe "querying names" do
     let(:params) { { :event_collection => "signups" } }
 
-    ["minimum", "maximum", "sum", "average", "count", "count_unique", "select_unique", "extraction"].each do |query_name|
+    ["minimum", "maximum", "sum", "average", "count", "count_unique", "select_unique", "extraction", "multi_analysis"].each do |query_name|
       it "should call keen query passing the query name" do
         client.should_receive(:query).with(query_name.to_sym, event_collection, params)
         client.send(query_name, event_collection, params)
