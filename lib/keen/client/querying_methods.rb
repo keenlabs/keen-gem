@@ -1,3 +1,4 @@
+
 module Keen
   class Client
     module QueryingMethods
@@ -141,6 +142,23 @@ module Keen
         query(__method__, nil, params)
       end
 
+      # Runs a multi-analysis query
+      # See detailed documentation here:
+      # https://keen.io/docs/data-analysis/multi-analysis/
+      #
+      # NOTE: why isn't multi-analysis listed in the
+      #       API Technical Reference?
+      #
+      # @param event_collection
+      # @param params [Hash]
+      #   analyses [Hash] (required)
+      #     label (required)
+      #     analysis_type (required)
+      #     target_property (optional)
+      def multi_analysis(event_collection, params)
+        query(__method__, event_collection, params)
+      end
+
       private
 
       def query(query_name, event_collection, params)
@@ -177,6 +195,10 @@ module Keen
           params[:steps] = MultiJson.encode(params[:steps])
         end
 
+        if params.key?(:analyses)
+          params[:analyses] = MultiJson.encode(params[:analyses])
+        end
+
         if params.key?(:timeframe) && params[:timeframe].is_a?(Hash)
           params[:timeframe] = MultiJson.encode(params[:timeframe])
         end
@@ -196,4 +218,3 @@ module Keen
     end
   end
 end
-
