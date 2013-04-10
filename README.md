@@ -29,13 +29,15 @@ Before making any API calls, you must supply keen-gem with a Project ID.
 The recommended way to do this is to set `KEEN_PROJECT_ID` in your
 environment. If you're using [foreman](http://ddollar.github.com/foreman/), add this to your `.env` file:
 
-    KEEN_PROJECT_ID=your-project-id
+    KEEN_PROJECT_ID=xxxxxxxxxxxxxxxx
 
-When you deploy, make sure your production environment variables are also set. For example,
+If not, make to to export the variable into your shell or put it before the command you use to start your server.
+
+When you deploy, make sure your production environment variables are set. For example,
 set [config vars](https://devcenter.heroku.com/articles/config-vars) on Heroku. (We recommend this
 environment-based approach because it keeps sensitive information out of the codebase. If you can't do this, see the alternatives below.)
 
-If your environment is set up property, `Keen` is ready go immediately. Publish an event like this:
+If your environment is set up property, `Keen` is ready to go immediately. Publish an event like this:
 
 ```ruby
 Keen.publish("sign_ups", { :username => "lloyd", :referred_by => "harry" })
