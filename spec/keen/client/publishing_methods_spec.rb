@@ -2,17 +2,18 @@ require File.expand_path("../../spec_helper", __FILE__)
 
 describe Keen::Client::PublishingMethods do
   let(:project_id) { "12345" }
+  let(:write_key) { "abcde" }
   let(:api_host) { "api.keen.io" }
   let(:collection) { "users" }
   let(:event_properties) { { "name" => "Bob" } }
   let(:api_success) { { "created" => true } }
-  let(:client) { Keen::Client.new(:project_id => project_id) }
+  let(:client) { Keen::Client.new(:project_id => project_id, :write_key => write_key) }
 
   describe "publish" do
     it "should post using the collection and properties" do
       stub_keen_post(api_event_resource_url(collection), 201, "")
       client.publish(collection, event_properties)
-      expect_keen_post(api_event_resource_url(collection), event_properties, "sync")
+      expect_keen_post(api_event_resource_url(collection), event_properties, "sync", write_key)
     end
 
     it "should return the proper response" do
@@ -36,7 +37,7 @@ describe Keen::Client::PublishingMethods do
     it "should url encode the event collection" do
       stub_keen_post(api_event_resource_url("foo%20bar"), 201, "")
       client.publish("foo bar", event_properties)
-      expect_keen_post(api_event_resource_url("foo%20bar"), event_properties, "sync")
+      expect_keen_post(api_event_resource_url("foo%20bar"), event_properties, "sync", write_key)
     end
 
     it "should wrap exceptions" do
@@ -74,7 +75,7 @@ describe Keen::Client::PublishingMethods do
         EM.run {
           client.publish_async(collection, event_properties).callback {
             begin
-              expect_keen_post(api_event_resource_url(collection), event_properties, "async")
+              expect_keen_post(api_event_resource_url(collection), event_properties, "async", write_key)
             ensure
               EM.stop
             end
@@ -168,9 +169,9 @@ describe Keen::Client::PublishingMethods do
 
   describe "beacon_url" do
     it "should return a url with a base-64 encoded json param" do
-      client = Keen::Client.new(project_id)
+      client = Keen::Client.new({:project_id => project_id, :write_key => write_key})
       client.beacon_url("sign_ups", { :name => "Bob" }).should ==
-        "https://api.keen.io/3.0/projects/12345/events/sign_ups?data=eyJuYW1lIjoiQm9iIn0="
+        "https://api.keen.io/3.0/projects/12345/events/sign_ups?api_key=#{write_key}&data=eyJuYW1lIjoiQm9iIn0="
     end
   end
 end

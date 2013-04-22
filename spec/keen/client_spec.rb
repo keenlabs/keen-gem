@@ -2,14 +2,16 @@ require File.expand_path("../spec_helper", __FILE__)
 
 describe Keen::Client do
   let(:project_id) { "12345" }
-  let(:api_key) { "abcde" }
+  let(:write_key) { "abcdewrite" }
+  let(:read_key) { "abcderead" }
   let(:client) { Keen::Client.new(:project_id => project_id) }
 
   describe "#initialize" do
     context "deprecated" do
-      it "should allow created via project_id and api_key args" do
-        client = Keen::Client.new(project_id, api_key)
-        client.api_key.should == api_key
+      it "should allow created via project_id and key args" do
+        client = Keen::Client.new(project_id, write_key, read_key)
+        client.write_key.should == write_key
+        client.read_key.should == read_key
         client.project_id.should == project_id
       end
     end
@@ -17,8 +19,10 @@ describe Keen::Client do
     it "should initialize with options" do
       client = Keen::Client.new(
         :project_id => project_id,
-        :api_key => api_key)
-      client.api_key.should == api_key
+        :write_key => write_key,
+        :read_key => read_key)
+      client.write_key.should == write_key
+      client.read_key.should == read_key
       client.project_id.should == project_id
     end
   end

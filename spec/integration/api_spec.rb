@@ -2,6 +2,7 @@ require File.expand_path("../spec_helper", __FILE__)
 
 describe "Keen IO API" do
   let(:project_id) { ENV['KEEN_PROJECT_ID'] }
+  let(:write_key) { ENV['KEEN_WRITE_KEY'] }
 
   describe "publishing" do
     let(:collection) { "users" }
@@ -16,7 +17,7 @@ describe "Keen IO API" do
 
     describe "failure" do
       it "should raise a not found error if an invalid project id" do
-        client = Keen::Client.new(:project_id => "riker")
+        client = Keen::Client.new(:project_id => "riker", :write_key => "whatever")
         expect {
           client.publish(collection, event_properties)
         }.to raise_error(Keen::NotFoundError)
@@ -53,7 +54,7 @@ describe "Keen IO API" do
   end
 
   describe "queries" do
-    let(:api_key) { ENV['KEEN_API_KEY'] }
+    let(:read_key) { ENV['KEEN_READ_KEY'] }
     let(:event_collection) { "purchases_" + rand(100000).to_s }
     let(:returns_event_collection) { "returns_" + rand(100000).to_s }
 

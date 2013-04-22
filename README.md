@@ -23,13 +23,13 @@ keen is tested with Ruby 1.8 and 1.9 on:
 
 ### Usage
 
-Before making any API calls, you must supply keen-gem with a Project ID.
+Before making any API calls, you must supply keen-gem with a Project ID and one or both of your Write and Read Keys.
 (If you need a Keen IO account, [sign up here](https://keen.io/) - it's free.)
 
-The recommended way to do this is to set `KEEN_PROJECT_ID` in your
+The recommended way to do this is to set `KEEN_PROJECT_ID`, `KEEN_WRITE_KEY`, and `KEEN_READ_KEY` in your
 environment. If you're using [foreman](http://ddollar.github.com/foreman/), add this to your `.env` file:
 
-    KEEN_PROJECT_ID=xxxxxxxxxxxxxxxx
+    KEEN_PROJECT_ID=xxxxxxxxxxxxxxxx KEEN_WRITE_KEY=yyyyyyyyyyyyy KEEN_READ_KEY=zzzzzzzzzzzzz
 
 If not, make to to export the variable into your shell or put it before the command you use to start your server.
 
@@ -95,9 +95,9 @@ to resume processing immediately.
 
 The Keen IO API provides rich querying capabilities against your event data set. For more information, see the [Data Analysis API Guide](https://keen.io/docs/data-analysis/).
 
-Unlike event publishing, queries require that an API Key is provided. Just like project ID, we encourage that you set this as an environment variable:
+Queries require that a Read Key is provided. Just like project ID, we encourage that you set this as an environment variable:
 
-    KEEN_API_KEY=your-api-key
+    KEEN_WRITE_KEY=your-write-key
 
 Here's are some examples of querying with keen-gem. Let's assume you've added some events to the "purchases" collection.
 
@@ -138,12 +138,16 @@ To configure keen-gem in code, do as follows:
 
 ```ruby
 Keen.project_id = 'your-project-id'
+Keen.write_key = 'your-write-key'
+Keen.read_key = 'your-read-key'
 ```
 
 You can also configure individual client instances as follows:
 
 ```ruby
-keen = Keen::Client.new(:project_id => 'your-project-id')
+keen = Keen::Client.new(:project_id => 'your-project-id',
+                        :write_key  => 'your-write-key',
+                        :read_key   => 'your-read-key')
 ```
 
 #### em-synchrony
@@ -163,12 +167,15 @@ The `beacon_url` method found on the `Keen::Client` does this for you. Here's an
 
 ```ruby
 Keen.beacon_url("sign_ups", :recipient => "foo@foo.com")
-  # => "https://api.keen.io/3.0/projects/12345/events/email_opens?data=eyJyZWNpcGllbnQiOiJmb29AZm9vLmNvbSJ9"
+  # => "https://api.keen.io/3.0/projects/12345/events/email_opens?api_key=your_write_key&data=eyJyZWNpcGllbnQiOiJmb29AZm9vLmNvbSJ9"
 ```
 
 To track email opens, simply add an image to your email template that points to this URL.
 
 ### Changelog
+
+##### 0.7.0
++ Add support for read and write scoped keys.
 
 ##### 0.6.1
 + Improved logging and exception handling.

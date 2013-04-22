@@ -2,13 +2,14 @@ require File.expand_path("../spec_helper", __FILE__)
 
 describe Keen::HTTP::Async do
   let(:project_id) { "12345" }
+  let(:write_key) { "abcdewrite" }
   let(:collection) { "users" }
   let(:event_properties) { { "name" => "Bob" } }
   let(:api_success) { { "created" => true } }
 
   describe "synchrony" do
     before do
-      @client = Keen::Client.new(:project_id => project_id)
+      @client = Keen::Client.new(:project_id => project_id, :write_key => write_key)
     end
 
     describe "success" do
@@ -16,7 +17,7 @@ describe Keen::HTTP::Async do
         stub_keen_post(api_event_resource_url(collection), 201, api_success)
         EM.synchrony {
           @client.publish_async(collection, event_properties)
-          expect_keen_post(api_event_resource_url(collection), event_properties, "async")
+          expect_keen_post(api_event_resource_url(collection), event_properties, "async", write_key)
           EM.stop
         }
       end

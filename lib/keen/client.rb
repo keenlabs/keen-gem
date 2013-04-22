@@ -13,7 +13,7 @@ module Keen
     include Keen::Client::PublishingMethods
     include Keen::Client::QueryingMethods
 
-    attr_accessor :project_id, :api_key
+    attr_accessor :project_id, :write_key, :read_key
 
     CONFIG = {
       :api_host => "api.keen.io",
@@ -42,12 +42,13 @@ module Keen
         # deprecated, pass a hash of options instead
         options = {
           :project_id => args[0],
-          :api_key => args[1],
-        }.merge(args[2] || {})
+          :write_key => args[1],
+          :read_key => args[2],
+        }.merge(args[3] || {})
       end
 
-      @project_id, @api_key = options.values_at(
-        :project_id, :api_key)
+      @project_id, @write_key, @read_key = options.values_at(
+        :project_id, :write_key, :read_key)
     end
 
     private
@@ -76,8 +77,12 @@ module Keen
       raise ConfigurationError, "Project ID must be set" unless self.project_id
     end
 
-    def ensure_api_key!
-      raise ConfigurationError, "API Key must be set for queries" unless self.api_key
+    def ensure_write_key!
+      raise ConfigurationError, "Write Key must be set for sending events" unless self.write_key
+    end
+
+    def ensure_read_key!
+      raise ConfigurationError, "Read Key must be set for queries" unless self.read_key
     end
 
     def method_missing(_method, *args, &block)

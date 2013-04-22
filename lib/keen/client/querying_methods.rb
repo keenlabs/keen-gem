@@ -163,9 +163,9 @@ module Keen
 
       def query(query_name, event_collection, params)
         ensure_project_id!
-        ensure_api_key!
+        ensure_read_key!
 
-        params[:api_key] = self.api_key
+        params[:api_key] = self.read_key
 
         if event_collection
           params[:event_collection] = event_collection

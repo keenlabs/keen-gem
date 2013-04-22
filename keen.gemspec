@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.name        = "keen"
   s.version     = Keen::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["Kyle Wild", "Josh Dzielak"]
+  s.authors     = ["Kyle Wild", "Josh Dzielak", "Daniel Kador"]
   s.email       = "josh@keen.io"
   s.homepage    = "https://github.com/keenlabs/keen-gem"
   s.summary     = "Keen IO API Client"

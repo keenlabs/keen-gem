@@ -2,11 +2,11 @@ require File.expand_path("../../spec_helper", __FILE__)
 
 describe Keen::Client do
   let(:project_id) { "12345" }
-  let(:api_key) { "abcde" }
+  let(:read_key) { "abcde" }
   let(:api_host) { "api.keen.io" }
   let(:api_version) { "3.0" }
   let(:event_collection) { "users" }
-  let(:client) { Keen::Client.new(:project_id => project_id, :api_key => api_key) }
+  let(:client) { Keen::Client.new(:project_id => project_id, :read_key => read_key) }
 
   def query_url(query_name, query_params)
     "https://#{api_host}/#{api_version}/projects/#{project_id}/queries/#{query_name}#{query_params}"
@@ -34,11 +34,11 @@ describe Keen::Client do
     describe "with an improperly configured client" do
       it "should require a project id" do
         expect {
-          Keen::Client.new(:api_key => api_key).count("users", {})
+          Keen::Client.new(:read_key => read_key).count("users", {})
         }.to raise_error(Keen::ConfigurationError)
       end
 
-      it "should require an api key" do
+      it "should require a read key" do
         expect {
           Keen::Client.new(:project_id => project_id).count("users", {})
         }.to raise_error(Keen::ConfigurationError)
@@ -51,7 +51,7 @@ describe Keen::Client do
       let(:api_response) { { "result" => 1 } }
 
       def test_query(extra_query_params="", extra_query_hash={})
-        expected_query_params = "?api_key=#{api_key}&event_collection=#{event_collection}"
+        expected_query_params = "?api_key=#{read_key}&event_collection=#{event_collection}"
         expected_query_params += extra_query_params
         expected_url = query_url(query_name, expected_query_params)
         stub_keen_get(expected_url, 200, :result => 1)
@@ -98,7 +98,7 @@ describe Keen::Client do
       end
 
       it "should raise a failed responses" do
-        query_params = "?api_key=#{api_key}&event_collection=#{event_collection}"
+        query_params = "?api_key=#{read_key}&event_collection=#{event_collection}"
         url = query_url(query_name, query_params)
 
         stub_keen_get(url, 401, :error => {})
@@ -112,7 +112,7 @@ describe Keen::Client do
 
   describe "#count" do
     it "should not require params" do
-      query_params = "?api_key=#{api_key}&event_collection=#{event_collection}"
+      query_params = "?api_key=#{read_key}&event_collection=#{event_collection}"
       url = query_url("count", query_params)
       stub_keen_get(url, 200, :result => 10)
       client.count(event_collection).should == 10
@@ -122,7 +122,7 @@ describe Keen::Client do
 
   describe "#extraction" do
     it "should not require params" do
-      query_params = "?api_key=#{api_key}&event_collection=#{event_collection}"
+      query_params = "?api_key=#{read_key}&event_collection=#{event_collection}"
       url = query_url("extraction", query_params)
       stub_keen_get(url, 200, :result => { "a" => 1 } )
       client.extraction(event_collection).should == { "a" => 1 }

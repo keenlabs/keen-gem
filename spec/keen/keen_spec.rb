@@ -6,7 +6,8 @@ describe Keen do
       before do
         Keen.instance_variable_set(:@default_client, nil)
         ENV["KEEN_PROJECT_ID"] = "12345"
-        ENV["KEEN_API_KEY"] = "abcde"
+        ENV["KEEN_WRITE_KEY"] = "abcdewrite"
+        ENV["KEEN_READ_KEY"] = "abcderead"
       end
 
       let(:client) { Keen.send(:default_client) }
@@ -15,8 +16,12 @@ describe Keen do
         client.project_id.should == "12345"
       end
 
-      it "should set an api key from the environment" do
-        client.api_key.should == "abcde"
+      it "should set a write key from the environment" do
+        client.write_key.should == "abcdewrite"
+      end
+
+      it "should set a read key from the environment" do
+        client.read_key.should == "abcderead"
       end
     end
   end
@@ -38,14 +43,14 @@ describe Keen do
       Keen.stub(:default_client).and_return(@default_client)
     end
 
-    [:project_id, :api_key].each do |_method|
+    [:project_id, :write_key, :read_key].each do |_method|
       it "should forward the #{_method} method" do
         @default_client.should_receive(_method)
         Keen.send(_method)
       end
     end
 
-    [:project_id=, :api_key=].each do |_method|
+    [:project_id=, :write_key=, :read_key=].each do |_method|
       it "should forward the #{_method} method" do
         @default_client.should_receive(_method).with("12345")
         Keen.send(_method, "12345")
