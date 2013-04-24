@@ -32,7 +32,7 @@ module Keen
               :headers => api_headers("sync"),
               :body => MultiJson.encode(properties))
         rescue Exception => http_error
-          raise HttpError.new("Couldn't connect to Keen IO: #{http_error.message}", http_error)
+          raise HttpError.new("HTTP publish failure: #{http_error.message}", http_error)
         end
         process_response(response.code, response.body.chomp)
       end
@@ -60,8 +60,9 @@ module Keen
 
         if defined?(EM::Synchrony)
           if http.error
-            Keen.logger.warn("Couldn't connect to Keen IO: #{http.error}")
-            raise HttpError.new("Couldn't connect to Keen IO: #{http.error}")
+            error = HttpError.new("HTTP em-synchrony publish_async error: #{http.error}")
+            Keen.logger.error(error)
+            raise error
           else
             process_response(http.response_header.status, http.response.chomp)
           end
@@ -69,14 +70,16 @@ module Keen
           http.callback {
             begin
               response = process_response(http.response_header.status, http.response.chomp)
-              deferrable.succeed(response)
             rescue Exception => e
+              Keen.logger.error(e)
               deferrable.fail(e)
             end
+            deferrable.succeed(response) if response
           }
           http.errback {
-            Keen.logger.warn("Couldn't connect to Keen IO: #{http.error}")
-            deferrable.fail(Error.new("Couldn't connect to Keen IO: #{http.error}"))
+            error = Error.new("HTTP publish_async failure: #{http.error}")
+            Keen.logger.error(error)
+            deferrable.fail(error)
           }
           deferrable
         end

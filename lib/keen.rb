@@ -10,6 +10,10 @@ module Keen
       self.original_error = _original_error
       super(message)
     end
+
+    def to_s
+      "Keen IO Exception: #{super}"
+    end
   end
 
   class ConfigurationError < Error; end

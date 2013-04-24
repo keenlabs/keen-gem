@@ -50,7 +50,7 @@ describe Keen::Client::PublishingMethods do
 
       e.class.should == Keen::HttpError
       e.original_error.class.should == Timeout::Error
-      e.message.should == "Couldn't connect to Keen IO: execution expired"
+      e.message.should == "Keen IO Exception: HTTP publish failure: execution expired"
     end
 
     it "should raise an exception if client has no project_id" do
@@ -87,7 +87,7 @@ describe Keen::Client::PublishingMethods do
         EM.run {
           client.publish_async("foo bar", event_properties).callback {
             begin
-              expect_post(api_event_resource_url("foo%20bar"), event_properties, "async")
+              expect_keen_post(api_event_resource_url("foo%20bar"), event_properties, "async")
             ensure
               EM.stop
             end
@@ -127,12 +127,27 @@ describe Keen::Client::PublishingMethods do
             client.publish_async(collection, event_properties).errback { |error|
               begin
                 error.should_not be_nil
-                error.message.should == "Couldn't connect to Keen IO: WebMock timeout error"
+                error.message.should == "Keen IO Exception: HTTP publish_async failure: WebMock timeout error"
               ensure
                 EM.stop
               end
             }
           }
+        end
+
+        it "should not trap exceptions in the client callback" do
+          stub_keen_post(api_event_resource_url("foo%20bar"), 201, api_success)
+          expect {
+            EM.run {
+              client.publish_async("foo bar", event_properties).callback {
+                begin
+                  blowup
+                ensure
+                  EM.stop
+                end
+              }
+            }
+          }.to raise_error
         end
       end
     end

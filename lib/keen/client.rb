@@ -53,18 +53,22 @@ module Keen
     private
 
     def process_response(status_code, response_body)
-      body = MultiJson.decode(response_body)
       case status_code.to_i
       when 200..201
-        return body
+        begin
+          return MultiJson.decode(response_body)
+        rescue
+          Keen.logger.warn("Invalid JSON for response code #{status_code}: #{response_body}")
+          return {}
+        end
       when 400
-        raise BadRequestError.new(body)
+        raise BadRequestError.new(response_body)
       when 401
-        raise AuthenticationError.new(body)
+        raise AuthenticationError.new(response_body)
       when 404
-        raise NotFoundError.new(body)
+        raise NotFoundError.new(response_body)
       else
-        raise HttpError.new(body)
+        raise HttpError.new(response_body)
       end
     end
 
