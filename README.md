@@ -170,6 +170,9 @@ To track email opens, simply add an image to your email template that points to 
 
 ### Changelog
 
+##### 0.6.1
++ Improved logging and exception handling.
+
 ##### 0.6.0
 + Added querying capabilities. A big thanks to [ifeelgoods](http://www.ifeelgoods.com/) for contributing!
 
