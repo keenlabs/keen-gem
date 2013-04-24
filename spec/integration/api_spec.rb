@@ -70,7 +70,7 @@ describe "Keen IO API" do
         :username => "bob",
         :price => 30
       })
-      sleep(1)
+      sleep(5)
     end
 
     it "should return a valid count" do
