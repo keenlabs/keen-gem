@@ -35,13 +35,13 @@ describe Keen::Client do
       it "should require a project id" do
         expect {
           Keen::Client.new(:read_key => read_key).count("users", {})
-        }.to raise_error(Keen::ConfigurationError)
+        }.to raise_error(Keen::ConfigurationError, "Keen IO Exception: Project ID must be set")
       end
 
       it "should require a read key" do
         expect {
           Keen::Client.new(:project_id => project_id).count("users", {})
-        }.to raise_error(Keen::ConfigurationError)
+        }.to raise_error(Keen::ConfigurationError, "Keen IO Exception: Read Key must be set for queries")
       end
     end
 
@@ -51,13 +51,13 @@ describe Keen::Client do
       let(:api_response) { { "result" => 1 } }
 
       def test_query(extra_query_params="", extra_query_hash={})
-        expected_query_params = "?api_key=#{read_key}&event_collection=#{event_collection}"
+        expected_query_params = "?event_collection=#{event_collection}"
         expected_query_params += extra_query_params
         expected_url = query_url(query_name, expected_query_params)
         stub_keen_get(expected_url, 200, :result => 1)
         response = query.call(query_name, event_collection, extra_query_hash)
         response.should == api_response["result"]
-        expect_keen_get(expected_url, "sync")
+        expect_keen_get(expected_url, "sync", read_key)
       end
 
       it "should call the API w/ proper headers and return the processed json response" do
@@ -98,35 +98,35 @@ describe Keen::Client do
       end
 
       it "should raise a failed responses" do
-        query_params = "?api_key=#{read_key}&event_collection=#{event_collection}"
+        query_params = "?event_collection=#{event_collection}"
         url = query_url(query_name, query_params)
 
         stub_keen_get(url, 401, :error => {})
         expect {
           query.call(query_name, event_collection, {})
         }.to raise_error(Keen::AuthenticationError)
-        expect_keen_get(url, "sync")
+        expect_keen_get(url, "sync", read_key)
       end
     end
   end
 
   describe "#count" do
     it "should not require params" do
-      query_params = "?api_key=#{read_key}&event_collection=#{event_collection}"
+      query_params = "?event_collection=#{event_collection}"
       url = query_url("count", query_params)
       stub_keen_get(url, 200, :result => 10)
       client.count(event_collection).should == 10
-      expect_keen_get(url, "sync")
+      expect_keen_get(url, "sync", read_key)
     end
   end
 
   describe "#extraction" do
     it "should not require params" do
-      query_params = "?api_key=#{read_key}&event_collection=#{event_collection}"
+      query_params = "?event_collection=#{event_collection}"
       url = query_url("extraction", query_params)
       stub_keen_get(url, 200, :result => { "a" => 1 } )
       client.extraction(event_collection).should == { "a" => 1 }
-      expect_keen_get(url, "sync")
+      expect_keen_get(url, "sync", read_key)
     end
   end
 end

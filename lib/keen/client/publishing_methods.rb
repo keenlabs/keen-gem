@@ -26,14 +26,11 @@ module Keen
         ensure_write_key!
         check_event_data!(event_collection, properties)
 
-        headers = api_headers("sync")
-        headers.merge({:Authorization => self.write_key})
-
         begin
           response = Keen::HTTP::Sync.new(
             api_host, api_port, api_sync_http_options).post(
               :path => api_event_resource_path(event_collection),
-              :headers => headers,
+              :headers => api_headers(self.write_key, "sync"),
               :body => MultiJson.encode(properties))
         rescue Exception => http_error
           raise HttpError.new("HTTP publish failure: #{http_error.message}", http_error)
@@ -54,17 +51,14 @@ module Keen
         ensure_write_key!
         check_event_data!(event_collection, properties)
 
-        headers = api_headers("async")
-        headers.merge({:Authorization => self.write_key})
-
         deferrable = EventMachine::DefaultDeferrable.new
 
         http_client = Keen::HTTP::Async.new(api_host, api_port, api_async_http_options)
-        http = http_client.post({
+        http = http_client.post(
           :path => api_event_resource_path(event_collection),
-          :headers => headers,
+          :headers => api_headers(self.write_key, "async"),
           :body => MultiJson.encode(properties)
-        })
+        )
 
         if defined?(EM::Synchrony)
           if http.error

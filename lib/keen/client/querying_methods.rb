@@ -1,4 +1,3 @@
-
 module Keen
   class Client
     module QueryingMethods
@@ -165,8 +164,6 @@ module Keen
         ensure_project_id!
         ensure_read_key!
 
-        params[:api_key] = self.read_key
-
         if event_collection
           params[:event_collection] = event_collection
         end
@@ -177,7 +174,7 @@ module Keen
           response = Keen::HTTP::Sync.new(
             api_host, api_port, api_sync_http_options).get(
               :path => "#{api_query_resource_path(query_name)}?#{query_params}",
-              :headers => api_headers("sync"))
+              :headers => api_headers(self.read_key, "sync"))
         rescue Exception => http_error
           raise HttpError.new("Couldn't perform #{query_name} on Keen IO: #{http_error.message}", http_error)
         end

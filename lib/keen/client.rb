@@ -25,14 +25,15 @@ module Keen
         :verify_depth => 5,
         :ca_file => File.expand_path("../../../config/cacert.pem", __FILE__) },
       :api_async_http_options => {},
-      :api_headers => lambda { |sync_or_async|
+      :api_headers => lambda { |authorization, sync_or_async|
         user_agent = "keen-gem, v#{Keen::VERSION}, #{sync_or_async}"
         user_agent += ", #{RUBY_VERSION}, #{RUBY_PLATFORM}, #{RUBY_PATCHLEVEL}"
         if defined?(RUBY_ENGINE)
           user_agent += ", #{RUBY_ENGINE}"
         end
         { "Content-Type" => "application/json",
-          "User-Agent" => user_agent }
+          "User-Agent" => user_agent,
+          "Authorization" => authorization }
       }
     }
 

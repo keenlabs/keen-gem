@@ -56,8 +56,18 @@ describe Keen::Client::PublishingMethods do
 
     it "should raise an exception if client has no project_id" do
       expect {
-        Keen::Client.new.publish(collection, event_properties)
-      }.to raise_error(Keen::ConfigurationError)
+        Keen::Client.new(
+          :write_key => "abcde"
+        ).publish(collection, event_properties)
+      }.to raise_error(Keen::ConfigurationError, "Keen IO Exception: Project ID must be set")
+    end
+
+    it "should raise an exception if client has no write_key" do
+      expect {
+        Keen::Client.new(
+          :project_id => "12345"
+        ).publish(collection, event_properties)
+      }.to raise_error(Keen::ConfigurationError, "Keen IO Exception: Write Key must be set for sending events")
     end
   end
 
@@ -88,7 +98,7 @@ describe Keen::Client::PublishingMethods do
         EM.run {
           client.publish_async("foo bar", event_properties).callback {
             begin
-              expect_keen_post(api_event_resource_url("foo%20bar"), event_properties, "async")
+              expect_keen_post(api_event_resource_url("foo%20bar"), event_properties, "async", write_key)
             ensure
               EM.stop
             end
@@ -169,7 +179,7 @@ describe Keen::Client::PublishingMethods do
 
   describe "beacon_url" do
     it "should return a url with a base-64 encoded json param" do
-      client = Keen::Client.new({:project_id => project_id, :write_key => write_key})
+      client = Keen::Client.new(:project_id => project_id, :write_key => write_key)
       client.beacon_url("sign_ups", { :name => "Bob" }).should ==
         "https://api.keen.io/3.0/projects/12345/events/sign_ups?api_key=#{write_key}&data=eyJuYW1lIjoiQm9iIn0="
     end

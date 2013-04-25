@@ -23,7 +23,7 @@ module Keen::SpecHelpers
     stub_keen_request(:get, url, status, MultiJson.encode(response_body))
   end
 
-  def expect_keen_request(method, url, body, sync_or_async_ua, extra_headers={})
+  def expect_keen_request(method, url, body, sync_or_async_ua, read_or_write_key)
     user_agent = "keen-gem, v#{Keen::VERSION}, #{sync_or_async_ua}"
     user_agent += ", #{RUBY_VERSION}, #{RUBY_PLATFORM}, #{RUBY_PATCHLEVEL}"
     if defined?(RUBY_ENGINE)
@@ -31,20 +31,21 @@ module Keen::SpecHelpers
     end
 
     headers = { "Content-Type" => "application/json",
-                "User-Agent" => user_agent }
-    headers.merge(extra_headers)
+                "User-Agent" => user_agent,
+                "Authorization" => read_or_write_key }
+
     WebMock.should have_requested(method, url).with(
       :body => body,
       :headers => headers)
 
   end
 
-  def expect_keen_get(url, sync_or_async_ua)
-    expect_keen_request(:get, url, "", sync_or_async_ua)
+  def expect_keen_get(url, sync_or_async_ua, read_key)
+    expect_keen_request(:get, url, "", sync_or_async_ua, read_key)
   end
 
   def expect_keen_post(url, event_properties, sync_or_async_ua, write_key)
-    expect_keen_request(:post, url, MultiJson.encode(event_properties), sync_or_async_ua, {:Authorization => write_key})
+    expect_keen_request(:post, url, MultiJson.encode(event_properties), sync_or_async_ua, write_key)
   end
 
   def api_event_resource_url(collection)
