@@ -6,18 +6,16 @@ require 'keen/client/querying_methods'
 require 'openssl'
 require 'multi_json'
 require 'base64'
-require 'uri'
 
 module Keen
   class Client
     include Keen::Client::PublishingMethods
     include Keen::Client::QueryingMethods
 
-    attr_accessor :project_id, :write_key, :read_key
+    attr_accessor :project_id, :write_key, :read_key, :api_url
 
     CONFIG = {
-      :api_host => "api.keen.io",
-      :api_port => 443,
+      :api_url => "https://api.keen.io",
       :api_version => "3.0",
       :api_sync_http_options => {
         :use_ssl => true,
@@ -48,8 +46,10 @@ module Keen
         }.merge(args[3] || {})
       end
 
-      @project_id, @write_key, @read_key = options.values_at(
+      self.project_id, self.write_key, self.read_key = options.values_at(
         :project_id, :write_key, :read_key)
+
+      self.api_url = options[:api_url] || CONFIG[:api_url]
     end
 
     private

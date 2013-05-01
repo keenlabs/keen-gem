@@ -172,7 +172,7 @@ module Keen
 
         begin
           response = Keen::HTTP::Sync.new(
-            api_host, api_port, api_sync_http_options).get(
+            self.api_url, api_sync_http_options).get(
               :path => "#{api_query_resource_path(query_name)}?#{query_params}",
               :headers => api_headers(self.read_key, "sync"))
         rescue Exception => http_error

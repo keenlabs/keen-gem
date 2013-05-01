@@ -177,6 +177,9 @@ To track email opens, simply add an image to your email template that points to 
 
 ### Changelog
 
+##### 0.7.1
++ Allow configuration of the base API URL via the KEEN_API_URL environment variable. Useful for local testing and proxies.
+
 ##### 0.7.0
 + BREAKING CHANGE! Added support for read and write scoped keys to reflect the new Keen IO security architecture.
 The advantage of scoped keys is finer grained permission control. Public clients that

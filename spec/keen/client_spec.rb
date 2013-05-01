@@ -4,7 +4,15 @@ describe Keen::Client do
   let(:project_id) { "12345" }
   let(:write_key) { "abcdewrite" }
   let(:read_key) { "abcderead" }
+  let(:api_url) { "http://fake.keen.io:fakeport" }
   let(:client) { Keen::Client.new(:project_id => project_id) }
+
+  before do
+    ENV["KEEN_PROJECT_ID"] = nil
+    ENV["KEEN_WRITE_KEY"] = nil
+    ENV["KEEN_READ_KEY"] = nil
+    ENV["KEEN_API_URL"] = nil
+  end
 
   describe "#initialize" do
     context "deprecated" do
@@ -20,10 +28,16 @@ describe Keen::Client do
       client = Keen::Client.new(
         :project_id => project_id,
         :write_key => write_key,
-        :read_key => read_key)
+        :read_key => read_key,
+        :api_url => api_url)
       client.write_key.should == write_key
       client.read_key.should == read_key
       client.project_id.should == project_id
+      client.api_url.should == api_url
+    end
+
+    it "should set a default api_url" do
+      Keen::Client.new.api_url.should == "https://api.keen.io"
     end
   end
 

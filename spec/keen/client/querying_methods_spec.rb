@@ -3,13 +3,15 @@ require File.expand_path("../../spec_helper", __FILE__)
 describe Keen::Client do
   let(:project_id) { "12345" }
   let(:read_key) { "abcde" }
-  let(:api_host) { "api.keen.io" }
+  let(:api_url) { "https://notreal.keen.io" }
   let(:api_version) { "3.0" }
   let(:event_collection) { "users" }
-  let(:client) { Keen::Client.new(:project_id => project_id, :read_key => read_key) }
+  let(:client) { Keen::Client.new(
+    :project_id => project_id, :read_key => read_key,
+    :api_url => api_url ) }
 
   def query_url(query_name, query_params)
-    "https://#{api_host}/#{api_version}/projects/#{project_id}/queries/#{query_name}#{query_params}"
+    "#{api_url}/#{api_version}/projects/#{project_id}/queries/#{query_name}#{query_params}"
   end
 
   describe "querying names" do

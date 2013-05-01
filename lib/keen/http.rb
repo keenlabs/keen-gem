@@ -1,9 +1,12 @@
 module Keen
   module HTTP
     class Sync
-      def initialize(host, port, options={})
+      def initialize(base_url, options={})
+        require 'uri'
         require 'net/https'
-        @http = Net::HTTP.new(host, port)
+
+        uri = URI.parse(base_url)
+        @http = Net::HTTP.new(uri.host, uri.port)
         options.each_pair { |key, value| @http.send "#{key}=", value }
       end
 
@@ -21,20 +24,20 @@ module Keen
     end
 
     class Async
-      def initialize(host, port, options={})
+      def initialize(base_url, options={})
         if defined?(EventMachine) && EventMachine.reactor_running?
           require 'em-http-request'
         else
           raise Error, "An EventMachine loop must be running to use publish_async calls"
         end
 
-        @host, @port, @http_options = host, port, options
+        @base_url, @http_options = base_url, options
       end
 
       def post(options)
         path, headers, body = options.values_at(
           :path, :headers, :body)
-        uri = "https://#{@host}:#{@port}#{path}"
+        uri = "#{@base_url}#{path}"
         http_client = EventMachine::HttpRequest.new(uri, @http_options)
         http_client.post(
           :body => body,

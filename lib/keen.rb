@@ -25,9 +25,18 @@ module Keen
   class << self
     extend Forwardable
 
-    def_delegators :default_client, :project_id, :write_key, :read_key,
-                   :project_id=, :write_key=, :read_key=, :publish, :publish_async,
-                   :beacon_url, :count, :count_unique, :minimum, :maximum,
+    def_delegators :default_client, 
+                   :project_id, :project_id=, 
+                   :write_key, :write_key=, 
+                   :read_key, :read_key=, 
+                   :api_url, :api_url=
+
+    def_delegators :default_client,
+                   :publish, :publish_async,
+                   :beacon_url
+
+    def_delegators :default_client,
+                   :count, :count_unique, :minimum, :maximum,
                    :sum, :average, :select_unique, :funnel, :extraction
 
     attr_writer :logger
@@ -46,7 +55,8 @@ module Keen
       @default_client ||= Keen::Client.new(
         :project_id => ENV['KEEN_PROJECT_ID'],
         :write_key => ENV['KEEN_WRITE_KEY'],
-        :read_key => ENV['KEEN_READ_KEY']
+        :read_key => ENV['KEEN_READ_KEY'],
+        :api_url => ENV['KEEN_API_URL']
       )
     end
   end

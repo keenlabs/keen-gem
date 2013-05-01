@@ -35,8 +35,14 @@ describe "Keen IO API" do
         it "should publish the event and trigger callbacks" do
           EM.run {
             Keen.publish_async(collection, event_properties).callback { |response|
-              response.should == api_success
+              begin
+                response.should == api_success
+              ensure
+                EM.stop
+              end
+            }.errback { |error|
               EM.stop
+              fail error
             }
           }
         end
@@ -44,8 +50,11 @@ describe "Keen IO API" do
         it "should publish to non-url-safe collections" do
           EM.run {
             Keen.publish_async("foo bar", event_properties).callback { |response|
-              response.should == api_success
-              EM.stop
+              begin
+                response.should == api_success
+              ensure
+                EM.stop
+              end
             }
           }
         end
@@ -55,19 +64,22 @@ describe "Keen IO API" do
 
   describe "queries" do
     let(:read_key) { ENV['KEEN_READ_KEY'] }
-    let(:event_collection) { "purchases_" + rand(100000).to_s }
-    let(:returns_event_collection) { "returns_" + rand(100000).to_s }
+    let(:event_collection) { @event_collection }
+    let(:returns_event_collection) { @returns_event_collection }
 
     before(:all) do
-      Keen.publish(event_collection, {
+      @event_collection = "purchases_" + rand(100000).to_s
+      @returns_event_collection = "returns_" + rand(100000).to_s
+
+      Keen.publish(@event_collection, {
         :username => "bob",
         :price => 10
       })
-      Keen.publish(event_collection, {
+      Keen.publish(@event_collection, {
         :username => "ted",
         :price => 20
       })
-      Keen.publish(returns_event_collection, {
+      Keen.publish(@returns_event_collection, {
         :username => "bob",
         :price => 30
       })
@@ -114,7 +126,7 @@ describe "Keen IO API" do
         :event_collection => event_collection,
         :actor_property => "username"
       }, {
-        :event_collection => returns_event_collection,
+        :event_collection => @returns_event_collection,
         :actor_property => "username"
       }]
       results = Keen.funnel(:steps => steps)

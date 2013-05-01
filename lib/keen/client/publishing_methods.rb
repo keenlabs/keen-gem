@@ -28,7 +28,7 @@ module Keen
 
         begin
           response = Keen::HTTP::Sync.new(
-            api_host, api_port, api_sync_http_options).post(
+            self.api_url, api_sync_http_options).post(
               :path => api_event_resource_path(event_collection),
               :headers => api_headers(self.write_key, "sync"),
               :body => MultiJson.encode(properties))
@@ -53,7 +53,7 @@ module Keen
 
         deferrable = EventMachine::DefaultDeferrable.new
 
-        http_client = Keen::HTTP::Async.new(api_host, api_port, api_async_http_options)
+        http_client = Keen::HTTP::Async.new(self.api_url, api_async_http_options)
         http = http_client.post(
           :path => api_event_resource_path(event_collection),
           :headers => api_headers(self.write_key, "async"),
@@ -98,7 +98,7 @@ module Keen
       def beacon_url(event_collection, properties)
         json = MultiJson.encode(properties)
         data = [json].pack("m0").tr("+/", "-_").gsub("\n", "")
-        "https://#{api_host}#{api_event_resource_path(event_collection)}?api_key=#{self.write_key}&data=#{data}"
+        "#{self.api_url}#{api_event_resource_path(event_collection)}?api_key=#{self.write_key}&data=#{data}"
       end
 
       private
