@@ -177,6 +177,9 @@ To track email opens, simply add an image to your email template that points to 
 
 ### Changelog
 
+##### 0.7.2
++ Fix support for non-https API URL testing
+
 ##### 0.7.1
 + Allow configuration of the base API URL via the KEEN_API_URL environment variable. Useful for local testing and proxies.
 
