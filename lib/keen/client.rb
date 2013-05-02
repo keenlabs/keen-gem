@@ -17,12 +17,6 @@ module Keen
     CONFIG = {
       :api_url => "https://api.keen.io",
       :api_version => "3.0",
-      :api_sync_http_options => {
-        :use_ssl => true,
-        :verify_mode => OpenSSL::SSL::VERIFY_PEER,
-        :verify_depth => 5,
-        :ca_file => File.expand_path("../../../config/cacert.pem", __FILE__) },
-      :api_async_http_options => {},
       :api_headers => lambda { |authorization, sync_or_async|
         user_agent = "keen-gem, v#{Keen::VERSION}, #{sync_or_async}"
         user_agent += ", #{RUBY_VERSION}, #{RUBY_PLATFORM}, #{RUBY_PATCHLEVEL}"
