@@ -3,6 +3,7 @@ module Keen
     class Sync
       def initialize(base_url)
         require 'uri'
+        require 'net/http'
 
         uri = URI.parse(base_url)
         @http = Net::HTTP.new(uri.host, uri.port)
@@ -13,8 +14,6 @@ module Keen
           @http.verify_mode = OpenSSL::SSL::VERIFY_PEER
           @http.verify_depth = 5
           @http.ca_file = File.expand_path("../../../config/cacert.pem", __FILE__)
-        else
-          require 'net/http'
         end
       end
 
