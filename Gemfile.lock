@@ -42,6 +42,7 @@ GEM
       guard (>= 1.8)
       rspec (~> 2.13)
     http_parser.rb (0.5.3)
+    json (1.7.7)
     linecache (0.46)
       rbx-require-relative (> 0.0.4)
     listen (1.0.3)
@@ -94,6 +95,7 @@ DEPENDENCIES
   em-synchrony
   guard
   guard-rspec
+  json (~> 1.7.7)
   keen!
   rake
   rb-fchange

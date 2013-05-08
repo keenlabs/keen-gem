@@ -8,6 +8,8 @@ group :development, :test do
   gem 'em-http-request'
   gem 'em-synchrony', :require => false
   gem 'webmock'
+  # ensure a reasonable json so multi_json doesn't complain
+  gem 'json', '~> 1.7.7'
 end
 
 group :development do
