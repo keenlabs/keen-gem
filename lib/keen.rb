@@ -37,7 +37,8 @@ module Keen
 
     def_delegators :default_client,
                    :count, :count_unique, :minimum, :maximum,
-                   :sum, :average, :select_unique, :funnel, :extraction
+                   :sum, :average, :select_unique, :funnel, :extraction,
+                   :multi_analysis
 
     attr_writer :logger
 
