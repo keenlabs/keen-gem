@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    keen (0.7.1)
+    keen (0.7.2)
       multi_json (~> 1.0)
 
 GEM
@@ -50,7 +50,7 @@ GEM
       rb-kqueue (>= 0.2)
     lumberjack (1.0.3)
     method_source (0.8.1)
-    multi_json (1.7.2)
+    multi_json (1.7.3)
     pry (0.9.12.1)
       coderay (~> 1.0.5)
       method_source (~> 0.8)
