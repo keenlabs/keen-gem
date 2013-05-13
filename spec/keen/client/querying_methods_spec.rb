@@ -113,12 +113,22 @@ describe Keen::Client do
   end
 
   describe "#count" do
-    it "should not require params" do
-      query_params = "?event_collection=#{event_collection}"
-      url = query_url("count", query_params)
+    let(:query_params) { "?event_collection=#{event_collection}" }
+    let(:url) { query_url("count", query_params) }
+    before do
       stub_keen_get(url, 200, :result => 10)
+    end
+
+    it "should not require params" do
       client.count(event_collection).should == 10
       expect_keen_get(url, "sync", read_key)
+    end
+
+    context "with event collection as symbol" do
+      let(:event_collection) { :users }
+      it "should not require a string" do
+        client.count(event_collection).should == 10
+      end
     end
   end
 

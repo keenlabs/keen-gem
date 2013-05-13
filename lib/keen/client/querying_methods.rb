@@ -165,7 +165,7 @@ module Keen
         ensure_read_key!
 
         if event_collection
-          params[:event_collection] = event_collection
+          params[:event_collection] = event_collection.to_s
         end
 
         query_params = preprocess_params(params)
