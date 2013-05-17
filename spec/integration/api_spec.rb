@@ -60,6 +60,29 @@ describe "Keen IO API" do
         end
       end
     end
+
+    describe "batch" do
+      it "should publish a batch of events" do
+        Keen.publish_batch(
+          :batch_signups => [
+            { :name => "bob" },
+            { :name => "ted" }
+          ],
+          :batch_purchases => [
+            { :price => 30 },
+            { :price => 40 }
+          ]
+        ).should == {
+          "batch_purchases" => [
+            { "success" => true },
+            { "success" => true }
+          ],
+          "batch_signups" => [
+            { "success" => true },
+            { "success"=>true }
+          ]}
+      end
+    end
   end
 
   describe "queries" do

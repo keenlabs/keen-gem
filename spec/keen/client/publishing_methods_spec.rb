@@ -13,14 +13,14 @@ describe Keen::Client::PublishingMethods do
 
   describe "publish" do
     it "should post using the collection and properties" do
-      stub_keen_post(api_event_resource_url(api_url, collection), 201, "")
+      stub_keen_post(api_event_collection_resource_url(api_url, collection), 201, "")
       client.publish(collection, event_properties)
-      expect_keen_post(api_event_resource_url(api_url, collection), event_properties, "sync", write_key)
+      expect_keen_post(api_event_collection_resource_url(api_url, collection), event_properties, "sync", write_key)
     end
 
     it "should return the proper response" do
       api_response = { "created" => true }
-      stub_keen_post(api_event_resource_url(api_url, collection), 201, api_response)
+      stub_keen_post(api_event_collection_resource_url(api_url, collection), 201, api_response)
       client.publish(collection, event_properties).should == api_response
     end
 
@@ -37,13 +37,13 @@ describe Keen::Client::PublishingMethods do
     end
 
     it "should url encode the event collection" do
-      stub_keen_post(api_event_resource_url(api_url, "foo%20bar"), 201, "")
+      stub_keen_post(api_event_collection_resource_url(api_url, "foo%20bar"), 201, "")
       client.publish("foo bar", event_properties)
-      expect_keen_post(api_event_resource_url(api_url, "foo%20bar"), event_properties, "sync", write_key)
+      expect_keen_post(api_event_collection_resource_url(api_url, "foo%20bar"), event_properties, "sync", write_key)
     end
 
     it "should wrap exceptions" do
-      stub_request(:post, api_event_resource_url(api_url, collection)).to_timeout
+      stub_request(:post, api_event_collection_resource_url(api_url, collection)).to_timeout
       e = nil
       begin
         client.publish(collection, event_properties)
@@ -73,6 +73,45 @@ describe Keen::Client::PublishingMethods do
     end
   end
 
+  describe "publish_batch" do
+    let(:events) {
+      {
+        :purchases => [
+          { :price => 10 },
+          { :price => 11 }
+        ],
+        :signups => [
+          { :name => "bob" },
+          { :name => "bill" }
+        ]
+      }
+    }
+
+    it "should raise an exception if client has no project_id" do
+      expect {
+        Keen::Client.new(
+          :write_key => "abcde"
+        ).publish_batch(events)
+      }.to raise_error(Keen::ConfigurationError, "Keen IO Exception: Project ID must be set")
+    end
+
+    it "should raise an exception if client has no write_key" do
+      expect {
+        Keen::Client.new(
+          :project_id => "12345"
+        ).publish_batch(events)
+      }.to raise_error(Keen::ConfigurationError, "Keen IO Exception: Write Key must be set for sending events")
+    end
+
+    it "should publish a batch of events" do
+      stub_keen_post(api_event_resource_url(api_url), 201, "")
+      client.publish_batch(events)
+      expect_keen_post(
+        api_event_resource_url(api_url),
+                       events, "sync", write_key)
+    end
+  end
+
   describe "publish_async" do
     # no TLS support in EventMachine on jRuby
     unless defined?(JRUBY_VERSION)
@@ -83,11 +122,11 @@ describe Keen::Client::PublishingMethods do
       end
 
       it "should post the event data" do
-        stub_keen_post(api_event_resource_url(api_url, collection), 201, api_success)
+        stub_keen_post(api_event_collection_resource_url(api_url, collection), 201, api_success)
         EM.run {
           client.publish_async(collection, event_properties).callback {
             begin
-              expect_keen_post(api_event_resource_url(api_url, collection), event_properties, "async", write_key)
+              expect_keen_post(api_event_collection_resource_url(api_url, collection), event_properties, "async", write_key)
             ensure
               EM.stop
             end
@@ -99,11 +138,11 @@ describe Keen::Client::PublishingMethods do
       end
 
       it "should uri encode the event collection" do
-        stub_keen_post(api_event_resource_url(api_url, "foo%20bar"), 201, api_success)
+        stub_keen_post(api_event_collection_resource_url(api_url, "foo%20bar"), 201, api_success)
         EM.run {
           client.publish_async("foo bar", event_properties).callback {
             begin
-              expect_keen_post(api_event_resource_url(api_url, "foo%20bar"), event_properties, "async", write_key)
+              expect_keen_post(api_event_collection_resource_url(api_url, "foo%20bar"), event_properties, "async", write_key)
             ensure
               EM.stop
             end
@@ -128,7 +167,7 @@ describe Keen::Client::PublishingMethods do
 
       describe "deferrable callbacks" do
         it "should trigger callbacks" do
-          stub_keen_post(api_event_resource_url(api_url, collection), 201, api_success)
+          stub_keen_post(api_event_collection_resource_url(api_url, collection), 201, api_success)
           EM.run {
             client.publish_async(collection, event_properties).callback { |response|
               begin
@@ -141,7 +180,7 @@ describe Keen::Client::PublishingMethods do
         end
 
         it "should trigger errbacks" do
-          stub_request(:post, api_event_resource_url(api_url, collection)).to_timeout
+          stub_request(:post, api_event_collection_resource_url(api_url, collection)).to_timeout
           EM.run {
             client.publish_async(collection, event_properties).errback { |error|
               begin
@@ -155,7 +194,7 @@ describe Keen::Client::PublishingMethods do
         end
 
         it "should not trap exceptions in the client callback" do
-          stub_keen_post(api_event_resource_url(api_url, "foo%20bar"), 201, api_success)
+          stub_keen_post(api_event_collection_resource_url(api_url, "foo%20bar"), 201, api_success)
           expect {
             EM.run {
               client.publish_async("foo bar", event_properties).callback {

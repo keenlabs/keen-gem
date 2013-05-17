@@ -48,8 +48,12 @@ module Keen::SpecHelpers
     expect_keen_request(:post, url, MultiJson.encode(event_properties), sync_or_async_ua, write_key)
   end
 
-  def api_event_resource_url(base_url, collection)
+  def api_event_collection_resource_url(base_url, collection)
     "#{base_url}/3.0/projects/#{project_id}/events/#{collection}"
+  end
+
+  def api_event_resource_url(base_url)
+    "#{base_url}/3.0/projects/#{project_id}/events"
   end
 end
 

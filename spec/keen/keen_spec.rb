@@ -62,7 +62,7 @@ describe Keen do
       end
     end
 
-    [:publish, :publish_async].each do |_method|
+    [:publish, :publish_async, :publish_batch].each do |_method|
       it "should forward the #{_method} method" do
         @default_client.should_receive(_method).with("users", {})
         Keen.send(_method, "users", {})

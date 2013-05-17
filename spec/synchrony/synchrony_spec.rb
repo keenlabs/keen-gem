@@ -17,16 +17,16 @@ describe Keen::HTTP::Async do
 
     describe "success" do
       it "should post the event data" do
-        stub_keen_post(api_event_resource_url(api_url, collection), 201, api_success)
+        stub_keen_post(api_event_collection_resource_url(api_url, collection), 201, api_success)
         EM.synchrony {
           @client.publish_async(collection, event_properties)
-          expect_keen_post(api_event_resource_url(api_url, collection), event_properties, "async", write_key)
+          expect_keen_post(api_event_collection_resource_url(api_url, collection), event_properties, "async", write_key)
           EM.stop
         }
       end
 
       it "should recieve the right response 'synchronously'" do
-        stub_keen_post(api_event_resource_url(api_url, collection), 201, api_success)
+        stub_keen_post(api_event_collection_resource_url(api_url, collection), 201, api_success)
         EM.synchrony {
           @client.publish_async(collection, event_properties).should == api_success
           EM.stop
@@ -36,7 +36,7 @@ describe Keen::HTTP::Async do
 
     describe "failure" do
       it "should raise an exception" do
-        stub_request(:post, api_event_resource_url(api_url, collection)).to_timeout
+        stub_request(:post, api_event_collection_resource_url(api_url, collection)).to_timeout
         e = nil
         EM.synchrony {
           begin

@@ -133,6 +133,26 @@ Detailed information on available parameters for each API resource can be found 
 
 ### Other code examples
 
+#### Batch publishing
+
+The keen-gem supports publishing events in batches via the `publish_batch` method. Here's an example usage:
+
+```ruby
+Keen.publish_batch(
+  :signups => [
+    { :name => "Bob" },
+    { :name => "Mary" }
+  ],
+  :purchases => [
+    { :price => 10 },
+    { :price => 20 }
+  ]
+)
+```
+
+This call would publish 2 `signups` events and 2 `purchases` events - all in just one API call.
+Batch publishing is ideal for loading historical events into Keen IO.
+
 #### Authentication
 
 To configure keen-gem in code, do as follows:
@@ -176,6 +196,10 @@ Keen.beacon_url("sign_ups", :recipient => "foo@foo.com")
 To track email opens, simply add an image to your email template that points to this URL.
 
 ### Changelog
+
+##### 0.7.3
++ Add batch publishing support
++ Allow event collection names for querying methods to be symbols. Thanks to [cbartlett](https://github.com/cbartlett).
 
 ##### 0.7.2
 + Fix support for non-https API URL testing
@@ -223,5 +247,6 @@ Fire away with issues and pull requests!
 + [alexkwolfe](https://github.com/alexkwolfe)
 + [peteygao](https://github.com/peteygao)
 + [obieq](https://github.com/obieq)
- 
++ [cbartlett](https://github.com/cbartlett)
+
 Thanks everyone, you rock!

@@ -25,17 +25,27 @@ module Keen
         ensure_project_id!
         ensure_write_key!
         check_event_data!(event_collection, properties)
+        publish_body(
+          api_event_collection_resource_path(event_collection),
+          MultiJson.encode(properties),
+          "publish")
+      end
 
-        begin
-          response = Keen::HTTP::Sync.new(
-            self.api_url).post(
-              :path => api_event_resource_path(event_collection),
-              :headers => api_headers(self.write_key, "sync"),
-              :body => MultiJson.encode(properties))
-        rescue Exception => http_error
-          raise HttpError.new("HTTP publish failure: #{http_error.message}", http_error)
-        end
-        process_response(response.code, response.body.chomp)
+      # Publishes a batch of events
+      # See detailed documentation here
+      # https://keen.io/docs/api/reference/#post-request-body-example-of-batch-event-posting
+      #
+      # @param events - a hash where the keys are event collection names
+      # and the values are arrays of hashes (event properties)
+      #
+      # @return the JSON response from the API
+      def publish_batch(events)
+        ensure_project_id!
+        ensure_write_key!
+        publish_body(
+          api_events_resource_path,
+          MultiJson.encode(events),
+          "publish")
       end
 
       # Publishes an asynchronous event
@@ -55,7 +65,7 @@ module Keen
 
         http_client = Keen::HTTP::Async.new(self.api_url)
         http = http_client.post(
-          :path => api_event_resource_path(event_collection),
+          :path => api_event_collection_resource_path(event_collection),
           :headers => api_headers(self.write_key, "async"),
           :body => MultiJson.encode(properties)
         )
@@ -98,13 +108,30 @@ module Keen
       def beacon_url(event_collection, properties)
         json = MultiJson.encode(properties)
         data = [json].pack("m0").tr("+/", "-_").gsub("\n", "")
-        "#{self.api_url}#{api_event_resource_path(event_collection)}?api_key=#{self.write_key}&data=#{data}"
+        "#{self.api_url}#{api_event_collection_resource_path(event_collection)}?api_key=#{self.write_key}&data=#{data}"
       end
 
       private
 
-      def api_event_resource_path(event_collection)
+      def publish_body(path, body, error_method)
+        begin
+          response = Keen::HTTP::Sync.new(
+            self.api_url).post(
+              :path => path,
+              :headers => api_headers(self.write_key, "sync"),
+              :body => body)
+        rescue Exception => http_error
+          raise HttpError.new("HTTP #{error_method} failure: #{http_error.message}", http_error)
+        end
+        process_response(response.code, response.body.chomp)
+      end
+
+      def api_event_collection_resource_path(event_collection)
         "/#{api_version}/projects/#{project_id}/events/#{URI.escape(event_collection)}"
+      end
+
+      def api_events_resource_path
+        "/#{api_version}/projects/#{project_id}/events"
       end
 
       def check_event_data!(event_collection, properties)
