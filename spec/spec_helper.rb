@@ -23,6 +23,10 @@ module Keen::SpecHelpers
     stub_keen_request(:get, url, status, MultiJson.encode(response_body))
   end
 
+  def stub_keen_delete(url, status)
+    stub_keen_request(:delete, url, status, "")
+  end
+
   def expect_keen_request(method, url, body, sync_or_async_ua, read_or_write_key)
     user_agent = "keen-gem, v#{Keen::VERSION}, #{sync_or_async_ua}"
     user_agent += ", #{RUBY_VERSION}, #{RUBY_PLATFORM}, #{RUBY_PATCHLEVEL}"
@@ -46,6 +50,10 @@ module Keen::SpecHelpers
 
   def expect_keen_post(url, event_properties, sync_or_async_ua, write_key)
     expect_keen_request(:post, url, MultiJson.encode(event_properties), sync_or_async_ua, write_key)
+  end
+
+  def expect_keen_delete(url, sync_or_async_ua, master_key)
+    expect_keen_request(:delete, url, "", sync_or_async_ua, master_key)
   end
 
   def api_event_collection_resource_url(base_url, collection)
