@@ -28,6 +28,12 @@ module Keen
           :path, :headers)
         @http.get(path, headers)
       end
+
+      def delete(options)
+        path, headers = options.values_at(
+          :path, :headers)
+        @http.delete(path, headers)
+      end
     end
 
     class Async

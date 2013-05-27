@@ -2,6 +2,7 @@ require 'keen/http'
 require 'keen/version'
 require 'keen/client/publishing_methods'
 require 'keen/client/querying_methods'
+require 'keen/client/maintenance_methods'
 
 require 'openssl'
 require 'multi_json'
@@ -11,8 +12,9 @@ module Keen
   class Client
     include Keen::Client::PublishingMethods
     include Keen::Client::QueryingMethods
+    include Keen::Client::MaintenanceMethods
 
-    attr_accessor :project_id, :write_key, :read_key, :api_url
+    attr_accessor :project_id, :write_key, :read_key, :master_key, :api_url
 
     CONFIG = {
       :api_url => "https://api.keen.io",
@@ -40,8 +42,8 @@ module Keen
         }.merge(args[3] || {})
       end
 
-      self.project_id, self.write_key, self.read_key = options.values_at(
-        :project_id, :write_key, :read_key)
+      self.project_id, self.write_key, self.read_key, self.master_key = options.values_at(
+        :project_id, :write_key, :read_key, :master_key)
 
       self.api_url = options[:api_url] || CONFIG[:api_url]
     end
@@ -57,6 +59,8 @@ module Keen
           Keen.logger.warn("Invalid JSON for response code #{status_code}: #{response_body}")
           return {}
         end
+      when 204
+        return true
       when 400
         raise BadRequestError.new(response_body)
       when 401
@@ -74,6 +78,10 @@ module Keen
 
     def ensure_write_key!
       raise ConfigurationError, "Write Key must be set for sending events" unless self.write_key
+    end
+
+    def ensure_master_key!
+      raise ConfigurationError, "Master Key must be set for delete event collections" unless self.master_key
     end
 
     def ensure_read_key!
