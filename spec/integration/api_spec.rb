@@ -164,4 +164,25 @@ describe "Keen IO API" do
       }]).should == 1
     end
   end
+
+  describe "deletes" do
+    let(:event_collection) { "delete_test_#{rand(10000)}" }
+
+    before do
+      Keen.publish(event_collection, :delete => "me")
+      Keen.publish(event_collection, :delete => "you")
+      sleep(3)
+    end
+
+    it "should delete the event" do
+      Keen.count(event_collection).should == 2
+      Keen.delete(event_collection, :filters => [
+        { :property_name => "delete", :operator => "eq", :property_value => "me" }
+      ])
+      sleep(3)
+      results = Keen.extraction(event_collection)
+      results.length.should == 1
+      results.first["delete"].should == "you"
+    end
+  end
 end
