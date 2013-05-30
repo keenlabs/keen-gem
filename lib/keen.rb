@@ -40,6 +40,9 @@ module Keen
                    :sum, :average, :select_unique, :funnel, :extraction,
                    :multi_analysis
 
+    def_delegators :default_client,
+                   :delete
+
     attr_writer :logger
 
     def logger
@@ -57,6 +60,7 @@ module Keen
         :project_id => ENV['KEEN_PROJECT_ID'],
         :write_key => ENV['KEEN_WRITE_KEY'],
         :read_key => ENV['KEEN_READ_KEY'],
+        :master_key => ENV['KEEN_MASTER_KEY'],
         :api_url => ENV['KEEN_API_URL']
       )
     end

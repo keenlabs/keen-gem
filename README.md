@@ -27,10 +27,11 @@ Before making any API calls, you must supply keen-gem with a Project ID and one 
 (If you need a Keen IO account, [sign up here](https://keen.io/) - it's free.) The Write key is required for publishing
 events, and the Read key is required for running queries.
 
-The recommended way to do this is to set `KEEN_PROJECT_ID`, `KEEN_WRITE_KEY`, and `KEEN_READ_KEY` in your
-environment. If you're using [foreman](http://ddollar.github.com/foreman/), add this to your `.env` file:
+The recommended way to do this is to set `KEEN_PROJECT_ID`, `KEEN_WRITE_KEY`, `KEEN_READ_KEY`, and/or 'KEEN_MASTER_KEY'
+in your environment. You only need to specify the keys you plan to use. If you're using
+[foreman](http://ddollar.github.com/foreman/), add this to your `.env` file:
 
-    KEEN_PROJECT_ID=xxxxxxxxxxxxxxxx KEEN_WRITE_KEY=yyyyyyyyyyyyy KEEN_READ_KEY=zzzzzzzzzzzzz
+    KEEN_PROJECT_ID=xxxxxxxxxxxxxxxx KEEN_WRITE_KEY=yyyyyyyyyyyyy KEEN_READ_KEY=zzzzzzzzzzzzz KEEN_MASTER_KEY=aaaaaaaaaaaaa
 
 If not, make to to export the variable into your shell or put it before the command you use to start your server.
 
@@ -161,6 +162,7 @@ To configure keen-gem in code, do as follows:
 Keen.project_id = 'xxxxxxxxxxxxxxx'
 Keen.write_key = 'yyyyyyyyyyyyyyy'
 Keen.read_key = 'zzzzzzzzzzzzzzz'
+Keen.master_key = 'aaaaaaaaaaaaaaa'
 ```
 
 You can also configure individual client instances as follows:
@@ -168,7 +170,8 @@ You can also configure individual client instances as follows:
 ```ruby
 keen = Keen::Client.new(:project_id => 'xxxxxxxxxxxxxxx',
                         :write_key  => 'yyyyyyyyyyyyyyy',
-                        :read_key   => 'zzzzzzzzzzzzzzz')
+                        :read_key   => 'zzzzzzzzzzzzzzz',
+                        :master_key => 'aaaaaaaaaaaaaaa')
 ```
 
 #### em-synchrony
