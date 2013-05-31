@@ -23,15 +23,19 @@ keen is tested with Ruby 1.8 and 1.9 on:
 
 ### Usage
 
-Before making any API calls, you must supply keen-gem with a Project ID and one or both of your Write and Read Keys.
-(If you need a Keen IO account, [sign up here](https://keen.io/) - it's free.) The Write key is required for publishing
-events, and the Read key is required for running queries.
+Before making any API calls, you must supply keen-gem with a Project ID and one or more authentication keys.
+(If you need a Keen IO account, [sign up here](https://keen.io/signup) - it's free.) 
 
-The recommended way to do this is to set `KEEN_PROJECT_ID`, `KEEN_WRITE_KEY`, `KEEN_READ_KEY`, and/or 'KEEN_MASTER_KEY'
-in your environment. You only need to specify the keys you plan to use. If you're using
-[foreman](http://ddollar.github.com/foreman/), add this to your `.env` file:
+Setting a write key is required for publishing events. Setting a read key is required for running queries. 
+Setting a master key is required for performing deletes. You can find keys for all of your projects
+on [keen.io](https://keen.io).
 
-    KEEN_PROJECT_ID=xxxxxxxxxxxxxxxx KEEN_WRITE_KEY=yyyyyyyyyyyyy KEEN_READ_KEY=zzzzzzzzzzzzz KEEN_MASTER_KEY=aaaaaaaaaaaaa
+The recommended way to set keys is via the environment. The keys you can set are 
+`KEEN_PROJECT_ID`, `KEEN_WRITE_KEY`, `KEEN_READ_KEY`, and `KEEN_MASTER_KEY`.
+You only need to specify the keys that correspond to the API calls you'll be performing. 
+If you're using [foreman](http://ddollar.github.com/foreman/), add this to your `.env` file:
+
+    KEEN_PROJECT_ID=aaaaaaaaaaaaaaa KEEN_MASTER_KEY=xxxxxxxxxxxxxxx KEEN_WRITE_KEY=yyyyyyyyyyyyy KEEN_READ_KEY=zzzzzzzzzzzzz
 
 If not, make to to export the variable into your shell or put it before the command you use to start your server.
 
@@ -39,23 +43,25 @@ When you deploy, make sure your production environment variables are set. For ex
 set [config vars](https://devcenter.heroku.com/articles/config-vars) on Heroku. (We recommend this
 environment-based approach because it keeps sensitive information out of the codebase. If you can't do this, see the alternatives below.)
 
-If your environment is set up property, `Keen` is ready to go immediately. Publish an event like this:
+Once your environment is properly configured, the `Keen` object is ready to go immediately.
+
+### Publishing events
+
+Publishing events requires that `KEEN_WRITE_KEY` is set. Publish an event like this:
 
 ```ruby
-Keen.publish("sign_ups", { :username => "lloyd", :referred_by => "harry" })
+Keen.publish(:sign_ups, { :username => "lloyd", :referred_by => "harry" })
 ```
 
-This will publish an event to the 'sign_ups' collection with the `username` and `referred_by` properties set.
+This will publish an event to the `sign_ups` collection with the `username` and `referred_by` properties set. 
+The event properties can be any valid Ruby hash and nested properties are allowed. You can learn more about data modeling with Keen IO with the [Data Modeling Guide](https://keen.io/docs/event-data-modeling/event-data-intro/).
 
-The event properties are arbitrary JSON, and the event collection need not exist in advance.
-If it doesn't exist, Keen IO will create it on the first request.
-
-You can learn more about data modeling with Keen IO with the [Data Modeling Guide](https://keen.io/docs/event-data-modeling/event-data-intro/).
+The event collection need not exist in advance. If it doesn't exist, Keen IO will create it on the first request.
 
 ### Asynchronous publishing
 
-Publishing events shouldn't slow your application down. It shouldn't make your
-users wait longer for their request to finish.
+Publishing events shouldn't slow your application down or make
+users wait longer for page loads & server requests.
 
 The Keen IO API is fast, but any synchronous network call you make will
 negatively impact response times. For this reason, we recommend you use the `publish_async`
@@ -78,7 +84,7 @@ Thread.new { EventMachine.run }
 ```
 
 The best place for this is in an initializer, or anywhere that runs when your app boots up.
-Here's a good blog article that explains more about this approach - [EventMachine and Passenger](http://railstips.org/blog/archives/2011/05/04/eventmachine-and-passenger/).
+Here's a useful blog article that explains more about this approach - [EventMachine and Passenger](http://railstips.org/blog/archives/2011/05/04/eventmachine-and-passenger/).
 
 And here's a gist that shows an example of [Eventmachine with Unicorn](https://gist.github.com/jonkgrimes/5103321). Thanks to [jonkgrimes](https://github.com/jonkgrimes) for sharing this with us!
 
@@ -97,11 +103,9 @@ to resume processing immediately.
 
 The Keen IO API provides rich querying capabilities against your event data set. For more information, see the [Data Analysis API Guide](https://keen.io/docs/data-analysis/).
 
-Queries require that a Read Key is provided. Just like project ID, we encourage that you set this as an environment variable:
+Running queries requires that `KEEN_READ_KEY` is set.
 
-    KEEN_READ_KEY=yyyyyyyyyyyyyyyy
-
-Here's are some examples of querying with keen-gem. Let's assume you've added some events to the "purchases" collection.
+Here are some examples of querying with keen-gem. Let's assume you've added some events to the "purchases" collection.
 
 ```ruby
 Keen.count("purchases") # => 100
@@ -128,7 +132,7 @@ Keen.multi_analysis("purchases", analyses: {
   :timeframe => 'today', :group_by => "item.id") # => [{"item.id"=>2, "gross"=>314.49, "customers"=> 8}, { ... }]
 ```
 
-Many of there queries can be performed with group by, filters, series and intervals. The API response for these is converted directly into Ruby Hash or Array.
+Many of there queries can be performed with group by, filters, series and intervals. The response is returned as a Ruby Hash or Array.
 
 Detailed information on available parameters for each API resource can be found on the [API Technical Reference](https://keen.io/docs/api/reference/).
 
@@ -137,18 +141,18 @@ Detailed information on available parameters for each API resource can be found 
 The Keen IO API allows you to [delete events](https://keen.io/docs/maintenance/#deleting-event-collections)
 from event collections, optionally supplying a filter to narrow the scope of what you would like to delete.
 
+Deleting events requires that the `KEEN_MASTER_KEY` is set.
+
 ```ruby
 # Assume some events in the 'signups' collection
 
 # We can delete them all
-Keen.delete(:signups)
-# => true
+Keen.delete(:signups)  # => true
 
 # Or just delete an event corresponding to a particular user
 Keen.delete(:signups, filters: [{
   property_name: 'username', operator: 'eq', property_value: "Bob"
-}])
-# => true
+}])  # => true
 ```
 
 ### Other code examples
@@ -173,7 +177,7 @@ Keen.publish_batch(
 This call would publish 2 `signups` events and 2 `purchases` events - all in just one API call.
 Batch publishing is ideal for loading historical events into Keen IO.
 
-#### Authentication
+#### Configurable and per-client authentication
 
 To configure keen-gem in code, do as follows:
 
@@ -184,7 +188,7 @@ Keen.read_key = 'zzzzzzzzzzzzzzz'
 Keen.master_key = 'aaaaaaaaaaaaaaa'
 ```
 
-You can also configure individual client instances as follows:
+You can also configure unique client instances as follows:
 
 ```ruby
 keen = Keen::Client.new(:project_id => 'xxxxxxxxxxxxxxx',
