@@ -138,7 +138,7 @@ The Keen IO API allows you to [delete events](https://keen.io/docs/maintenance/#
 from event collections, optionally supplying a filter to narrow the scope of what you would like to delete.
 
 ```ruby
-# Assume some events in the signup collection
+# Assume some events in the 'signups' collection
 
 # We can delete them all
 Keen.delete(:signups)
