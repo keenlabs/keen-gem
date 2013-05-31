@@ -88,6 +88,10 @@ module Keen
       raise ConfigurationError, "Read Key must be set for queries" unless self.read_key
     end
 
+    def api_event_collection_resource_path(event_collection)
+      "/#{api_version}/projects/#{project_id}/events/#{URI.escape(event_collection.to_s)}"
+    end
+
     def preprocess_params(params)
       if params.key?(:filters)
         params[:filters] = MultiJson.encode(params[:filters])

@@ -126,10 +126,6 @@ module Keen
         process_response(response.code, response.body.chomp)
       end
 
-      def api_event_collection_resource_path(event_collection)
-        "/#{api_version}/projects/#{project_id}/events/#{URI.escape(event_collection.to_s)}"
-      end
-
       def api_events_resource_path
         "/#{api_version}/projects/#{project_id}/events"
       end
