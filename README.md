@@ -35,7 +35,10 @@ The recommended way to set keys is via the environment. The keys you can set are
 You only need to specify the keys that correspond to the API calls you'll be performing. 
 If you're using [foreman](http://ddollar.github.com/foreman/), add this to your `.env` file:
 
-    KEEN_PROJECT_ID=aaaaaaaaaaaaaaa KEEN_MASTER_KEY=xxxxxxxxxxxxxxx KEEN_WRITE_KEY=yyyyyyyyyyyyy KEEN_READ_KEY=zzzzzzzzzzzzz
+    KEEN_PROJECT_ID=aaaaaaaaaaaaaaa
+    KEEN_MASTER_KEY=xxxxxxxxxxxxxxx
+    KEEN_WRITE_KEY=yyyyyyyyyyyyyyy
+    KEEN_READ_KEY=zzzzzzzzzzzzzzz
 
 If not, make to to export the variable into your shell or put it before the command you use to start your server.
 
