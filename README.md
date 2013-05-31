@@ -113,7 +113,7 @@ Keen.average("purchases", :target_property => "price")  # => 60
 Keen.sum("purchases", :target_property => "price", :group_by => "item.id")  # => [{ "item.id": 123, "result": 240 }, { ... }]
 
 Keen.count_unique("purchases", :target_property => "username")  # => 3
-Keen.select_unique("purchases", :target_property => "username")  # => ["bob", "linda", "travis"]
+Keen.select_unique("purchases", :target_property => "username")  # => ["Bob", "Linda", "Travis"]
 
 Keen.extraction("purchases")  # => [{ "price" => 20, ... }, { ... }]
 
@@ -131,6 +131,25 @@ Keen.multi_analysis("purchases", analyses: {
 Many of there queries can be performed with group by, filters, series and intervals. The API response for these is converted directly into Ruby Hash or Array.
 
 Detailed information on available parameters for each API resource can be found on the [API Technical Reference](https://keen.io/docs/api/reference/).
+
+### Deleting events
+
+The Keen IO API allows you to [delete events](https://keen.io/docs/maintenance/#deleting-event-collections)
+from event collections, optionally supplying a filter to narrow the scope of what you would like to delete.
+
+```ruby
+# Assume some events in the signup collection
+
+# We can delete them all
+Keen.delete(:signups)
+# => true
+
+# Or just delete an event corresponding to a particular user
+Keen.delete(:signups, filters: [{
+  property_name: 'username', operator: 'eq', property_value: "Bob"
+}])
+# => true
+```
 
 ### Other code examples
 
@@ -199,6 +218,10 @@ Keen.beacon_url("sign_ups", :recipient => "foo@foo.com")
 To track email opens, simply add an image to your email template that points to this URL.
 
 ### Changelog
+
+##### 0.7.4
++ Add support for deletes (thanks again [cbartlett](https://github.com/cbartlett)!)
++ Allow event collection names for publishing/deleting methods to be symbols
 
 ##### 0.7.3
 + Add batch publishing support
