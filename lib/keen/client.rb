@@ -88,6 +88,32 @@ module Keen
       raise ConfigurationError, "Read Key must be set for queries" unless self.read_key
     end
 
+    def preprocess_params(params)
+      if params.key?(:filters)
+        params[:filters] = MultiJson.encode(params[:filters])
+      end
+
+      if params.key?(:steps)
+        params[:steps] = MultiJson.encode(params[:steps])
+      end
+
+      if params.key?(:analyses)
+        params[:analyses] = MultiJson.encode(params[:analyses])
+      end
+
+      if params.key?(:timeframe) && params[:timeframe].is_a?(Hash)
+        params[:timeframe] = MultiJson.encode(params[:timeframe])
+      end
+
+      query_params = ""
+      params.each do |param, value|
+        query_params << "#{param}=#{URI.escape(value)}&"
+      end
+
+      query_params.chop!
+      query_params
+    end
+
     def method_missing(_method, *args, &block)
       if config = CONFIG[_method.to_sym]
         if config.is_a?(Proc)

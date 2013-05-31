@@ -182,32 +182,6 @@ module Keen
         process_response(response.code, response_body)["result"]
       end
 
-      def preprocess_params(params)
-        if params.key?(:filters)
-          params[:filters] = MultiJson.encode(params[:filters])
-        end
-
-        if params.key?(:steps)
-          params[:steps] = MultiJson.encode(params[:steps])
-        end
-
-        if params.key?(:analyses)
-          params[:analyses] = MultiJson.encode(params[:analyses])
-        end
-
-        if params.key?(:timeframe) && params[:timeframe].is_a?(Hash)
-          params[:timeframe] = MultiJson.encode(params[:timeframe])
-        end
-
-        query_params = ""
-        params.each do |param, value|
-          query_params << "#{param}=#{URI.escape(value)}&"
-        end
-
-        query_params.chop!
-        query_params
-      end
-
       def api_query_resource_path(analysis_type)
         "/#{self.api_version}/projects/#{self.project_id}/queries/#{analysis_type}"
       end
