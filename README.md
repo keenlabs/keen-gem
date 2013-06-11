@@ -226,6 +226,9 @@ To track email opens, simply add an image to your email template that points to 
 
 ### Changelog
 
+##### 0.7.5
++ Use `CGI.escape` instead of `URI.escape` to get accurate URL encoding for certain characters
+
 ##### 0.7.4
 + Add support for deletes (thanks again [cbartlett](https://github.com/cbartlett)!)
 + Allow event collection names for publishing/deleting methods to be symbols
