@@ -139,6 +139,41 @@ Many of there queries can be performed with group by, filters, series and interv
 
 Detailed information on available parameters for each API resource can be found on the [API Technical Reference](https://keen.io/docs/api/reference/).
 
+### Managing saved queries
+
+Managing saved queries require MASTER_ID.
+
+To save a query, instead of calling your query:
+
+```ruby
+Keen.sum("purchases", :target_property => "price")
+```
+call:
+```ruby
+saved_query = Keen::SavedQuery.new('name_of_the_query')
+saved_query.put('sum','purchases', :target_property => "price")  # this send to keen the parameters of the query
+saved_query.result # to get the result
+saved_query.delete # to delete the saved query from Keen
+```
+
+Convenient methods
+
+Get the result of a saved query
+```ruby
+Keen::SavedQuery.result('name_saved_query')
+```
+
+Delete a saved query
+```ruby
+Keen::SavedQuery.delete('name_saved_query')
+
+
+Create a saved query from a query:
+```ruby
+query = Keen::Query.new(query_name, event_collection, params)
+query.saved('name_saved_query) # Save the query in Keen and return a Keen::SavedQuery object
+```
+
 ### Deleting events
 
 The Keen IO API allows you to [delete events](https://keen.io/docs/maintenance/#deleting-event-collections)
