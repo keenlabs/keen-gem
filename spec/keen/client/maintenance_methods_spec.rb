@@ -10,7 +10,7 @@ describe Keen::Client do
     :api_url => api_url ) }
 
   def delete_url(event_collection, filter_params=nil)
-    "#{api_url}/#{api_version}/projects/#{project_id}/events/#{event_collection}#{filter_params ? "?filters=#{URI.escape(MultiJson.encode(filter_params[:filters]))}" : ""}"
+    "#{api_url}/#{api_version}/projects/#{project_id}/events/#{event_collection}#{filter_params ? "?filters=#{CGI.escape(MultiJson.encode(filter_params[:filters]))}" : ""}"
   end
 
   describe '#delete' do

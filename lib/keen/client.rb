@@ -89,7 +89,7 @@ module Keen
     end
 
     def api_event_collection_resource_path(event_collection)
-      "/#{api_version}/projects/#{project_id}/events/#{URI.escape(event_collection.to_s)}"
+      "/#{api_version}/projects/#{project_id}/events/#{CGI.escape(event_collection.to_s)}"
     end
 
     def preprocess_params(params)
@@ -111,7 +111,7 @@ module Keen
 
       query_params = ""
       params.each do |param, value|
-        query_params << "#{param}=#{URI.escape(value)}&"
+        query_params << "#{param}=#{CGI.escape(value)}&"
       end
 
       query_params.chop!
