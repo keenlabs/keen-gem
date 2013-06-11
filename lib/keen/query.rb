@@ -5,7 +5,9 @@ module Keen
     include Keen::Helpers
     attr_reader :params, :query_name
 
-    def initialize(query_name=nil, event_collection=nil, params={})
+    def initialize(query_name=nil, event_collection=nil, params={}, config=Keen.config)
+      @config = config
+
       ensure_project_id!
 
       if event_collection
@@ -27,9 +29,9 @@ module Keen
       body = @params.to_json
 
       begin
-        response = Keen::HTTP::Sync.new(Keen.config.api_url).put(
+        response = Keen::HTTP::Sync.new(@config.api_url).put(
             :path => api_saved_queries_resource_path(name),
-            :headers => Keen.config.api_headers(Keen.config.master_key, 'sync'),
+            :headers => @config.api_headers(@config.master_key, 'sync'),
             :body => body)
       rescue Exception => http_error
         raise HttpError.new("Couldn't save #{@query_name} on Keen IO: #{http_error.message}", http_error)
@@ -47,9 +49,9 @@ module Keen
       ensure_read_key!
 
       begin
-        response = Keen::HTTP::Sync.new(Keen.config.api_url).get(
+        response = Keen::HTTP::Sync.new(@config.api_url).get(
             :path => "#{api_saved_queries_resource_path(name)}/result",
-            :headers => Keen.config.api_headers(Keen.config.read_key, "sync"))
+            :headers => @config.api_headers(@config.read_key, "sync"))
       rescue Exception => http_error
         raise HttpError.new("Couldn't perform #{name} on Keen IO: #{http_error.message}", http_error)
       end
@@ -67,9 +69,9 @@ module Keen
       ensure_master_key!
 
       begin
-        response = Keen::HTTP::Sync.new(Keen.config.api_url).delete(
+        response = Keen::HTTP::Sync.new(@config.api_url).delete(
             :path => api_saved_queries_resource_path(name),
-            :headers => Keen.config.api_headers(Keen.config.master_key, 'sync'))
+            :headers => @config.api_headers(@config.master_key, 'sync'))
       rescue Exception => http_error
         raise HttpError.new("Couldn't delete #{name} on Keen IO: #{http_error.message}", http_error)
       end
@@ -85,9 +87,9 @@ module Keen
       param_query = preprocess_params(@params)
 
       begin
-        response = Keen::HTTP::Sync.new(Keen.config.api_url).get(
+        response = Keen::HTTP::Sync.new(@config.api_url).get(
             :path => "#{api_query_resource_path(@query_name)}?#{param_query}",
-            :headers => Keen.config.api_headers(Keen.config.read_key, "sync"))
+            :headers => @config.api_headers(@config.read_key, "sync"))
       rescue Exception => http_error
         raise HttpError.new("Couldn't perform #{@query_name} on Keen IO: #{http_error.message}", http_error)
       end

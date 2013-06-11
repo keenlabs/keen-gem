@@ -26,19 +26,19 @@ module Keen
     end
 
     def ensure_project_id!
-      raise ConfigurationError, "Project ID must be set" unless Keen.config.project_id
+      raise ConfigurationError, "Project ID must be set" unless config.project_id
     end
 
     def ensure_write_key!
-      raise ConfigurationError, "Write Key must be set for sending events" unless Keen.config.write_key
+      raise ConfigurationError, "Write Key must be set for sending events" unless config.write_key
     end
 
     def ensure_master_key!
-      raise ConfigurationError, "Master Key must be set for delete event collections" unless Keen.config.master_key
+      raise ConfigurationError, "Master Key must be set for delete event collections" unless config.master_key
     end
 
     def ensure_read_key!
-      raise ConfigurationError, "Read Key must be set for queries" unless Keen.config.read_key
+      raise ConfigurationError, "Read Key must be set for queries" unless config.read_key
     end
 
     def api_event_collection_resource_path(event_collection)
@@ -54,7 +54,7 @@ module Keen
     end
 
     def common_api
-      "/#{Keen.config.api_version}/projects/#{Keen.config.project_id}"
+      "/#{config.api_version}/projects/#{config.project_id}"
     end
 
     def preprocess_params(params)
@@ -81,6 +81,10 @@ module Keen
 
       query_params.chop!
       query_params
+    end
+
+    def config
+      @config ? @config : Keen.config
     end
 
   end

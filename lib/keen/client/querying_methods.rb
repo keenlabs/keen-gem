@@ -161,7 +161,7 @@ module Keen
       private
 
       def query(query_name, event_collection, params)
-        Keen::Query.new(query_name, event_collection, params).execute
+        Keen::Query.new(query_name, event_collection, params, config).execute
       end
 
     end
