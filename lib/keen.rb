@@ -24,6 +24,13 @@ module Keen
 
   class << self
     extend Forwardable
+    def_delegators :default_client,
+                   :project_id, :project_id=,
+                   :write_key, :write_key=,
+                   :read_key, :read_key=,
+                   :api_url, :api_url=,
+                   :master_key, :master_key=
+
 
     def_delegators :default_client,
                    :publish, :publish_async, :publish_batch,

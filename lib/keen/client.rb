@@ -44,6 +44,11 @@ module Keen
     def config
       @config ||= Keen::Config.new
     end
+
+    # able to set and get any keys of the config
+    def method_missing(name, *args, &blk)
+      config.send name, *args, &blk
+    end
   end
 
 end
