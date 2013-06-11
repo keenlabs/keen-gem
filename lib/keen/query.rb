@@ -5,7 +5,7 @@ module Keen
     include Keen::Helpers
     attr_reader :params, :query_name
 
-    def initialize(query_name, event_collection, params)
+    def initialize(query_name=nil, event_collection=nil, params={})
       ensure_project_id!
 
       if event_collection
@@ -17,6 +17,7 @@ module Keen
 
     end
 
+    # Save a query in Keen
     def save(name)
       ensure_master_key!
 
@@ -37,6 +38,47 @@ module Keen
       response.code == "201" ? true : false
     end
 
+    def self.execute(name)
+      self.new.execute_saved(name)
+    end
+
+    # Return the result of a saved query
+    def execute_saved(name)
+      ensure_read_key!
+
+      begin
+        response = Keen::HTTP::Sync.new(Keen.config.api_url).get(
+            :path => "#{api_saved_queries_resource_path(name)}/result",
+            :headers => Keen.config.api_headers(Keen.config.read_key, "sync"))
+      rescue Exception => http_error
+        raise HttpError.new("Couldn't perform #{name} on Keen IO: #{http_error.message}", http_error)
+      end
+
+      response_body = response.body.chomp
+      process_response(response.code, response_body)["result"]
+    end
+
+    def self.delete(name)
+      self.new.delete(name)
+    end
+
+    # Delete a saved query
+    def delete(name)
+      ensure_master_key!
+
+      begin
+        response = Keen::HTTP::Sync.new(Keen.config.api_url).delete(
+            :path => api_saved_queries_resource_path(name),
+            :headers => Keen.config.api_headers(Keen.config.master_key, 'sync'))
+      rescue Exception => http_error
+        raise HttpError.new("Couldn't delete #{name} on Keen IO: #{http_error.message}", http_error)
+      end
+
+      response.code == "204" ? true : false
+
+    end
+
+    # Execute a query and return the result
     def execute
       ensure_read_key!
 
