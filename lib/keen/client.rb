@@ -4,6 +4,7 @@ require 'keen/client/publishing_methods'
 require 'keen/client/querying_methods'
 require 'keen/client/maintenance_methods'
 require 'keen/helpers'
+require 'keen/query'
 require 'keen/config'
 
 require 'openssl'
