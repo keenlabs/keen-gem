@@ -37,9 +37,9 @@ describe Keen::Client::PublishingMethods do
     end
 
     it "should url encode the event collection" do
-      stub_keen_post(api_event_collection_resource_url(api_url, "foo%20bar"), 201, "")
+      stub_keen_post(api_event_collection_resource_url(api_url, "foo+bar"), 201, "")
       client.publish("foo bar", event_properties)
-      expect_keen_post(api_event_collection_resource_url(api_url, "foo%20bar"), event_properties, "sync", write_key)
+      expect_keen_post(api_event_collection_resource_url(api_url, "foo+bar"), event_properties, "sync", write_key)
     end
 
     it "should wrap exceptions" do
@@ -137,12 +137,12 @@ describe Keen::Client::PublishingMethods do
         }
       end
 
-      it "should uri encode the event collection" do
-        stub_keen_post(api_event_collection_resource_url(api_url, "foo%20bar"), 201, api_success)
+      it "should url encode the event collection" do
+        stub_keen_post(api_event_collection_resource_url(api_url, "foo+bar"), 201, api_success)
         EM.run {
           client.publish_async("foo bar", event_properties).callback {
             begin
-              expect_keen_post(api_event_collection_resource_url(api_url, "foo%20bar"), event_properties, "async", write_key)
+              expect_keen_post(api_event_collection_resource_url(api_url, "foo+bar"), event_properties, "async", write_key)
             ensure
               EM.stop
             end
