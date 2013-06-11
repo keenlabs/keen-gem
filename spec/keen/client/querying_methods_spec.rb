@@ -66,32 +66,32 @@ describe Keen::Client do
         test_query
       end
 
-      it "should encode & escape filters properly" do
+      it "should encode filters properly" do
         filters = [{
           :property_name => "the+animal",
           :operator => "eq",
           :property_value => "dogs"
         }]
-        filter_str = "&filters=%5B%7B%22property_name%22%3A%22the%2Banimal%22%2C%22operator%22%3A%22eq%22%2C%22property_value%22%3A%22dogs%22%7D%5D"
-        test_query(filter_str, :filters => filters)
+        filter_str = CGI.escape(MultiJson.encode(filters))
+        test_query("&filters=#{filter_str}", :filters => filters)
       end
 
-      it "should encode & escape absolute timeframes properly" do
+      it "should encode absolute timeframes properly" do
         timeframe = {
-          :start => "2012-08-13T19:00+00:00",
-          :end => "2012-08-13T19:00+00:00",
+          :start => "2012-08-13T19:00Z+00:00",
+          :end => "2012-08-13T19:00Z+00:00",
         }
-        timeframe_str = "&timeframe=%7B%22start%22%3A%222012-08-13T19%3A00%2B00%3A00%22%2C%22end%22%3A%222012-08-13T19%3A00%2B00%3A00%22%7D"
-        test_query(timeframe_str, :timeframe => timeframe)
+        timeframe_str = CGI.escape(MultiJson.encode(timeframe))
+        test_query("&timeframe=#{timeframe_str}", :timeframe => timeframe)
       end
 
-      it "should encode & escape steps properly" do
+      it "should encode steps properly" do
         steps = [{
-          :event_collection => "sign+ups",
+          :event_collection => "sign ups",
           :actor_property => "user.id"
         }]
-        steps_str = "&steps=%5B%7B%22event_collection%22%3A%22sign%2Bups%22%2C%22actor_property%22%3A%22user.id%22%7D%5D"
-        test_query(steps_str, :steps => steps)
+        steps_str = CGI.escape(MultiJson.encode(steps))
+        test_query("&steps=#{steps_str}", :steps => steps)
       end
 
       it "should not encode relative timeframes" do
