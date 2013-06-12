@@ -4,21 +4,24 @@ module Keen
 
     CONFIG = {
         :api_url => "https://api.keen.io",
-        :api_version => "3.0",
-        :api_headers => lambda { |authorization, sync_or_async|
-          user_agent = "keen-gem, v#{Keen::VERSION}, #{sync_or_async}"
-          user_agent += ", #{RUBY_VERSION}, #{RUBY_PLATFORM}, #{RUBY_PATCHLEVEL}"
-          if defined?(RUBY_ENGINE)
-            user_agent += ", #{RUBY_ENGINE}"
-          end
-          { "Content-Type" => "application/json",
-            "User-Agent" => user_agent,
-            "Authorization" => authorization }
-        }
+        :api_version => "3.0"
     }
 
     def initialize
-      @options = CONFIG.dup
+      @options = {}
+      @options = @options.merge(CONFIG.dup)
+    end
+
+    def api_headers(authorization, sync_or_async)
+      user_agent = "keen-gem, v#{Keen::VERSION}, #{sync_or_async}"
+      user_agent += ", #{RUBY_VERSION}, #{RUBY_PLATFORM}, #{RUBY_PATCHLEVEL}"
+      if defined?(RUBY_ENGINE)
+        user_agent += ", #{RUBY_ENGINE}"
+      end
+
+        { "Content-Type" => "application/json",
+          "User-Agent" => user_agent,
+          "Authorization" => authorization }
     end
 
     # able to set and get any keys of the config
@@ -29,12 +32,8 @@ module Keen
         else
           super
         end
-      elsif config = @options[name.to_sym]
-        if config.is_a?(Proc)
-          config.call(*args)
-        else
-          config
-        end
+      elsif @options[name.to_sym]
+          @options[name.to_sym]
       else
         super
       end
