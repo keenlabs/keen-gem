@@ -18,7 +18,7 @@ module Keen
     }
 
     def initialize
-      @options = CONFIG
+      @options = CONFIG.dup
     end
 
     # able to set and get any keys of the config
