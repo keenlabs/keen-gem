@@ -76,7 +76,7 @@ module Keen
 
       query_params = ""
       params.each do |param, value|
-        query_params << "#{param}=#{URI.escape(value)}&"
+        query_params << "#{param}=#{CGI.escape(value)}&"
       end
 
       query_params.chop!
