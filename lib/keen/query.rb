@@ -8,8 +8,6 @@ module Keen
     def initialize(query_name=nil, event_collection=nil, params={}, config=Keen.config)
       @config = config
 
-      ensure_project_id!
-
       if event_collection
         params[:event_collection] = event_collection.to_s
       end
@@ -21,6 +19,7 @@ module Keen
 
     # Save a query in Keen
     def save(name)
+      ensure_project_id!
       ensure_master_key!
 
       @params[:analysis_type] = @query_name
@@ -46,6 +45,7 @@ module Keen
 
     # Return the result of a saved query
     def execute_saved(name)
+      ensure_project_id!
       ensure_read_key!
 
       begin
@@ -66,6 +66,7 @@ module Keen
 
     # Delete a saved query
     def delete(name)
+      ensure_project_id!
       ensure_master_key!
 
       begin
