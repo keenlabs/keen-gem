@@ -161,30 +161,9 @@ module Keen
       private
 
       def query(query_name, event_collection, params)
-        ensure_project_id!
-        ensure_read_key!
-
-        if event_collection
-          params[:event_collection] = event_collection.to_s
-        end
-
-        query_params = preprocess_params(params)
-
-        begin
-          response = Keen::HTTP::Sync.new(self.api_url).get(
-              :path => "#{api_query_resource_path(query_name)}?#{query_params}",
-              :headers => api_headers(self.read_key, "sync"))
-        rescue Exception => http_error
-          raise HttpError.new("Couldn't perform #{query_name} on Keen IO: #{http_error.message}", http_error)
-        end
-
-        response_body = response.body.chomp
-        process_response(response.code, response_body)["result"]
+        Keen::Query.new(query_name, event_collection, params, config).execute
       end
 
-      def api_query_resource_path(analysis_type)
-        "/#{self.api_version}/projects/#{self.project_id}/queries/#{analysis_type}"
-      end
     end
   end
 end

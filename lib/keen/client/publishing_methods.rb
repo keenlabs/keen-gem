@@ -63,10 +63,10 @@ module Keen
 
         deferrable = EventMachine::DefaultDeferrable.new
 
-        http_client = Keen::HTTP::Async.new(self.api_url)
+        http_client = Keen::HTTP::Async.new(config.api_url)
         http = http_client.post(
           :path => api_event_collection_resource_path(event_collection),
-          :headers => api_headers(self.write_key, "async"),
+          :headers => config.api_headers(config.write_key, "async"),
           :body => MultiJson.encode(properties)
         )
 
@@ -108,7 +108,7 @@ module Keen
       def beacon_url(event_collection, properties)
         json = MultiJson.encode(properties)
         data = [json].pack("m0").tr("+/", "-_").gsub("\n", "")
-        "#{self.api_url}#{api_event_collection_resource_path(event_collection)}?api_key=#{self.write_key}&data=#{data}"
+        "#{config.api_url}#{api_event_collection_resource_path(event_collection)}?api_key=#{config.write_key}&data=#{data}"
       end
 
       private
@@ -116,9 +116,9 @@ module Keen
       def publish_body(path, body, error_method)
         begin
           response = Keen::HTTP::Sync.new(
-            self.api_url).post(
+              config.api_url).post(
               :path => path,
-              :headers => api_headers(self.write_key, "sync"),
+              :headers => config.api_headers(config.write_key, "sync"),
               :body => body)
         rescue Exception => http_error
           raise HttpError.new("HTTP #{error_method} failure: #{http_error.message}", http_error)
@@ -127,7 +127,7 @@ module Keen
       end
 
       def api_events_resource_path
-        "/#{api_version}/projects/#{project_id}/events"
+        "/#{config.api_version}/projects/#{config.project_id}/events"
       end
 
       def check_event_data!(event_collection, properties)
