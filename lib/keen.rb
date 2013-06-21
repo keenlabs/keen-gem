@@ -32,7 +32,7 @@ module Keen
                    :api_url, :api_url=
 
     def_delegators :default_client,
-                   :publish, :publish_async, :publish_batch,
+                   :publish, :publish_json, :publish_async, :publish_batch,
                    :beacon_url
 
     def_delegators :default_client,

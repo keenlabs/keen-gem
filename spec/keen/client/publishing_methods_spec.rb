@@ -73,6 +73,69 @@ describe Keen::Client::PublishingMethods do
     end
   end
 
+  describe "publish_json" do
+    let(:event_properties) { MultiJson.encode({ "name" => "Bob" }) }
+    it "should post using the collection and properties" do
+      stub_keen_post(api_event_collection_resource_url(api_url, collection), 201, "")
+      client.publish(collection, event_properties)
+      expect_keen_post(api_event_collection_resource_url(api_url, collection), event_properties, "sync", write_key)
+    end
+
+    it "should return the proper response" do
+      api_response = { "created" => true }
+      stub_keen_post(api_event_collection_resource_url(api_url, collection), 201, api_response)
+      client.publish(collection, event_properties).should == api_response
+    end
+
+    it "should raise an argument error if no event collection is specified" do
+      expect {
+        client.publish(nil, {})
+      }.to raise_error(ArgumentError)
+    end
+
+    it "should raise an argument error if no properties are specified" do
+      expect {
+        client.publish(collection, nil)
+      }.to raise_error(ArgumentError)
+    end
+
+    it "should url encode the event collection" do
+      stub_keen_post(api_event_collection_resource_url(api_url, "foo+bar"), 201, "")
+      client.publish("foo bar", event_properties)
+      expect_keen_post(api_event_collection_resource_url(api_url, "foo+bar"), event_properties, "sync", write_key)
+    end
+
+    it "should wrap exceptions" do
+      stub_request(:post, api_event_collection_resource_url(api_url, collection)).to_timeout
+      e = nil
+      begin
+        client.publish(collection, event_properties)
+      rescue Exception => exception
+        e = exception
+      end
+
+      e.class.should == Keen::HttpError
+      e.original_error.class.should == Timeout::Error
+      e.message.should == "Keen IO Exception: HTTP publish failure: execution expired"
+    end
+
+    it "should raise an exception if client has no project_id" do
+      expect {
+        Keen::Client.new(
+          :write_key => "abcde"
+        ).publish(collection, event_properties)
+      }.to raise_error(Keen::ConfigurationError, "Keen IO Exception: Project ID must be set")
+    end
+
+    it "should raise an exception if client has no write_key" do
+      expect {
+        Keen::Client.new(
+          :project_id => "12345"
+        ).publish(collection, event_properties)
+      }.to raise_error(Keen::ConfigurationError, "Keen IO Exception: Write Key must be set for sending events")
+    end
+  end
+
   describe "publish_batch" do
     let(:events) {
       {
