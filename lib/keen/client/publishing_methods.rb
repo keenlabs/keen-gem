@@ -31,6 +31,23 @@ module Keen
           "publish")
       end
 
+      # Publishes a synchronous event using vanilla JSON
+      # 
+      # @param event_collection
+      # @param json - a string of JSON to post to the API
+      # 
+      # @return the JSON response from the API
+      def publish_json(event_collection,json)
+        ensure_project_id!
+        ensure_write_key!
+        check_event_data!(event_collection, json)
+        publish_body(
+          api_event_collection_resource_path(event_collection),
+          json,
+          "publish"
+        )
+      end
+
       # Publishes a batch of events
       # See detailed documentation here
       # https://keen.io/docs/api/reference/#post-request-body-example-of-batch-event-posting
