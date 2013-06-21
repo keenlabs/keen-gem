@@ -40,7 +40,7 @@ module Keen
       def publish_json(event_collection,json)
         ensure_project_id!
         ensure_write_key!
-        check_event_data!(event_collection, properties)
+        check_event_data!(event_collection, json)
         publish_body(
           api_event_collection_resource_path(event_collection),
           json,
