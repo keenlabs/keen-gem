@@ -7,6 +7,7 @@ require 'keen/client/maintenance_methods'
 require 'openssl'
 require 'multi_json'
 require 'base64'
+require 'cgi'
 
 module Keen
   class Client
