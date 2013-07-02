@@ -226,6 +226,9 @@ To track email opens, simply add an image to your email template that points to 
 
 ### Changelog
 
+##### 0.7.6
++ Explicitly require `CGI`.
+
 ##### 0.7.5
 + Use `CGI.escape` instead of `URI.escape` to get accurate URL encoding for certain characters
 
