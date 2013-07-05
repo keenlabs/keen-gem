@@ -5,7 +5,6 @@ require "keen/version"
 Gem::Specification.new do |s|
   s.name        = "keen"
   s.version     = Keen::VERSION
-  s.platform    = Gem::Platform::RUBY
   s.authors     = ["Kyle Wild", "Josh Dzielak", "Daniel Kador"]
   s.email       = "josh@keen.io"
   s.homepage    = "https://github.com/keenlabs/keen-gem"
@@ -14,6 +13,33 @@ Gem::Specification.new do |s|
 
   s.add_dependency "multi_json", "~> 1.0"
   s.add_dependency "jruby-openssl" if defined?(JRUBY_VERSION)
+
+  s.add_development_dependency 'rake'
+  s.add_development_dependency 'rspec'
+  s.add_development_dependency 'em-http-request'
+  s.add_development_dependency 'em-synchrony'
+  s.add_development_dependency 'webmock'
+
+  # guard
+  s.add_development_dependency 'guard'
+  s.add_development_dependency 'guard-rspec'
+
+  # guard cross-platform listener trick
+  s.add_development_dependency 'rb-inotify'
+  s.add_development_dependency 'rb-fsevent'
+  s.add_development_dependency 'rb-fchange'
+
+  # guard notifications
+  s.add_development_dependency 'ruby_gntp'
+
+  # fix guard prompt
+  s.add_development_dependency 'rb-readline' # or compile ruby w/ readline
+
+  # debuggers
+  if RUBY_ENGINE == 'ruby'
+    s.add_development_dependency 'ruby-debug' if RUBY_VERSION.start_with? '1.8'
+    s.add_development_dependency 'debugger'   if RUBY_VERSION.start_with? '1.9'
+  end
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
