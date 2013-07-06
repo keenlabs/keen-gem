@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rb-readline' # or compile ruby w/ readline
 
   # debuggers
-  if RUBY_ENGINE == 'ruby'
+  if /\Aruby/ === RUBY_DESCRIPTION
     s.add_development_dependency 'ruby-debug' if RUBY_VERSION.start_with? '1.8'
     s.add_development_dependency 'debugger'   if RUBY_VERSION.start_with? '1.9'
   end
