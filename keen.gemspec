@@ -14,12 +14,6 @@ Gem::Specification.new do |s|
   s.add_dependency "multi_json", "~> 1.0"
   s.add_dependency "jruby-openssl" if defined?(JRUBY_VERSION)
 
-  s.add_development_dependency 'rake'
-  s.add_development_dependency 'rspec'
-  s.add_development_dependency 'em-http-request'
-  s.add_development_dependency 'em-synchrony'
-  s.add_development_dependency 'webmock'
-
   # guard
   s.add_development_dependency 'guard'
   s.add_development_dependency 'guard-rspec'
