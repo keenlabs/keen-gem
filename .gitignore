@@ -3,3 +3,4 @@ tmp
 .env
 log
 *.gem
+Gemfile.lock
