@@ -44,7 +44,7 @@ module Keen
     class Async
       def initialize(base_url, proxy_url=nil)
         if defined?(EventMachine) && EventMachine.reactor_running?
-            require 'em-http-request'
+          require 'em-http-request'
         else
           raise Error, "An EventMachine loop must be running to use publish_async calls"
         end
