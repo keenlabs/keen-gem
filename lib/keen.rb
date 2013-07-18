@@ -29,6 +29,14 @@ module Keen
                    :project_id, :project_id=,
                    :write_key, :write_key=,
                    :read_key, :read_key=,
+                   :api_url, :api_url=,
+                   :proxy_url, :proxy_url=,
+                   :proxy_type, :proxy_type=
+
+    def_delegators :default_client,
+                   :project_id, :project_id=,
+                   :write_key, :write_key=,
+                   :read_key, :read_key=,
                    :api_url, :api_url=
 
     def_delegators :default_client,
@@ -61,7 +69,9 @@ module Keen
         :write_key => ENV['KEEN_WRITE_KEY'],
         :read_key => ENV['KEEN_READ_KEY'],
         :master_key => ENV['KEEN_MASTER_KEY'],
-        :api_url => ENV['KEEN_API_URL']
+        :api_url => ENV['KEEN_API_URL'],
+        :proxy_url => ENV['KEEN_PROXY_URL'],
+        :proxy_type => ENV['KEEN_PROXY_TYPE']
       )
     end
   end
