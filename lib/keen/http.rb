@@ -65,8 +65,8 @@ module Keen
           http_client = EventMachine::HttpRequest.new(uri)
         end
         http_client.post(
-            :body => body,
-            :head => headers
+          :body => body,
+          :head => headers
         )
 
       end
