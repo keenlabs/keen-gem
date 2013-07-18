@@ -15,7 +15,7 @@ module Keen
     include Keen::Client::QueryingMethods
     include Keen::Client::MaintenanceMethods
 
-    attr_accessor :project_id, :write_key, :read_key, :master_key, :api_url
+    attr_accessor :project_id, :write_key, :read_key, :master_key, :api_url, :proxy_url
 
     CONFIG = {
       :api_url => "https://api.keen.io",
@@ -47,6 +47,7 @@ module Keen
         :project_id, :write_key, :read_key, :master_key)
 
       self.api_url = options[:api_url] || CONFIG[:api_url]
+      self.proxy_url = options[:proxy_url]
     end
 
     private

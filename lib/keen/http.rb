@@ -1,12 +1,17 @@
 module Keen
   module HTTP
     class Sync
-      def initialize(base_url)
+      def initialize(base_url, proxy_url=nil)
         require 'uri'
         require 'net/http'
 
         uri = URI.parse(base_url)
-        @http = Net::HTTP.new(uri.host, uri.port)
+        if proxy_url
+          proxy_uri = URI.parse(proxy_url)
+          @http = Net::HTTP::Proxy(proxy_uri.host, proxy_uri.port, proxy_uri.user, proxy_uri.password).new(uri.host, uri.port)
+        else
+          @http = Net::HTTP.new(uri.host, uri.port)
+        end
 
         if uri.scheme == "https"
           require 'net/https'
@@ -37,25 +42,33 @@ module Keen
     end
 
     class Async
-      def initialize(base_url)
+      def initialize(base_url, proxy_url=nil)
         if defined?(EventMachine) && EventMachine.reactor_running?
-          require 'em-http-request'
+            require 'em-http-request'
         else
           raise Error, "An EventMachine loop must be running to use publish_async calls"
         end
 
         @base_url = base_url
+        @proxy_url = proxy_url
       end
 
       def post(options)
         path, headers, body = options.values_at(
           :path, :headers, :body)
         uri = "#{@base_url}#{path}"
-        http_client = EventMachine::HttpRequest.new(uri)
+        if @proxy_url
+          proxy_uri = URI.parse(@proxy_url)
+          connection_options = {:proxy => {:host => proxy_uri.host, :port => proxy_uri.port, :type => :socks5}}
+          http_client = EventMachine::HttpRequest.new(uri, connection_options)
+        else
+          http_client = EventMachine::HttpRequest.new(uri)
+        end
         http_client.post(
-          :body => body,
-          :head => headers
+            :body => body,
+            :head => headers
         )
+
       end
     end
   end

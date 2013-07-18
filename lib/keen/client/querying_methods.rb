@@ -171,7 +171,7 @@ module Keen
         query_params = preprocess_params(params)
 
         begin
-          response = Keen::HTTP::Sync.new(self.api_url).get(
+          response = Keen::HTTP::Sync.new(self.api_url, self.proxy_url).get(
               :path => "#{api_query_resource_path(query_name)}?#{query_params}",
               :headers => api_headers(self.read_key, "sync"))
         rescue Exception => http_error
