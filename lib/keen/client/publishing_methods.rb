@@ -63,7 +63,9 @@ module Keen
 
         deferrable = EventMachine::DefaultDeferrable.new
 
-        http_client = Keen::HTTP::Async.new(self.api_url)
+        http_client = Keen::HTTP::Async.new(
+            self.api_url,
+            {:proxy_url => self.proxy_url, :proxy_type => self.proxy_type})
         http = http_client.post(
           :path => api_event_collection_resource_path(event_collection),
           :headers => api_headers(self.write_key, "async"),
@@ -116,7 +118,7 @@ module Keen
       def publish_body(path, body, error_method)
         begin
           response = Keen::HTTP::Sync.new(
-            self.api_url).post(
+            self.api_url, self.proxy_url).post(
               :path => path,
               :headers => api_headers(self.write_key, "sync"),
               :body => body)
