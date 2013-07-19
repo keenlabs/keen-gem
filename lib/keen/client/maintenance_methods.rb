@@ -16,7 +16,7 @@ module Keen
         query_params = preprocess_params(params) if params != {}
 
         begin
-          response = Keen::HTTP::Sync.new(self.api_url).delete(
+          response = Keen::HTTP::Sync.new(self.api_url, self.proxy_url).delete(
               :path => [api_event_collection_resource_path(event_collection), query_params].compact.join('?'),
               :headers => api_headers(self.master_key, "sync"))
         rescue Exception => http_error
