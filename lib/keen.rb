@@ -29,15 +29,12 @@ module Keen
                    :project_id, :project_id=,
                    :write_key, :write_key=,
                    :read_key, :read_key=,
-                   :api_url, :api_url=,
-                   :proxy_url, :proxy_url=,
-                   :proxy_type, :proxy_type=
+                   :master_key, :master_key=,
+                   :api_url, :api_url=
 
     def_delegators :default_client,
-                   :project_id, :project_id=,
-                   :write_key, :write_key=,
-                   :read_key, :read_key=,
-                   :api_url, :api_url=
+                   :proxy_url, :proxy_url=,
+                   :proxy_type, :proxy_type=
 
     def_delegators :default_client,
                    :publish, :publish_async, :publish_batch,

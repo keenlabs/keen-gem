@@ -8,6 +8,7 @@ describe Keen do
         ENV["KEEN_PROJECT_ID"] = "12345"
         ENV["KEEN_WRITE_KEY"] = "abcdewrite"
         ENV["KEEN_READ_KEY"] = "abcderead"
+        ENV["KEEN_MASTER_KEY"] = "lalalala"
         ENV["KEEN_API_URL"] = "http://fake.keen.io:fakeport"
         ENV["KEEN_PROXY_URL"] = "http://proxy.keen.io:proxyport"
         ENV["KEEN_PROXY_TYPE"] = "http"
@@ -25,6 +26,10 @@ describe Keen do
 
       it "should set a read key from the environment" do
         client.read_key.should == "abcderead"
+      end
+
+      it "should set a master key from the environment" do
+        client.master_key.should == "lalalala"
       end
 
       it "should set an api host from the environment" do
@@ -65,14 +70,14 @@ describe Keen do
       end
     end
 
-    [:project_id, :write_key, :read_key, :api_url].each do |_method|
+    [:project_id, :write_key, :read_key, :master_key, :api_url].each do |_method|
       it "should forward the #{_method} method" do
         @default_client.should_receive(_method)
         Keen.send(_method)
       end
     end
 
-    [:project_id=, :write_key=, :read_key=, :api_url=].each do |_method|
+    [:project_id=, :write_key=, :read_key=, :master_key=, :api_url=].each do |_method|
       it "should forward the #{_method} method" do
         @default_client.should_receive(_method).with("12345")
         Keen.send(_method, "12345")

@@ -226,6 +226,12 @@ To track email opens, simply add an image to your email template that points to 
 
 ### Changelog
 
+##### 0.7.7
++ Add support for HTTP and SOCKS proxies. Set `KEEN_PROXY_URL` to the proxy URL and `KEEN_PROXY_TYPE` to 'socks5' if you need to. These
+properties can also be set on the client instances as `proxy_url` and `proxy_type`.
+
++ Delegate the `master_key` fields from the Keen object.
+
 ##### 0.7.6
 + Explicitly require `CGI`.
 
