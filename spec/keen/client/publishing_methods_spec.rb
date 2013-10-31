@@ -230,4 +230,11 @@ describe Keen::Client::PublishingMethods do
         "#{api_url}/3.0/projects/12345/events/sign_ups?api_key=#{write_key}&data=eyJuYW1lIjoiQm9iIn0="
     end
   end
+
+  describe "redirect_url" do
+    it "should return a url with a base-64 encoded json param" do
+      client.beacon_url("sign_ups", { :name => "Bob" }, "http://www.keenio.com").should ==
+        "#{api_url}/3.0/projects/12345/events/sign_ups?api_key=#{write_key}&data=eyJuYW1lIjoiQm9iIn0=&redirect=http://www.keenio.com"
+    end
+  end
 end
