@@ -113,6 +113,20 @@ module Keen
         "#{self.api_url}#{api_event_collection_resource_path(event_collection)}?api_key=#{self.write_key}&data=#{data}"
       end
 
+      # Returns an encoded URL that will record an event and then redirect. Useful in email situations.
+      # See detailed documentation here
+      # https://keen.io/docs/api/reference/#event-collection-resource
+      #
+      # @param event_collection
+      # @param [Hash] event properties
+      #
+      # @return a URL that will track an event when hit
+      def redirect_url(event_collection, properties, redirect_url)
+        json = MultiJson.encode(properties)
+        data = [json].pack("m0").tr("+/", "-_").gsub("\n", "")
+        "#{self.api_url}#{api_event_collection_resource_path(event_collection)}?api_key=#{self.write_key}&data=#{data}&redirect=#{redirect_url}"
+      end
+
       private
 
       def publish_body(path, body, error_method)

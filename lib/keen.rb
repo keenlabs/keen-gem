@@ -38,7 +38,7 @@ module Keen
 
     def_delegators :default_client,
                    :publish, :publish_async, :publish_batch,
-                   :beacon_url
+                   :beacon_url, :redirect_url
 
     def_delegators :default_client,
                    :count, :count_unique, :minimum, :maximum,
