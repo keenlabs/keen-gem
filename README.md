@@ -235,6 +235,19 @@ Keen.redirect_url("sign_ups", { :recipient => "foo@foo.com" }, "http://foo.com")
 
 This is helpful for tracking email clickthroughs.
 
+### Troubleshooting
+
+##### EventMachine
+
+If you run into `Keen::Error: Keen IO Exception: An EventMachine loop must be running to use publish_async calls` or 
+`Uncaught RuntimeError: eventmachine not initialized: evma_set_pending_connect_timeout`, this means that the EventMachine
+loop has died. This can happen for a variety of reasons, and every app is different. [Issue #22](https://github.com/keenlabs/keen-gem/issues/22) shows how to add some extra protection to avoid this situation.
+
+##### publish_async in a script or worker
+
+If you write a script that uses `publish_async`, you need to keep the script alive long enough for the call(s) to complete.
+EventMachine itself won't do this because it runs in a different thread. Here's an [example gist](https://gist.github.com/dzello/7472823) that shows how to exit the process after the event has been recorded.
+
 ### Changelog
 
 ##### 0.7.8
