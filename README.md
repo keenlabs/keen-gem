@@ -224,7 +224,21 @@ Keen.beacon_url("sign_ups", :recipient => "foo@foo.com")
 
 To track email opens, simply add an image to your email template that points to this URL.
 
+#### Redirect URL's
+Redirect URL's are just like image beacon URL's with the addition of a `redirect` query parameter. This parameter is used
+to issue a redirect to a certain URL after an event is recorded.
+
+```
+Keen.redirect_url("sign_ups", { :recipient => "foo@foo.com" }, "http://foo.com")
+  # => "https://api.keen.io/3.0/projects/xxxxxx/events/email_opens?api_key=yyyyyy&data=eyJyZWNpcGllbnQiOiJmb29AZm9vLmNvbSJ9&redirect=http://foo.com"
+```
+
+This is helpful for tracking email clickthroughs.
+
 ### Changelog
+
+##### 0.7.8
++ Add support for redirect URL creation.
 
 ##### 0.7.7
 + Add support for HTTP and SOCKS proxies. Set `KEEN_PROXY_URL` to the proxy URL and `KEEN_PROXY_TYPE` to 'socks5' if you need to. These
