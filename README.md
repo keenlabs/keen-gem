@@ -89,7 +89,7 @@ Thread.new { EventMachine.run }
 The best place for this is in an initializer, or anywhere that runs when your app boots up.
 Here's a useful blog article that explains more about this approach - [EventMachine and Passenger](http://railstips.org/blog/archives/2011/05/04/eventmachine-and-passenger/).
 
-And here's a gist that shows an example of [Eventmachine with Unicorn](https://gist.github.com/jonkgrimes/5103321). Thanks to [jonkgrimes](https://github.com/jonkgrimes) for sharing this with us!
+And here's an example repository that shows an example of [Eventmachine with Unicorn](https://github.com/dzello/em-unicorn/blob/master/unicorn.rb), specifically the Unicorn config for starting and stopping EventMachine after forking.
 
 Now, in your code, replace `publish` with `publish_async`. Bind callbacks if you require them.
 
