@@ -3,7 +3,6 @@ require 'keen/version'
 require 'keen/client/publishing_methods'
 require 'keen/client/querying_methods'
 require 'keen/client/maintenance_methods'
-
 require 'openssl'
 require 'multi_json'
 require 'base64'
@@ -110,6 +109,10 @@ module Keen
 
       if params.key?(:timeframe) && params[:timeframe].is_a?(Hash)
         params[:timeframe] = MultiJson.encode(params[:timeframe])
+      end
+
+      if params.key?(:group_by) && params[:group_by].is_a?(Array)
+        params[:group_by] = MultiJson.encode(params[:group_by])
       end
 
       query_params = ""
