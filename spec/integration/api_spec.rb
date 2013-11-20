@@ -116,6 +116,24 @@ describe "Keen IO API" do
     it "should return a valid count_unique" do
       Keen.count_unique(event_collection, :target_property => "price").should == 2
     end
+    
+    it "should return a valid count with group_by" do   
+      response = Keen.average(event_collection, :group_by => "username", :target_property => "price")
+      bobs_response = response.select { |result| result["username"] == "bob" }.first
+      bobs_response["result"].should == 10
+      teds_response = response.select { |result| result["username"] == "ted" }.first
+      teds_response["result"].should == 20    
+    end
+    
+    it "should return a valid count with multi-group_by" do   
+      response = Keen.average(event_collection, :group_by => ["username", "price"], :target_property => "price")
+      bobs_response = response.select { |result| result["username"] == "bob" }.first
+      bobs_response["result"].should == 10
+      bobs_response["price"].should == 10
+      teds_response = response.select { |result| result["username"] == "ted" }.first
+      teds_response["result"].should == 20
+      teds_response["price"].should == 20
+    end
 
     it "should return a valid sum" do
       Keen.sum(event_collection, :target_property => "price").should == 30

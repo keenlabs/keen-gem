@@ -75,6 +75,16 @@ describe Keen::Client do
         filter_str = CGI.escape(MultiJson.encode(filters))
         test_query("&filters=#{filter_str}", :filters => filters)
       end
+      
+      it "should encode a single group by property" do
+        test_query("&group_by=one%20foo", :group_by => "one foo")
+      end
+      
+      it "should encode multi-group by properly" do
+        group_by = ["one", "two"]
+        group_by_str = CGI.escape(MultiJson.encode(group_by))
+        test_query("&group_by=#{group_by_str}", :group_by => group_by)
+      end
 
       it "should encode absolute timeframes properly" do
         timeframe = {
