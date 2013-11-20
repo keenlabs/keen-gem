@@ -10,6 +10,7 @@ Gem::Specification.new do |s|
   s.homepage    = "https://github.com/keenlabs/keen-gem"
   s.summary     = "Keen IO API Client"
   s.description = "Send events and build analytics features into your Ruby applications."
+  s.license     = "MIT"
 
   s.add_dependency "multi_json", "~> 1.0"
   s.add_dependency "jruby-openssl" if defined?(JRUBY_VERSION)
