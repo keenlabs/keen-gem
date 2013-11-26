@@ -235,6 +235,24 @@ Keen.redirect_url("sign_ups", { :recipient => "foo@foo.com" }, "http://foo.com")
 
 This is helpful for tracking email clickthroughs.
 
+#### Scoped keys
+
+A scoped key is an API key that only has access to events that match a set of filters. Read more about scoped keys [here](https://keen.io/docs/security/#scoped-key).
+
+Here's how to create one:
+``` ruby
+# requires your master API key
+scoped_key = Keen::ScopedKey.new("master-api-key", { "filters" => [{
+  "property_name" => "username",
+  "operator" => "eq",
+  "property_value" => "lloyd"
+}]}).encrypt!
+
+# use the scoped key
+scoped_client = Keen::Client.new(:project_id => 'xxxxxxxxxxxxxxx',
+                                 :read_key   => scoped_key)
+```
+
 ### Troubleshooting
 
 ##### EventMachine
