@@ -2,6 +2,7 @@ require 'logger'
 require 'forwardable'
 
 require 'keen/client'
+require 'keen/scoped_key'
 
 module Keen
   class Error < RuntimeError
