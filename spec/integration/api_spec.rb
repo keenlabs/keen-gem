@@ -189,7 +189,7 @@ describe "Keen IO API" do
     before do
       Keen.publish(event_collection, :delete => "me")
       Keen.publish(event_collection, :delete => "you")
-      sleep(3)
+      sleep(10)
     end
 
     it "should delete the event" do
