@@ -40,7 +40,7 @@ If you're using [foreman](http://ddollar.github.com/foreman/), add this to your 
     KEEN_WRITE_KEY=yyyyyyyyyyyyyyy
     KEEN_READ_KEY=zzzzzzzzzzzzzzz
 
-If not, make to to export the variable into your shell or put it before the command you use to start your server.
+If not, make a script to export the variables into your shell or put it before the command you use to start your server.
 
 When you deploy, make sure your production environment variables are set. For example,
 set [config vars](https://devcenter.heroku.com/articles/config-vars) on Heroku. (We recommend this
