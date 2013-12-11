@@ -319,7 +319,7 @@ Fire away with issues and pull requests!
 
 `bundle exec rake spec` - Run unit specs. HTTP is mocked.
 
-`bundle exec rake integration` - Run integration specs. Interacts with the real API, and requires environment variables to be set. See [.travis.yml](https://github.com/keenlabs/keen-gem/blob/master/.travis.yml).
+`bundle exec rake integration` - Run integration specs. Interacts with the real API. Requires env. variables to be set. See [.travis.yml](https://github.com/keenlabs/keen-gem/blob/master/.travis.yml).
 
 `bundle exec rake synchrony` - Run async publishing specs with `EM::Synchrony`.
 
