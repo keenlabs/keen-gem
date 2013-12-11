@@ -5,7 +5,7 @@ describe "Keen IO API" do
   let(:write_key) { ENV['KEEN_WRITE_KEY'] }
 
   describe "publishing" do
-    let(:collection) { "users" }
+    let(:collection) { "User posts.new" }
     let(:event_properties) { { "name" => "Bob" } }
     let(:api_success) { { "created" => true } }
 
