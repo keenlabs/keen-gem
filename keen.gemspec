@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.description = "Send events and build analytics features into your Ruby applications."
 
   s.add_dependency "multi_json", "~> 1.0"
+  s.add_dependency "addressable", "~> 2.3.5"
   s.add_dependency "jruby-openssl" if defined?(JRUBY_VERSION)
 
   # guard
