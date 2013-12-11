@@ -7,6 +7,7 @@ require 'openssl'
 require 'multi_json'
 require 'base64'
 require 'cgi'
+require 'addressable'
 
 module Keen
   class Client
