@@ -91,7 +91,7 @@ module Keen
     end
 
     def api_event_collection_resource_path(event_collection)
-      "/#{api_version}/projects/#{project_id}/events/#{CGI.escape(event_collection.to_s)}"
+      "/#{api_version}/projects/#{project_id}/events/#{URI::escape(event_collection.to_s)}"
     end
 
     def preprocess_params(params)
