@@ -207,7 +207,7 @@ If you call `publish_async` and `EM::Synchrony` is defined the method will retur
 directly. (It does not return the deferrable on which to register callbacks.) Likewise, it will raise
 exceptions 'synchronously' should they happen.
 
-#### Beacon URL's
+#### Beacon URLs
 
 It's possible to publish events to your Keen IO project using the HTTP GET method.
 This is useful for situations like tracking email opens using [image beacons](http://en.wikipedia.org/wiki/Web_bug).
@@ -222,10 +222,10 @@ Keen.beacon_url("sign_ups", :recipient => "foo@foo.com")
   # => "https://api.keen.io/3.0/projects/xxxxxx/events/email_opens?api_key=yyyyyy&data=eyJyZWNpcGllbnQiOiJmb29AZm9vLmNvbSJ9"
 ```
 
-To track email opens, simply add an image to your email template that points to this URL.
+To track email opens, simply add an image to your email template that points to this URL. For further information on how to do this, see the [image beacon documentation](https://keen.io/docs/data-collection/image-beacon/).
 
-#### Redirect URL's
-Redirect URL's are just like image beacon URL's with the addition of a `redirect` query parameter. This parameter is used
+#### Redirect URLs
+Redirect URLs are just like image beacon URLs with the addition of a `redirect` query parameter. This parameter is used
 to issue a redirect to a certain URL after an event is recorded.
 
 ```
@@ -233,7 +233,7 @@ Keen.redirect_url("sign_ups", { :recipient => "foo@foo.com" }, "http://foo.com")
   # => "https://api.keen.io/3.0/projects/xxxxxx/events/email_opens?api_key=yyyyyy&data=eyJyZWNpcGllbnQiOiJmb29AZm9vLmNvbSJ9&redirect=http://foo.com"
 ```
 
-This is helpful for tracking email clickthroughs.
+This is helpful for tracking email clickthroughs. See the [redirect documentation](https://keen.io/docs/data-collection/redirect/).
 
 ### Troubleshooting
 
