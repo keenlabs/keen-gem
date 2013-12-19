@@ -233,7 +233,7 @@ Keen.redirect_url("sign_ups", { :recipient => "foo@foo.com" }, "http://foo.com")
   # => "https://api.keen.io/3.0/projects/xxxxxx/events/email_opens?api_key=yyyyyy&data=eyJyZWNpcGllbnQiOiJmb29AZm9vLmNvbSJ9&redirect=http://foo.com"
 ```
 
-This is helpful for tracking email clickthroughs. See the [redirect documentation](https://keen.io/docs/data-collection/redirect/).
+This is helpful for tracking email clickthroughs. See the [redirect documentation](https://keen.io/docs/data-collection/redirect/) for further information.
 
 ### Troubleshooting
 
