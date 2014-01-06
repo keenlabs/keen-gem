@@ -235,6 +235,22 @@ Keen.redirect_url("sign_ups", { :recipient => "foo@foo.com" }, "http://foo.com")
 
 This is helpful for tracking email clickthroughs. See the [redirect documentation](https://keen.io/docs/data-collection/redirect/) for further information.
 
+#### Generating scoped keys
+
+A [scoped key](https://keen.io/docs/security/#scoped-key) is a string, generated with your API Key, that represents some encrypted authentication and query options.
+Use them to control what data queries have access to.
+
+``` ruby
+# "my-api-key" should be your MASTER API key
+scoped_key = Keen::ScopedKey.new("my-api-key", { "filters" => [{
+  "property_name" => "accountId",
+  "operator" => "eq",
+  "property_value" => "123456"
+}]}).encrypt! # "4d1982fe601b359a5cab7ac7845d3bf27026936cdbf8ce0ab4ebcb6930d6cf7f139e..."
+```
+
+You can use the scoped key created in Ruby for API requests from any client. Scoped keys are commonly used in JavaScript, where credentials are visible and need to be protected.
+
 ### Troubleshooting
 
 ##### EventMachine
@@ -249,6 +265,10 @@ If you write a script that uses `publish_async`, you need to keep the script ali
 EventMachine itself won't do this because it runs in a different thread. Here's an [example gist](https://gist.github.com/dzello/7472823) that shows how to exit the process after the event has been recorded.
 
 ### Changelog
+
+##### 0.8.0
++ Add support for generating scoped keys.
++ Make collection name encoding more robust. Make sure collection names are encoded identically for publishing events, running queries, and performing deletes.
 
 ##### 0.7.8
 + Add support for redirect URL creation.
