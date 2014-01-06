@@ -61,8 +61,6 @@ module Keen
         ensure_write_key!
         check_event_data!(event_collection, properties)
 
-        deferrable = EventMachine::DefaultDeferrable.new
-
         http_client = Keen::HTTP::Async.new(
             self.api_url,
             {:proxy_url => self.proxy_url, :proxy_type => self.proxy_type})
@@ -73,29 +71,9 @@ module Keen
         )
 
         if defined?(EM::Synchrony)
-          if http.error
-            error = HttpError.new("HTTP em-synchrony publish_async error: #{http.error}")
-            Keen.logger.error(error)
-            raise error
-          else
-            process_response(http.response_header.status, http.response.chomp)
-          end
+          process_with_synchrony(http)
         else
-          http.callback {
-            begin
-              response = process_response(http.response_header.status, http.response.chomp)
-            rescue Exception => e
-              Keen.logger.error(e)
-              deferrable.fail(e)
-            end
-            deferrable.succeed(response) if response
-          }
-          http.errback {
-            error = Error.new("HTTP publish_async failure: #{http.error}")
-            Keen.logger.error(error)
-            deferrable.fail(error)
-          }
-          deferrable
+          process_with_callbacks(http)
         end
       end
 
@@ -130,6 +108,35 @@ module Keen
       end
 
       private
+
+      def process_with_synchrony(http)
+        if http.error
+          error = HttpError.new("HTTP em-synchrony publish_async error: #{http.error}")
+          Keen.logger.error(error)
+          raise error
+        else
+          process_response(http.response_header.status, http.response.chomp)
+        end
+      end
+
+      def process_with_callbacks(http)
+        deferrable = EventMachine::DefaultDeferrable.new
+        http.callback {
+          begin
+            response = process_response(http.response_header.status, http.response.chomp)
+          rescue Exception => e
+            Keen.logger.error(e)
+            deferrable.fail(e)
+          end
+          deferrable.succeed(response) if response
+        }
+        http.errback {
+          error = Error.new("HTTP publish_async failure: #{http.error}")
+          Keen.logger.error(error)
+          deferrable.fail(error)
+        }
+        deferrable
+      end
 
       def publish_body(path, body, error_method)
         begin
