@@ -4,7 +4,7 @@ describe Keen::Client::PublishingMethods do
   let(:project_id) { "12345" }
   let(:write_key) { "abcde" }
   let(:api_url) { "https://unreal.keen.io" }
-  let(:collection) { "users" }
+  let(:collection) { "some :actions_to.record" }
   let(:event_properties) { { "name" => "Bob" } }
   let(:api_success) { { "created" => true } }
   let(:client) { Keen::Client.new(
@@ -37,9 +37,9 @@ describe Keen::Client::PublishingMethods do
     end
 
     it "should url encode the event collection" do
-      stub_keen_post(api_event_collection_resource_url(api_url, "foo+bar"), 201, "")
-      client.publish("foo bar", event_properties)
-      expect_keen_post(api_event_collection_resource_url(api_url, "foo+bar"), event_properties, "sync", write_key)
+      stub_keen_post(api_event_collection_resource_url(api_url, "User%20posts.new%20)(*%26%5E%25%40!)%3A%3A%2520%2520"), 201, "")
+      client.publish("User posts.new )(*&^%@!)::%20%20", event_properties)
+      expect_keen_post(api_event_collection_resource_url(api_url, "User%20posts.new%20)(*%26%5E%25%40!)%3A%3A%2520%2520"), event_properties, "sync", write_key)
     end
 
     it "should wrap exceptions" do
@@ -138,11 +138,11 @@ describe Keen::Client::PublishingMethods do
       end
 
       it "should url encode the event collection" do
-        stub_keen_post(api_event_collection_resource_url(api_url, "foo+bar"), 201, api_success)
+        stub_keen_post(api_event_collection_resource_url(api_url, 'User%20posts.new%20)(*%26%5E%25%40!)%3A%3A%2520%2520'), 201, api_success)
         EM.run {
-          client.publish_async("foo bar", event_properties).callback {
+          client.publish_async('User posts.new )(*&^%@!)::%20%20', event_properties).callback {
             begin
-              expect_keen_post(api_event_collection_resource_url(api_url, "foo+bar"), event_properties, "async", write_key)
+              expect_keen_post(api_event_collection_resource_url(api_url, 'User%20posts.new%20)(*%26%5E%25%40!)%3A%3A%2520%2520'), event_properties, "async", write_key)
             ensure
               EM.stop
             end

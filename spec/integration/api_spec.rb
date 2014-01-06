@@ -5,7 +5,7 @@ describe "Keen IO API" do
   let(:write_key) { ENV['KEEN_WRITE_KEY'] }
 
   describe "publishing" do
-    let(:collection) { "users" }
+    let(:collection) { "User posts.new" }
     let(:event_properties) { { "name" => "Bob" } }
     let(:api_success) { { "created" => true } }
 
@@ -189,7 +189,7 @@ describe "Keen IO API" do
     before do
       Keen.publish(event_collection, :delete => "me")
       Keen.publish(event_collection, :delete => "you")
-      sleep(3)
+      sleep(10)
     end
 
     it "should delete the event" do

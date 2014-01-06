@@ -315,6 +315,22 @@ at [users.keen.io](http://users.keen.io). We'd love to hear your feedback and id
 keen-gem is an open source project and we welcome your contributions.
 Fire away with issues and pull requests!
 
+#### Running Tests
+
+`bundle exec rake spec` - Run unit specs. HTTP is mocked.
+
+`bundle exec rake integration` - Run integration specs with the real API. Requires env variables. See [.travis.yml](https://github.com/keenlabs/keen-gem/blob/master/.travis.yml).
+
+`bundle exec rake synchrony` - Run async publishing specs with `EM::Synchrony`.
+
+Similarly, you can use guard to listen for changes to files and run specs.
+
+`bundle exec guard -g unit`
+
+`bundle exec guard -g integration`
+
+`bundle exec guard -g synchrony`
+
 ### Community Contributors
 + [alexkwolfe](https://github.com/alexkwolfe)
 + [peteygao](https://github.com/peteygao)
