@@ -1,5 +1,5 @@
 group :unit do
-  guard 'rspec', :spec_paths => "spec/keen" do
+  guard 'rspec', :spec_paths => ["spec/keen"] do
     watch('spec/spec_helper.rb')  { "spec" }
     watch('spec/keen/spec_helper.rb')  { "spec" }
     watch(%r{^spec/keen/.+_spec\.rb$})
@@ -8,7 +8,7 @@ group :unit do
 end
 
 group :integration do
-  guard 'rspec', :spec_paths => "spec/integration" do
+  guard 'rspec', :spec_paths => ["spec/integration"] do
     watch('spec/spec_helper.rb')  { "spec" }
     watch('spec/integration/spec_helper.rb')  { "spec" }
     watch(%r{^spec/integration/.+_spec\.rb$})
@@ -16,7 +16,7 @@ group :integration do
 end
 
 group :synchrony do
-  guard 'rspec', :spec_paths => "spec/synchrony" do
+  guard 'rspec', :spec_paths => ["spec/synchrony"] do
     watch('spec/spec_helper.rb')  { "spec" }
     watch('spec/synchrony/spec_helper.rb')  { "spec" }
     watch(%r{^spec/synchrony/.+_spec\.rb$})
