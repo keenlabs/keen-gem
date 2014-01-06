@@ -92,12 +92,9 @@ module Keen
     end
 
     def api_event_collection_resource_path(event_collection)
-        path = ""
-        path = path + "/#{api_version}/projects/#{project_id}/events/"
         encoded_collection_name = Addressable::URI.escape(event_collection.to_s)
         encoded_collection_name.gsub! '/', '%2F'
-        path = path + encoded_collection_name
-        path
+        "/#{api_version}/projects/#{project_id}/events/#{encoded_collection_name}"
     end
 
     def preprocess_params(params)
