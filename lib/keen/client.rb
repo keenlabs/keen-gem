@@ -98,25 +98,9 @@ module Keen
     end
 
     def preprocess_params(params)
-      if params.key?(:filters)
-        params[:filters] = MultiJson.encode(params[:filters])
-      end
-
-      if params.key?(:steps)
-        params[:steps] = MultiJson.encode(params[:steps])
-      end
-
-      if params.key?(:analyses)
-        params[:analyses] = MultiJson.encode(params[:analyses])
-      end
-
-      if params.key?(:timeframe) && params[:timeframe].is_a?(Hash)
-        params[:timeframe] = MultiJson.encode(params[:timeframe])
-      end
-
-      if params.key?(:group_by) && params[:group_by].is_a?(Array)
-        params[:group_by] = MultiJson.encode(params[:group_by])
-      end
+      preprocess_encodables(params)
+      preprocess_timeframe(params)
+      preprocess_group_by(params)
 
       query_params = ""
       params.each do |param, value|
@@ -125,6 +109,28 @@ module Keen
 
       query_params.chop!
       query_params
+    end
+
+    def preprocess_encodables(params)
+      [:filters, :steps, :analyses].each do |key|
+        if params.key?(key)
+          params[key] = MultiJson.encode(params[key])
+        end
+      end
+    end
+
+    def preprocess_timeframe(params)
+      timeframe = params[:timeframe]
+      if timeframe.is_a?(Hash)
+        params[:timeframe] = MultiJson.encode(timeframe)
+      end
+    end
+
+    def preprocess_group_by(params)
+      group_by = params[:group_by]
+      if group_by.is_a?(Array)
+        params[:group_by] = MultiJson.encode(group_by)
+      end
     end
 
     def method_missing(_method, *args, &block)
