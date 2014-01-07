@@ -13,6 +13,12 @@ env:
   #- PATTERN=integration KEEN_MASTER_KEY=f806128f31c349fda124b62d1f4cf4b2 KEEN_WRITE_KEY=f806128f31c349fda124b62d1f4cf4b2 KEEN_READ_KEY=f806128f31c349fda124b62d1f4cf4b2 KEEN_PROJECT_ID=50e5ffa6897a2c319b000000
   - PATTERN=synchrony
 
+before_install:
+  - gem update bundler
+  - bundle --version
+  - gem update --system 2.1.11
+  - gem --version
+
 matrix:
   exclude:
     - rvm: 1.8.7
