@@ -33,7 +33,7 @@ describe Keen::ScopedKey do
       encrypted_str = new_scoped_key.encrypt!
       expect {
         other_api_key = Keen::ScopedKey.decrypt!(bad_api_key, encrypted_str)
-      }.to raise_error(OpenSSL::Cipher::CipherError, "bad decrypt")
+      }.to raise_error(OpenSSL::Cipher::CipherError)
     end
   end
 end
