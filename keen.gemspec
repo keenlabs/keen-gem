@@ -17,19 +17,21 @@ Gem::Specification.new do |s|
   s.add_dependency "jruby-openssl" if defined?(JRUBY_VERSION)
 
   # guard
-  s.add_development_dependency 'guard'
-  s.add_development_dependency 'guard-rspec'
+  unless RUBY_VERSION.start_with? '1.8'
+    s.add_development_dependency 'guard'
+    s.add_development_dependency 'guard-rspec'
 
-  # guard cross-platform listener trick
-  s.add_development_dependency 'rb-inotify'
-  s.add_development_dependency 'rb-fsevent'
-  s.add_development_dependency 'rb-fchange'
+    # guard cross-platform listener trick
+    s.add_development_dependency 'rb-inotify'
+    s.add_development_dependency 'rb-fsevent'
+    s.add_development_dependency 'rb-fchange'
 
-  # guard notifications
-  s.add_development_dependency 'ruby_gntp'
+    # guard notifications
+    s.add_development_dependency 'ruby_gntp'
 
-  # fix guard prompt
-  s.add_development_dependency 'rb-readline' # or compile ruby w/ readline
+    # fix guard prompt
+    s.add_development_dependency 'rb-readline' # or compile ruby w/ readline
+  end
 
   # debuggers
   if /\Aruby/ === RUBY_DESCRIPTION
