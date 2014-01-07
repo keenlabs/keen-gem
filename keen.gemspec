@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.add_dependency "addressable", "~> 2.3.5"
   s.add_dependency "jruby-openssl" if defined?(JRUBY_VERSION)
 
-  s.add_dependency 'rubysl', '~> 2.0' if RUBY_ENGINE == 'rbx'
+  s.add_dependency 'rubysl', '~> 2.0' if defined?(RUBY_ENGINE) && RUBY_ENGINE == 'rbx'
 
   # guard
   unless RUBY_VERSION.start_with? '1.8'
