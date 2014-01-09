@@ -267,8 +267,10 @@ EventMachine itself won't do this because it runs in a different thread. Here's 
 ### Changelog
 
 ##### 0.8.0
-+ Add support for generating scoped keys.
++ **UPGRADE WARNING** Do you use spaces in collection names? Or other special characters? Read [this post](https://groups.google.com/forum/?fromgroups#!topic/keen-io-devs/VtCgPuNKrgY) from the mailing list to make sure your collection names don't change.
++ Add support for generating [scoped keys](https://keen.io/docs/security/#scoped-key).
 + Make collection name encoding more robust. Make sure collection names are encoded identically for publishing events, running queries, and performing deletes.
++ Add support for [grouping by multiple properties](https://keen.io/docs/data-analysis/group-by/#grouping-by-multiple-properties).
 
 ##### 0.7.8
 + Add support for redirect URL creation.
