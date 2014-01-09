@@ -270,8 +270,8 @@ EventMachine itself won't do this because it runs in a different thread. Here's 
 + Add support for generating scoped keys.
 + Make collection name encoding more robust. Make sure collection names are encoded identically for publishing events, running queries, and performing deletes.
 + BREAKING CHANGE! You are affected if you have collection names with spaces 
- + Previously, the gem was encoding a space as a plus sign (e.g. "do+a+barrel+roll"). As of this release any new events will go to a collection name with spaces instead of plus signs. That means you may end up with two collections ("Log+Ins" for events captured with previous versions of the gem and "Log Ins" for events captured with the new gem).  
- + To query existing collections e.g. ("nom+nom+nom") using the gem, you will now need to insert a plus sign to query them (e.g. Keen.count("nom+nom+nom") # => 100). 
+ + Previously, the gem was encoding a space as a plus sign (e.g. "do+a+barrel+roll"). As of this release any new events will go to a collection name with spaces instead of plus signs (e.g. "do a barrel roll"). That means you may end up with two collections ("Log+Ins" for events captured with previous versions of the gem and "Log Ins" for events captured with the new gem).  
+ + To query existing collections e.g. ("Log+Ins") using the gem, insert a plus sign for querying (e.g. Keen.count("Log+Ins") # => 100).
  + This change should only affect spaces, but if you have other strange characters in your collection names you may want to monitor them.
 
 ##### 0.7.8
