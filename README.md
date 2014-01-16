@@ -154,7 +154,7 @@ Keen.delete(:signups)  # => true
 
 # Or just delete an event corresponding to a particular user
 Keen.delete(:signups, filters: [{
-  :property_name => 'username', ;operator => 'eq', :property_value => "Bob"
+  :property_name => 'username', :operator => 'eq', :property_value => "Bob"
 }])  # => true
 ```
 
