@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.post_install_message = "**UPGRADE WARNING** Do you use spaces in collection names? Or other special characters? Read https://groups.google.com/forum/?fromgroups#!topic/keen-io-devs/VtCgPuNKrgY from the mailing list to make sure your collection names don't change!"
 
-  s.add_dependency "multi_json", "~> 1.0"
+  s.add_dependency "multi_json", "~> 1.3"
   s.add_dependency "addressable", "~> 2.3.5"
   s.add_dependency "jruby-openssl" if defined?(JRUBY_VERSION)
 
