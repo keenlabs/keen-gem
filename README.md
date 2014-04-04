@@ -283,6 +283,9 @@ EventMachine itself won't do this because it runs in a different thread. Here's 
 
 ### Changelog
 
+##### 0.8.1
++ Add support for asynchronous batch publishing
+
 ##### 0.8.0
 + **UPGRADE WARNING** Do you use spaces in collection names? Or other special characters? Read [this post](https://groups.google.com/forum/?fromgroups#!topic/keen-io-devs/VtCgPuNKrgY) from the mailing list to make sure your collection names don't change.
 + Add support for generating [scoped keys](https://keen.io/docs/security/#scoped-key).
