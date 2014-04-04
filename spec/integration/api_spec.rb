@@ -4,6 +4,15 @@ describe "Keen IO API" do
   let(:project_id) { ENV['KEEN_PROJECT_ID'] }
   let(:write_key) { ENV['KEEN_WRITE_KEY'] }
 
+  def wait_for_count(event_collection, count)
+    attempts = 0
+    while attempts < 30
+      break if Keen.count(event_collection) == count
+      attempts += 1
+      sleep(1)
+    end
+  end
+
   describe "publishing" do
     let(:collection) { "User posts.new" }
     let(:event_properties) { { "name" => "Bob" } }
@@ -135,11 +144,10 @@ describe "Keen IO API" do
         :username => "bob",
         :price => 30
       })
-      sleep(5)
-    end
 
-    it "should return a valid count" do
-      Keen.count(event_collection).should == 2
+      # poll the count to know when to continue
+      wait_for_count(@event_collection, 2)
+      wait_for_count(@returns_event_collection, 1)
     end
 
     it "should return a valid count_unique" do
@@ -218,15 +226,14 @@ describe "Keen IO API" do
     before do
       Keen.publish(event_collection, :delete => "me")
       Keen.publish(event_collection, :delete => "you")
-      sleep(10)
+      wait_for_count(event_collection, 2)
     end
 
     it "should delete the event" do
-      Keen.count(event_collection).should == 2
       Keen.delete(event_collection, :filters => [
         { :property_name => "delete", :operator => "eq", :property_value => "me" }
       ])
-      sleep(3)
+      wait_for_count(event_collection, 1)
       results = Keen.extraction(event_collection)
       results.length.should == 1
       results.first["delete"].should == "you"
