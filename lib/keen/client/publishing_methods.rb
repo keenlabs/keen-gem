@@ -77,6 +77,26 @@ module Keen
         end
       end
 
+      def publish_batch_async(events)
+        ensure_project_id!
+        ensure_write_key!
+
+        http_client = Keen::HTTP::Async.new(
+            self.api_url,
+            {:proxy_url => self.proxy_url, :proxy_type => self.proxy_type})
+
+        http = http_client.post(
+          :path => api_events_resource_path,
+          :headers => api_headers(self.write_key, "async"),
+          :body => MultiJson.encode(events)
+        )
+        if defined?(EM::Synchrony)
+          process_with_synchrony(http)
+        else
+          process_with_callbacks(http)
+        end
+      end
+
       # Returns an encoded URL that will record an event. Useful in email situations.
       # See detailed documentation here
       # https://keen.io/docs/api/reference/#event-collection-resource

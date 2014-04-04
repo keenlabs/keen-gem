@@ -180,6 +180,23 @@ Keen.publish_batch(
 This call would publish 2 `signups` events and 2 `purchases` events - all in just one API call.
 Batch publishing is ideal for loading historical events into Keen IO.
 
+#### Asynchronous batch publishing 
+
+Ensuring the above guidance is followed for asynchronous publishing, batch publishing logic can used asynchronously with `publish_batch_async`:
+
+```ruby
+Keen.publish_batch_async(
+  :signups => [
+    { :name => "Bob" },
+    { :name => "Mary" }
+  ],
+  :purchases => [
+    { :price => 10 },
+    { :price => 20 }
+  ]
+)
+```
+
 #### Configurable and per-client authentication
 
 To configure keen-gem in code, do as follows:

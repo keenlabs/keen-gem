@@ -7,6 +7,19 @@ describe Keen::HTTP::Async do
   let(:api_url) { "https://fake.keen.io" }
   let(:event_properties) { { "name" => "Bob" } }
   let(:api_success) { { "created" => true } }
+  let(:batch_api_success) { { "created" => true } }
+  let(:events) {
+        {
+          :purchases => [
+            { :price => 10 },
+            { :price => 11 }
+          ],
+          :signups => [
+            { :name => "bob" },
+            { :name => "bill" }
+          ]
+        }
+      }
 
   describe "synchrony" do
     before do
@@ -25,10 +38,29 @@ describe Keen::HTTP::Async do
         }
       end
 
-      it "should recieve the right response 'synchronously'" do
+      it "should receive the right response 'synchronously'" do
         stub_keen_post(api_event_collection_resource_url(api_url, collection), 201, api_success)
         EM.synchrony {
           @client.publish_async(collection, event_properties).should == api_success
+          EM.stop
+        }
+      end
+    end
+
+    describe "batch success" do
+      it "should post the event data" do
+        stub_keen_post(api_event_resource_url(api_url), 201, api_success)
+        EM.synchrony {
+          @client.publish_batch_async(events)
+          expect_keen_post(api_event_resource_url(api_url), events, "async", write_key)
+          EM.stop
+        }
+      end
+
+      it "should receive the right response 'synchronously'" do
+        stub_keen_post(api_event_resource_url(api_url), 201, api_success)
+        EM.synchrony {
+          @client.publish_batch_async(events).should == api_success
           EM.stop
         }
       end
@@ -41,6 +73,23 @@ describe Keen::HTTP::Async do
         EM.synchrony {
           begin
             @client.publish_async(collection, event_properties).should == api_success
+          rescue Exception => exception
+            e = exception
+          end
+          e.class.should == Keen::HttpError
+          e.message.should == "Keen IO Exception: HTTP em-synchrony publish_async error: WebMock timeout error"
+          EM.stop
+        }
+      end
+    end
+
+    describe "batch failure" do
+      it "should raise an exception" do
+        stub_request(:post, api_event_resource_url(api_url)).to_timeout
+        e = nil
+        EM.synchrony {
+          begin
+            @client.publish_batch_async(events).should == api_success
           rescue Exception => exception
             e = exception
           end

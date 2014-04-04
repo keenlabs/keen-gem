@@ -85,6 +85,35 @@ describe "Keen IO API" do
     end
   end
 
+  describe "batch_async" do
+      # no TLS support in EventMachine on jRuby
+      unless defined?(JRUBY_VERSION)
+        let(:api_success) { {"batch_purchases"=>[{"success"=>true}, {"success"=>true}], "batch_signups"=>[{"success"=>true}, {"success"=>true}]} }
+        it "should publish the event and trigger callbacks" do
+          EM.run {
+            Keen.publish_batch_async(
+              :batch_signups => [
+                { :name => "bob" },
+                { :name => "ted" }
+              ],
+              :batch_purchases => [
+                { :price => 30 },
+                { :price => 40 }
+              ]).callback { |response|
+              begin
+                response.should == api_success
+              ensure
+                EM.stop
+              end
+            }.errback { |error|
+              EM.stop
+              fail error
+            }
+          }
+        end
+      end
+    end
+
   describe "queries" do
     let(:read_key) { ENV['KEEN_READ_KEY'] }
     let(:event_collection) { @event_collection }
@@ -116,16 +145,16 @@ describe "Keen IO API" do
     it "should return a valid count_unique" do
       Keen.count_unique(event_collection, :target_property => "price").should == 2
     end
-    
-    it "should return a valid count with group_by" do   
+
+    it "should return a valid count with group_by" do
       response = Keen.average(event_collection, :group_by => "username", :target_property => "price")
       bobs_response = response.select { |result| result["username"] == "bob" }.first
       bobs_response["result"].should == 10
       teds_response = response.select { |result| result["username"] == "ted" }.first
-      teds_response["result"].should == 20    
+      teds_response["result"].should == 20
     end
-    
-    it "should return a valid count with multi-group_by" do   
+
+    it "should return a valid count with multi-group_by" do
       response = Keen.average(event_collection, :group_by => ["username", "price"], :target_property => "price")
       bobs_response = response.select { |result| result["username"] == "bob" }.first
       bobs_response["result"].should == 10

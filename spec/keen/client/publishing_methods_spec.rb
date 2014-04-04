@@ -130,7 +130,7 @@ describe Keen::Client::PublishingMethods do
             ensure
               EM.stop
             end
-          }.errback { 
+          }.errback {
             EM.stop
             fail
           }
@@ -211,6 +211,84 @@ describe Keen::Client::PublishingMethods do
     end
   end
 
+  describe "publish_batch_async" do
+    unless defined?(JRUBY_VERSION)
+      let(:multi) { EventMachine::MultiRequest.new }
+      let(:events) {
+        {
+          :purchases => [
+            { :price => 10 },
+            { :price => 11 }
+          ],
+          :signups => [
+            { :name => "bob" },
+            { :name => "bill" }
+          ]
+        }
+      }
+
+      it "should raise an exception if client has no project_id" do
+        expect {
+          Keen::Client.new(
+            :write_key => "abcde"
+          ).publish_batch_async(events)
+        }.to raise_error(Keen::ConfigurationError, "Keen IO Exception: Project ID must be set")
+      end
+
+      it "should raise an exception if client has no write_key" do
+        expect {
+          Keen::Client.new(
+            :project_id => "12345"
+          ).publish_batch_async(events)
+        }.to raise_error(Keen::ConfigurationError, "Keen IO Exception: Write Key must be set for sending events")
+      end
+
+      describe "deferrable callbacks" do
+        it "should trigger callbacks" do
+          stub_keen_post(api_event_resource_url(api_url), 201, api_success)
+          EM.run {
+            client.publish_batch_async(events).callback { |response|
+              begin
+                response.should == api_success
+              ensure
+                EM.stop
+              end
+            }
+          }
+        end
+
+        it "should trigger errbacks" do
+          stub_request(:post, api_event_resource_url(api_url)).to_timeout
+          EM.run {
+            client.publish_batch_async(events).errback { |error|
+              begin
+                error.should_not be_nil
+                error.message.should == "Keen IO Exception: HTTP publish_async failure: WebMock timeout error"
+              ensure
+                EM.stop
+              end
+            }
+          }
+        end
+
+        it "should not trap exceptions in the client callback" do
+          stub_keen_post(api_event_resource_url(api_url), 201, api_success)
+          expect {
+            EM.run {
+              client.publish_batch_async(events).callback {
+                begin
+                  blowup
+                ensure
+                  EM.stop
+                end
+              }
+            }
+          }.to raise_error
+        end
+      end
+    end
+  end
+
   it "should raise an exception if client has no project_id" do
     expect {
       Keen::Client.new.publish_async(collection, event_properties)
@@ -237,4 +315,5 @@ describe Keen::Client::PublishingMethods do
         "#{api_url}/3.0/projects/12345/events/sign_ups?api_key=#{write_key}&data=eyJuYW1lIjoiQm9iIn0=&redirect=http://keen.io/?foo=bar&bar=baz"
     end
   end
+
 end
