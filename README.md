@@ -83,6 +83,8 @@ Next, run an instance of EventMachine. If you're using an EventMachine-based web
 thin or goliath you're already doing this. Otherwise, you'll need to start an EventMachine loop manually as follows:
 
 ```ruby
+require 'em-http-request'
+
 Thread.new { EventMachine.run }
 ```
 
