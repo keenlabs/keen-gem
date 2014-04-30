@@ -119,6 +119,17 @@ describe Keen::Client do
         }.to raise_error(Keen::AuthenticationError)
         expect_keen_get(url, "sync", read_key)
       end
+
+      it "should not change the extra params" do
+        timeframe = {
+          :start => "2012-08-13T19:00Z+00:00",
+          :end => "2012-08-13T19:00Z+00:00",
+        }
+        timeframe_str =  CGI.escape(MultiJson.encode(timeframe))
+
+        test_query("&timeframe=#{timeframe_str}", options = {:timeframe => timeframe})
+        options.should eq({:timeframe => timeframe})
+      end
     end
   end
 

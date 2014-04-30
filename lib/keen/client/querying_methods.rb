@@ -161,14 +161,15 @@ module Keen
       private
 
       def query(query_name, event_collection, params)
+        query_params = clone_params(params)
         ensure_project_id!
         ensure_read_key!
 
         if event_collection
-          params[:event_collection] = event_collection.to_s
+          query_params[:event_collection] = event_collection.to_s
         end
 
-        query_params = preprocess_params(params)
+        query_params = preprocess_params(query_params)
 
         begin
           response = Keen::HTTP::Sync.new(self.api_url, self.proxy_url).get(
@@ -180,6 +181,10 @@ module Keen
 
         response_body = response.body.chomp
         process_response(response.code, response_body)["result"]
+      end
+
+      def clone_params(params)
+        params.dup
       end
 
       def api_query_resource_path(analysis_type)
