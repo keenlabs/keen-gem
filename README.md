@@ -118,6 +118,8 @@ Keen.sum("purchases", :target_property => "price")  # => 10000
 Keen.minimum("purchases", :target_property => "price")  # => 20
 Keen.maximum("purchases", :target_property => "price")  # => 100
 Keen.average("purchases", :target_property => "price")  # => 60
+Keen.median("purchases", :target_property => "price")  # => 60
+Keen.percentile("purchases", :target_property => "price", :percentile => 90)  # => 100
 
 Keen.sum("purchases", :target_property => "price", :group_by => "item.id")  # => [{ "item.id": 123, "result": 240 }, { ... }]
 

@@ -188,6 +188,15 @@ describe "Keen IO API" do
       Keen.average(event_collection, :target_property => "price").should == 15
     end
 
+    it "should return a valid median" do
+      Keen.median(event_collection, :target_property => "price").should == 10
+    end
+
+    it "should return a valid percentile" do
+      Keen.percentile(event_collection, :target_property => "price", :percentile => 50).should == 10
+      Keen.percentile(event_collection, :target_property => "price", :percentile => 100).should == 20
+    end
+
     it "should return a valid select_unique" do
       results = Keen.select_unique(event_collection, :target_property => "price")
       results.sort.should == [10, 20].sort

@@ -97,6 +97,39 @@ module Keen
         query(__method__, event_collection, params)
       end
 
+      # Runs a median query.
+      # See detailed documentation here:
+      # https://keen.io/docs/api/reference/#median-resource
+      #
+      # @param event_collection
+      # @param params [Hash] (optional)
+      #   target_property (required)
+      #   group_by (optional)
+      #   timeframe (optional)
+      #   interval (optional)
+      #   filters (optional) [Array]
+      #   timezone (optional)
+      def median(event_collection, params)
+        query(__method__, event_collection, params)
+      end
+
+      # Runs a percentile query.
+      # See detailed documentation here:
+      # https://keen.io/docs/api/reference/#percentile-resource
+      #
+      # @param event_collection
+      # @param params [Hash] (optional)
+      #   target_property (required)
+      #   percentile (required)
+      #   group_by (optional)
+      #   timeframe (optional)
+      #   interval (optional)
+      #   filters (optional) [Array]
+      #   timezone (optional)
+      def percentile(event_collection, params)
+        query(__method__, event_collection, params)
+      end
+
       # Runs a select_unique query.
       # See detailed documentation here:
       # https://keen.io/docs/api/reference/#select-unique-resource

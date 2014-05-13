@@ -17,7 +17,7 @@ describe Keen::Client do
   describe "querying names" do
     let(:params) { { :event_collection => "signups" } }
 
-    ["minimum", "maximum", "sum", "average", "count", "count_unique", "select_unique", "extraction", "multi_analysis"].each do |query_name|
+    ["minimum", "maximum", "sum", "average", "count", "count_unique", "select_unique", "extraction", "multi_analysis", "median", "percentile"].each do |query_name|
       it "should call keen query passing the query name" do
         client.should_receive(:query).with(query_name.to_sym, event_collection, params)
         client.send(query_name, event_collection, params)
@@ -75,11 +75,11 @@ describe Keen::Client do
         filter_str = CGI.escape(MultiJson.encode(filters))
         test_query("&filters=#{filter_str}", :filters => filters)
       end
-      
+
       it "should encode a single group by property" do
         test_query("&group_by=one%20foo", :group_by => "one foo")
       end
-      
+
       it "should encode multi-group by properly" do
         group_by = ["one", "two"]
         group_by_str = CGI.escape(MultiJson.encode(group_by))

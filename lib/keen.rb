@@ -44,7 +44,7 @@ module Keen
     def_delegators :default_client,
                    :count, :count_unique, :minimum, :maximum,
                    :sum, :average, :select_unique, :funnel, :extraction,
-                   :multi_analysis
+                   :multi_analysis, :median, :percentile
 
     def_delegators :default_client,
                    :delete

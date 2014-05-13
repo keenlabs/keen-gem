@@ -101,6 +101,7 @@ module Keen
       preprocess_encodables(params)
       preprocess_timeframe(params)
       preprocess_group_by(params)
+      preprocess_percentile(params)
 
       query_params = ""
       params.each do |param, value|
@@ -130,6 +131,12 @@ module Keen
       group_by = params[:group_by]
       if group_by.is_a?(Array)
         params[:group_by] = MultiJson.encode(group_by)
+      end
+    end
+
+    def preprocess_percentile(params)
+      if params.key?(:percentile)
+        params[:percentile] = params[:percentile].to_s
       end
     end
 
