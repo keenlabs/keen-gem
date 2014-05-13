@@ -86,6 +86,16 @@ describe Keen::Client do
         test_query("&group_by=#{group_by_str}", :group_by => group_by)
       end
 
+      it "should encode an array of property names property" do
+        property_names = ["one", "two"]
+        property_names_str = CGI.escape(MultiJson.encode(property_names))
+        test_query("&property_names=#{property_names_str}", :property_names => property_names)
+      end
+
+      it "should encode a percentile decimal properly" do
+        test_query("&percentile=99.99", :percentile => 99.99)
+      end
+
       it "should encode absolute timeframes properly" do
         timeframe = {
           :start => "2012-08-13T19:00Z+00:00",

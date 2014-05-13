@@ -102,6 +102,7 @@ module Keen
       preprocess_timeframe(params)
       preprocess_group_by(params)
       preprocess_percentile(params)
+      preprocess_property_names(params)
 
       query_params = ""
       params.each do |param, value|
@@ -137,6 +138,13 @@ module Keen
     def preprocess_percentile(params)
       if params.key?(:percentile)
         params[:percentile] = params[:percentile].to_s
+      end
+    end
+
+    def preprocess_property_names(params)
+      property_names = params[:property_names]
+      if property_names.is_a?(Array)
+        params[:property_names] = MultiJson.encode(property_names)
       end
     end
 

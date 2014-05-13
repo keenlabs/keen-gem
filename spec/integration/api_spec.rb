@@ -206,6 +206,24 @@ describe "Keen IO API" do
       results = Keen.extraction(event_collection)
       results.length.should == 2
       results.all? { |result| result["keen"] }.should be_true
+      results.map { |result| result["price"] }.sort.should == [10, 20]
+      results.map { |result| result["username"] }.sort.should == ["bob", "ted"]
+    end
+
+    it "should return a valid extraction of one property name" do
+      results = Keen.extraction(event_collection, :property_names => "price")
+      results.length.should == 2
+      results.any? { |result| result["keen"] }.should be_false
+      results.map { |result| result["price"] }.sort.should == [10, 20]
+      results.map { |result| result["username"] }.sort.should == [nil, nil]
+    end
+
+    it "should return a valid extraction of more than one property name" do
+      results = Keen.extraction(event_collection, :property_names => ["price", "username"])
+      results.length.should == 2
+      results.any? { |result| result["keen"] }.should be_false
+      results.map { |result| result["price"] }.sort.should == [10, 20]
+      results.map { |result| result["username"] }.sort.should == ["bob", "ted"]
     end
 
     it "should return a valid funnel" do
