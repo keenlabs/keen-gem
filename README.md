@@ -287,6 +287,10 @@ EventMachine itself won't do this because it runs in a different thread. Here's 
 
 ### Changelog
 
+##### 0.8.2
++ Add support for `median` and `percentile` analysis
++ Support arrays for extraction `property_names` option
+
 ##### 0.8.1
 + Add support for asynchronous batch publishing
 
