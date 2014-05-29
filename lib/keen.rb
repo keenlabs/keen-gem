@@ -47,7 +47,8 @@ module Keen
                    :multi_analysis, :median, :percentile
 
     def_delegators :default_client,
-                   :delete
+                   :delete,
+                   :event_collections
 
     attr_writer :logger
 

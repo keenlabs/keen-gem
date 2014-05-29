@@ -35,4 +35,14 @@ describe Keen::Client do
       expect_keen_delete(url, "sync", master_key)
     end
   end
+
+  describe '#event_collections' do
+    let(:events_url) { "#{api_url}/#{api_version}/projects/#{project_id}/events" }
+
+    it "should not require params" do
+      stub_keen_get(events_url, 200, [{ "a" => 1 }, { "b" => 2 }] )
+      client.event_collections.should == [{ "a" => 1 }, { "b" => 2 }]
+      expect_keen_get(events_url, "sync", master_key)
+    end
+  end
 end
