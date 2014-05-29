@@ -143,6 +143,16 @@ Many of there queries can be performed with group by, filters, series and interv
 
 Detailed information on available parameters for each API resource can be found on the [API Technical Reference](https://keen.io/docs/api/reference/).
 
+### Listing collections
+
+The Keen IO API let you get the event collections for the project set, it includes properties and their type. It also returns links to the collection resource.
+
+```ruby
+Keen.event_collections # => [{ "name": "purchases", "properties": { "item.id": "num", ... }, ... }]
+```
+
+Getting the list of event collections requires that the `KEEN_MASTER_KEY` is set.
+
 ### Deleting events
 
 The Keen IO API allows you to [delete events](https://keen.io/docs/maintenance/#deleting-event-collections)
