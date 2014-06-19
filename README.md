@@ -139,7 +139,7 @@ Keen.multi_analysis("purchases", analyses: {
   :timeframe => 'today', :group_by => "item.id") # => [{"item.id"=>2, "gross"=>314.49, "customers"=> 8}, { ... }]
 ```
 
-Many of there queries can be performed with group by, filters, series and intervals. The response is returned as a Ruby Hash or Array.
+Many of these queries can be performed with group by, filters, series and intervals. The response is returned as a Ruby Hash or Array.
 
 Detailed information on available parameters for each API resource can be found on the [API Technical Reference](https://keen.io/docs/api/reference/).
 
