@@ -19,7 +19,7 @@ describe Keen::Client do
     it 'should not require filters' do
       url = delete_url(event_collection)
       stub_keen_delete(url, 204)
-      client.delete(event_collection).should be_true
+      client.delete(event_collection).should == true
       expect_keen_delete(url, "sync", master_key)
     end
 
@@ -30,7 +30,7 @@ describe Keen::Client do
         ]
       }
       url = delete_url(event_collection, filters)
-      stub_keen_delete(url, 204).should be_true
+      stub_keen_delete(url, 204)
       client.delete(event_collection, filters)
       expect_keen_delete(url, "sync", master_key)
     end
