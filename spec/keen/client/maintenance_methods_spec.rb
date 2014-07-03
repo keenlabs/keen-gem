@@ -39,10 +39,20 @@ describe Keen::Client do
   describe '#event_collections' do
     let(:events_url) { "#{api_url}/#{api_version}/projects/#{project_id}/events" }
 
-    it "should not require params" do
+    it "should fetch the project's event resource" do
       stub_keen_get(events_url, 200, [{ "a" => 1 }, { "b" => 2 }] )
       client.event_collections.should == [{ "a" => 1 }, { "b" => 2 }]
       expect_keen_get(events_url, "sync", master_key)
+    end
+  end
+
+  describe '#event_collections' do
+    let(:project_url) { "#{api_url}/#{api_version}/projects/#{project_id}" }
+
+    it "should fetch the project resource" do
+      stub_keen_get(project_url, 200, [{ "a" => 1 }, { "b" => 2 }] )
+      client.project_info.should == [{ "a" => 1 }, { "b" => 2 }]
+      expect_keen_get(project_url, "sync", master_key)
     end
   end
 end

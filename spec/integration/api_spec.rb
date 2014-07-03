@@ -266,4 +266,21 @@ describe "Keen IO API" do
       results.first["delete"].should == "you"
     end
   end
+
+   describe "project methods" do
+     describe "event_collection" do
+       # requires a project with at least 1 collection
+       it "should return the project's collections as JSON" do
+         first_collection = Keen.event_collections.first
+         first_collection["properties"]["keen.timestamp"].should == "datetime"
+       end
+     end
+
+     describe "project_info" do
+       it "should return the project info as JSON" do
+         Keen.project_info["url"].should =~ Regexp.new(project_id)
+
+       end
+     end
+   end
 end
