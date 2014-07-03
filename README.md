@@ -298,7 +298,7 @@ EventMachine itself won't do this because it runs in a different thread. Here's 
 ### Changelog
 
 ##### 0.8.3
-+ Add support for getting a list of a projects collections
++ Add support for getting a list of a project's collections
 
 ##### 0.8.2
 + Add support for `median` and `percentile` analysis
