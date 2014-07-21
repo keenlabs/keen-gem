@@ -1,6 +1,7 @@
 # Keen IO Official Ruby Client Library
 
 [![Build Status](https://secure.travis-ci.org/keenlabs/keen-gem.png?branch=master)](http://travis-ci.org/keenlabs/keen-gem) [![Code Climate](https://codeclimate.com/github/keenlabs/keen-gem.png)](https://codeclimate.com/github/keenlabs/keen-gem)
+[![Gem Version](https://badge.fury.io/rb/keen.svg)](http://badge.fury.io/rb/keen)
 
 keen-gem is the official Ruby Client for the [Keen IO](https://keen.io/) API. The
 Keen IO API lets developers build analytics features directly into their apps.
