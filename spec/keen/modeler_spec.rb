@@ -11,11 +11,11 @@ describe Keen::Modeler, '::define' do
     end
 
     def nested_array
-      [OpenStruct.new(sku: '1234')]
+      [OpenStruct.new(:sku => '1234')]
     end
 
     def nested_obj
-      OpenStruct.new(sku: '4321', price: OpenStruct.new(base: 1200))
+      OpenStruct.new(:sku => '4321', :price => OpenStruct.new(:base => 1200))
     end
 
     def empty_array
@@ -35,7 +35,7 @@ describe Keen::Modeler, '::define' do
       description
     end
 
-    expect(schema.output).to eq title: 'Title', description: 'Description'
+    expect(schema.output).to eq :title => 'Title', :description => 'Description'
   end
 
   it 'handles nil attributes' do
@@ -44,7 +44,13 @@ describe Keen::Modeler, '::define' do
       description
       not_found
     end
-    response = { title: 'Title', description: 'Description', not_found: nil }
+
+    response = {
+      :title => 'Title',
+      :description => 'Description',
+      :not_found => nil
+    }
+
     expect(schema.output).to eq response
   end
 
@@ -64,7 +70,13 @@ describe Keen::Modeler, '::define' do
       end
     end
 
-    response = { surprise: { title: 'Title', description: 'Description' } }
+    response = {
+      :surprise => {
+        :title => 'Title',
+        :description => 'Description'
+      }
+    }
+
     expect(schema.output).to eq response
   end
 
@@ -78,7 +90,15 @@ describe Keen::Modeler, '::define' do
       end
     end
 
-    response = { a: { b: { title: 'Title', description: 'Description' } } }
+    response = {
+      :a => {
+        :b => {
+          :title => 'Title',
+          :description => 'Description'
+        }
+      }
+    }
+
     expect(schema.output).to eq response
   end
 
@@ -94,7 +114,15 @@ describe Keen::Modeler, '::define' do
       end
     end
 
-    response = { a: { title: 'Title'}, nested_obj: { item: { sku: '4321' } } }
+    response = {
+      :a => {
+        :title => 'Title'
+      },
+      :nested_obj => {
+        :item => { :sku => '4321' }
+      }
+    }
+
     expect(schema.output).to eq response
   end
 
@@ -107,13 +135,15 @@ describe Keen::Modeler, '::define' do
       end
     end
 
-    expect(schema.output).to eq  nope: { more_nope: { still_nope: nil } }
+    expect(schema.output).to eq(
+      :nope => { :more_nope => { :still_nope => nil } }
+    )
   end
 
   it 'accepts hash aliases' do
     schema = schema_with do
-      title as: 'header'
-      description as: 'body'
+      title :as => 'header'
+      description :as => 'body'
     end
 
     expect(schema.output).to eq 'header' => 'Title', 'body' => 'Description'
@@ -121,10 +151,10 @@ describe Keen::Modeler, '::define' do
 
   it 'accepts procs' do
     schema = schema_with do
-      summary -> { "#{object.title} #{object.description}" }
+      summary Proc.new { "#{object.title} #{object.description}" }
     end
 
-    expect(schema.output).to eq summary: 'Title Description'
+    expect(schema.output).to eq :summary => 'Title Description'
   end
 
   it 'handles nested objects' do
@@ -136,32 +166,34 @@ describe Keen::Modeler, '::define' do
         end
       end
     end
-    result = { nested_obj: { sku: '4321', price: { base: 1200 } } }
+    result = { :nested_obj => { :sku => '4321', :price => { :base => 1200 } } }
 
     expect(schema.output).to eq result
   end
 
   it 'handles nested objects with aliases' do
     schema = schema_with do
-      nested_obj as: :cart do
+      nested_obj :as => :cart do
         sku
         price do
-          base as: :cost
+          base :as => :cost
         end
       end
     end
 
-    expect(schema.output).to eq cart: { sku: '4321', price: { cost: 1200 } }
+    expect(schema.output).to eq(
+      :cart => { :sku => '4321', :price => { :cost => 1200 } }
+    )
   end
 
   it 'handles collections of objects' do
     schema = schema_with do
-      nested_array as: :cart do
+      nested_array :as => :cart do
         sku
       end
     end
 
-    expect(schema.output).to eq cart: [{ sku: '1234' }]
+    expect(schema.output).to eq :cart => [{ :sku => '1234' }]
   end
 
   it 'handles empty collections' do
@@ -170,7 +202,7 @@ describe Keen::Modeler, '::define' do
       empty_array
     end
 
-    expect(schema.output).to eq title: 'Title', empty_array: []
+    expect(schema.output).to eq :title => 'Title', :empty_array => []
   end
 
   def schema_with(&block)

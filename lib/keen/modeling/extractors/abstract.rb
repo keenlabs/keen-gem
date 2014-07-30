@@ -5,9 +5,9 @@ module Keen
         attr_writer :next
         attr_reader :object
 
-        def initialize(object, *args, proc)
-          @object = object
+        def initialize(object, proc, *args)
           @args = args
+          @object = object
           @proc = proc
         end
 

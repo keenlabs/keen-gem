@@ -12,12 +12,12 @@ describe Keen::Modeling::Extractors::Proc, '#extract_value' do
   end
 
   it 'has @value within scope on extract' do
-    value = double(title: 'This')
-    proc = proc_factory(-> { "#{value.title} is a title" }, value)
+    value = double(:title => 'This')
+    proc = proc_factory(Proc.new { "#{value.title} is a title" }, value)
     expect(proc.extract_value).to eq 'This is a title'
   end
 end
 
-def proc_factory(proc = -> { 'test' }, value = nil)
-  Keen::Modeling::Extractors::Proc.new value, proc, nil
+def proc_factory(proc = Proc.new { 'test' }, value = nil)
+  Keen::Modeling::Extractors::Proc.new value, nil, proc
 end

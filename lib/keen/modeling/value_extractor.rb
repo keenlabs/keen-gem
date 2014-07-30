@@ -5,10 +5,10 @@ module Keen
 
       def initialize(value, *args, &block)
         proc = block.to_proc if block
-        @extractor = Extractors::Enumerable.new(value, *args, proc)
+        @extractor = Extractors::Enumerable.new(value, proc, *args)
 
         extractors.inject(extractor) do |fallback, link|
-          fallback.next = link.new(value, *args, proc)
+          fallback.next = link.new(value, proc, *args)
         end
       end
 

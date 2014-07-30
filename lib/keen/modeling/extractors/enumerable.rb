@@ -7,7 +7,7 @@ module Keen
         end
 
         def extract_value
-          object.map { |obj| Block.new(obj, [], @proc).extract_value }
+          object.map { |obj| Block.new(obj, @proc, []).extract_value }
         end
 
         private
