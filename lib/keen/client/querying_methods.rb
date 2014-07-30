@@ -191,33 +191,49 @@ module Keen
         query(__method__, event_collection, params)
       end
 
+      # Returns the URL for a Query without running it
+      # @param event_colection
+      # @param params [Hash] (required)
+      #   analysis_type (required)
+      #   group_by (optional)
+      #   timeframe (optional)
+      #   interval (optional)
+      #   filters (optional) [Array]
+      #   timezone (optional)
+      def query_url(event_collection, params)
+        ensure_project_id!
+        query_name = params.delete(:analysis_type)
+        params[:event_collection] = event_collection.to_s if event_collection
+        "#{self.api_url}#{api_query_resource_path(query_name)}?#{preprocess_params(params)}"
+      end
+
       private
 
       def query(query_name, event_collection, params)
-        query_params = clone_params(params)
-        ensure_project_id!
         ensure_read_key!
-
-        if event_collection
-          query_params[:event_collection] = event_collection.to_s
-        end
-
-        query_params = preprocess_params(query_params)
-
-        begin
-          response = Keen::HTTP::Sync.new(self.api_url, self.proxy_url).get(
-              :path => "#{api_query_resource_path(query_name)}?#{query_params}",
-              :headers => api_headers(self.read_key, "sync"))
-        rescue Exception => http_error
-          raise HttpError.new("Couldn't perform #{query_name} on Keen IO: #{http_error.message}", http_error)
-        end
-
+        query_params = (params.dup || {}).merge({:analysis_type => query_name})
+        url = query_url(event_collection, query_params)
+        response = get_response(url)
         response_body = response.body.chomp
         process_response(response.code, response_body)["result"]
       end
 
-      def clone_params(params)
-        params.dup
+      def get_response(url)
+        uri = URI.parse(url)
+        http_sync.get(
+          :path => "#{uri.path}?#{uri.query}",
+          :headers => headers
+        )
+      rescue Exception => http_error
+        raise HttpError.new("Couldn't perform #{@analysis_type} on Keen IO: #{http_error.message}", http_error)
+      end
+
+      def http_sync
+        Keen::HTTP::Sync.new(self.api_url, self.proxy_url)
+      end
+
+      def headers
+        api_headers(self.read_key, "sync")
       end
 
       def api_query_resource_path(analysis_type)
