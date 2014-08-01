@@ -49,7 +49,8 @@ module Keen
     def_delegators :default_client,
                    :delete,
                    :event_collections,
-                   :project_info
+                   :project_info,
+                   :query_url
 
     attr_writer :logger
 
