@@ -49,7 +49,7 @@ environment-based approach because it keeps sensitive information out of the cod
 
 Once your environment is properly configured, the `Keen` object is ready to go immediately.
 
-### Publishing events
+### Synchronous Publishing
 
 Publishing events requires that `KEEN_WRITE_KEY` is set. Publish an event like this:
 
@@ -66,12 +66,9 @@ The event collection need not exist in advance. If it doesn't exist, Keen IO wil
 
 ### Asynchronous publishing
 
-Publishing events shouldn't slow your application down or make
-users wait longer for page loads & server requests.
+Publishing events shouldn't slow your application down or make users wait longer for page loads & server requests.
 
-The Keen IO API is fast, but any synchronous network call you make will
-negatively impact response times. For this reason, we recommend you use the `publish_async`
-method to send events.
+The Keen IO API is fast, but any synchronous network call you make will negatively impact response times. For this reason, we recommend you use the `publish_async` method to send events when latency is a concern. Alternatively, you can drop events into a background queue e.g. Delayed Jobs and publish synchronously from there.
 
 To compare asychronous vs. synchronous performance, check out the [keen-gem-example](http://keen-gem-example.herokuapp.com/) app.
 
