@@ -58,7 +58,9 @@ Keen.publish(:sign_ups, { :username => "lloyd", :referred_by => "harry" })
 ```
 
 This will publish an event to the `sign_ups` collection with the `username` and `referred_by` properties set. 
-The event properties can be any valid Ruby hash and nested properties are allowed. You can learn more about data modeling with Keen IO with the [Data Modeling Guide](https://keen.io/docs/event-data-modeling/event-data-intro/).
+The event properties can be any valid Ruby hash and nested properties are allowed. You can learn more about data modeling with Keen IO with the [Data Modeling Guide](https://keen.io/docs/event-data-modeling/event-data-intro/). 
+
+If you need an easier way to construct hashes from objects, you can leverage a marshalling gem like [Blockhead](https://github.com/vinniefranco/blockhead)
 
 The event collection need not exist in advance. If it doesn't exist, Keen IO will create it on the first request.
 
