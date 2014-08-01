@@ -94,6 +94,7 @@ describe Keen do
     # pull the query methods list at runtime in order to ensure
     # any new methods have a corresponding delegator
     Keen::Client::QueryingMethods.instance_methods.each do |_method|
+      next if _method == :query
       it "should forward the #{_method} query method" do
         @default_client.should_receive(_method).with("users", {})
         Keen.send(_method, "users", {})

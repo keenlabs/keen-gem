@@ -207,8 +207,15 @@ module Keen
         "#{self.api_url}#{api_query_resource_path(query_name)}?#{preprocess_params(params)}"
       end
 
-      private
-
+      # Run a query
+      # @param event_colection
+      # @param params [Hash] (required)
+      #   analysis_type (required)
+      #   group_by (optional)
+      #   timeframe (optional)
+      #   interval (optional)
+      #   filters (optional) [Array]
+      #   timezone (optional)
       def query(query_name, event_collection, params)
         query_params = (params.dup || {})
         url = query_url(query_name, event_collection, query_params)
@@ -216,6 +223,8 @@ module Keen
         response_body = response.body.chomp
         process_response(response.code, response_body)["result"]
       end
+
+      private
 
       def get_response(url)
         uri = URI.parse(url)
