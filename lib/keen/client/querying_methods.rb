@@ -200,9 +200,9 @@ module Keen
       #   interval (optional)
       #   filters (optional) [Array]
       #   timezone (optional)
-      def query_url(event_collection, params)
+      def query_url(query_name, event_collection, params)
         ensure_project_id!
-        query_name = params.delete(:analysis_type)
+        ensure_read_key!
         params[:event_collection] = event_collection.to_s if event_collection
         "#{self.api_url}#{api_query_resource_path(query_name)}?#{preprocess_params(params)}"
       end
@@ -210,9 +210,8 @@ module Keen
       private
 
       def query(query_name, event_collection, params)
-        ensure_read_key!
-        query_params = (params.dup || {}).merge({:analysis_type => query_name})
-        url = query_url(event_collection, query_params)
+        query_params = (params.dup || {})
+        url = query_url(query_name, event_collection, query_params)
         response = get_response(url)
         response_body = response.body.chomp
         process_response(response.code, response_body)["result"]
@@ -220,20 +219,12 @@ module Keen
 
       def get_response(url)
         uri = URI.parse(url)
-        http_sync.get(
+        Keen::HTTP::Sync.new(self.api_url, self.proxy_url).get(
           :path => "#{uri.path}?#{uri.query}",
-          :headers => headers
+          :headers => api_headers(self.read_key, "sync")
         )
       rescue Exception => http_error
         raise HttpError.new("Couldn't perform #{@analysis_type} on Keen IO: #{http_error.message}", http_error)
-      end
-
-      def http_sync
-        Keen::HTTP::Sync.new(self.api_url, self.proxy_url)
-      end
-
-      def headers
-        api_headers(self.read_key, "sync")
       end
 
       def api_query_resource_path(analysis_type)
