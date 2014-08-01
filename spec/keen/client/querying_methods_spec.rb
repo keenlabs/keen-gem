@@ -172,4 +172,27 @@ describe Keen::Client do
       expect_keen_get(url, "sync", read_key)
     end
   end
+
+  describe "#query_url" do
+    let(:expected) { 'https://notreal.keen.io/3.0/projects/12345/queries/count?event_collection=users' }
+    let(:response) { client.query_url(event_collection, {:analysis_type => 'count'}) }
+
+    it "should require a project id" do
+      expect {
+        Keen::Client.new(:read_key => read_key).query_url("users", {})
+      }.to raise_error(Keen::ConfigurationError, "Keen IO Exception: Project ID must be set")
+    end
+
+    it "should returns the URL for a query" do
+      expect(response).to eq expected
+    end
+
+    it "should not run the query" do
+      Keen::HTTP::Sync.should_not receive(:new)
+    end
+
+    it "should not include the analysis type in the query params" do
+      expect(response).not_to include 'analysis_type='
+    end
+  end
 end
