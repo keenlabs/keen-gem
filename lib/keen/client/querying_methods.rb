@@ -200,7 +200,7 @@ module Keen
       #   interval (optional)
       #   filters (optional) [Array]
       #   timezone (optional)
-      def query_url(query_name, event_collection, params)
+      def query_url(query_name, event_collection, params={})
         ensure_project_id!
         ensure_read_key!
         params[:event_collection] = event_collection.to_s if event_collection
@@ -216,7 +216,7 @@ module Keen
       #   interval (optional)
       #   filters (optional) [Array]
       #   timezone (optional)
-      def query(query_name, event_collection, params)
+      def query(query_name, event_collection, params={})
         query_params = (params.dup || {})
         url = query_url(query_name, event_collection, query_params)
         response = get_response(url)
