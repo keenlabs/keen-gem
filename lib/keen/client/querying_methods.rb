@@ -200,11 +200,12 @@ module Keen
       #   interval (optional)
       #   filters (optional) [Array]
       #   timezone (optional)
-      def query_url(query_name, event_collection, params={})
-        ensure_project_id!
-        ensure_read_key!
-        params[:event_collection] = event_collection.to_s if event_collection
-        "#{self.api_url}#{api_query_resource_path(query_name)}?#{preprocess_params(params)}"
+      # @param options
+      #   exclude_api_key
+      def query_url(query_name, event_collection, params={}, options={})
+        str = _query_url(query_name, event_collection, params)
+        str << "&api_key=#{self.read_key}" unless options[:exclude_api_key]
+        str
       end
 
       # Run a query
@@ -217,14 +218,22 @@ module Keen
       #   filters (optional) [Array]
       #   timezone (optional)
       def query(query_name, event_collection, params={})
-        query_params = (params.dup || {})
-        url = query_url(query_name, event_collection, query_params)
+        url = _query_url(query_name, event_collection, params)
         response = get_response(url)
         response_body = response.body.chomp
         process_response(response.code, response_body)["result"]
       end
 
       private
+
+      def _query_url(query_name, event_collection, params={})
+        ensure_project_id!
+        ensure_read_key!
+
+        query_params = params.dup
+        query_params[:event_collection] = event_collection.to_s if event_collection
+        "#{self.api_url}#{api_query_resource_path(query_name)}?#{preprocess_params(query_params)}"
+      end
 
       def get_response(url)
         uri = URI.parse(url)

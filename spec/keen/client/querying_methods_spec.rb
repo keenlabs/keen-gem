@@ -178,6 +178,11 @@ describe Keen::Client do
 
     it "should returns the URL for a query" do
       response = client.query_url('count', event_collection)
+      expect(response).to eq 'https://notreal.keen.io/3.0/projects/12345/queries/count?event_collection=users&api_key=abcde'
+    end
+
+    it "should exclude the api key if option is passed" do
+      response = client.query_url('count', event_collection, {}, :exclude_api_key => true)
       expect(response).to eq 'https://notreal.keen.io/3.0/projects/12345/queries/count?event_collection=users'
     end
 
