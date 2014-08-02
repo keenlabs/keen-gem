@@ -202,8 +202,8 @@ module Keen
       #   timezone (optional)
       # @param options
       #   exclude_api_key
-      def query_url(query_name, event_collection, params={}, options={})
-        str = _query_url(query_name, event_collection, params)
+      def query_url(analysis_type, event_collection, params={}, options={})
+        str = _query_url(analysis_type, event_collection, params)
         str << "&api_key=#{self.read_key}" unless options[:exclude_api_key]
         str
       end
@@ -217,8 +217,8 @@ module Keen
       #   interval (optional)
       #   filters (optional) [Array]
       #   timezone (optional)
-      def query(query_name, event_collection, params={})
-        url = _query_url(query_name, event_collection, params)
+      def query(analysis_type, event_collection, params={})
+        url = _query_url(analysis_type, event_collection, params)
         response = get_response(url)
         response_body = response.body.chomp
         process_response(response.code, response_body)["result"]
@@ -226,13 +226,13 @@ module Keen
 
       private
 
-      def _query_url(query_name, event_collection, params={})
+      def _query_url(analysis_type, event_collection, params={})
         ensure_project_id!
         ensure_read_key!
 
         query_params = params.dup
         query_params[:event_collection] = event_collection.to_s if event_collection
-        "#{self.api_url}#{api_query_resource_path(query_name)}?#{preprocess_params(query_params)}"
+        "#{self.api_url}#{api_query_resource_path(analysis_type)}?#{preprocess_params(query_params)}"
       end
 
       def get_response(url)
