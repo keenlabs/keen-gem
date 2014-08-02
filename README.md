@@ -143,6 +143,25 @@ Many of these queries can be performed with group by, filters, series and interv
 
 Detailed information on available parameters for each API resource can be found on the [API Technical Reference](https://keen.io/docs/api/reference/).
 
+##### The Query Method
+
+You can also specify the analysis type as a parameter to a method called `query`:
+
+``` ruby
+Keen.query("median", "purchases", :target_property => "price")  # => 60
+```
+
+This simplifes querying code where the analysis type is dynamic.
+
+##### Getting Query URLs
+
+Sometimes you just want the URL for a query, but don't actually need to run it. Maybe to paste into a dashboard, or open in your browser. In that case, use the `query_url` method:
+
+``` ruby
+Keen.query_url("median", "purchases", :target_property => "price")
+# => "https://api.keen.io/3.0/projects/<project-id>/queries/median?target_property=price&event_collection=purchases"
+```
+
 ### Listing collections
 
 The Keen IO API let you get the event collections for the project set, it includes properties and their type. It also returns links to the collection resource.
