@@ -159,6 +159,13 @@ Sometimes you just want the URL for a query, but don't actually need to run it. 
 
 ``` ruby
 Keen.query_url("median", "purchases", :target_property => "price")
+# => "https://api.keen.io/3.0/projects/<project-id>/queries/median?target_property=price&event_collection=purchases&api_key=<api-key>"
+```
+
+If you don't want the API key included, pass the `:exclude_api_key` option:
+
+``` ruby
+Keen.query_url("median", "purchases", { :target_property => "price" }, :exclude_api_key => true)
 # => "https://api.keen.io/3.0/projects/<project-id>/queries/median?target_property=price&event_collection=purchases"
 ```
 
