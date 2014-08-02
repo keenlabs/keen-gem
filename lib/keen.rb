@@ -50,7 +50,8 @@ module Keen
                    :delete,
                    :event_collections,
                    :project_info,
-                   :query_url
+                   :query_url,
+                   :query
 
     attr_writer :logger
 
