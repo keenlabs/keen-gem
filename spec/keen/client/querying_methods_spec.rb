@@ -177,8 +177,8 @@ describe Keen::Client do
     let(:expected) {  }
 
     it "should returns the URL for a query" do
-      response = client.query_url('count', event_collection, :timeframe => 'last_20_minutes')
-      expect(response).to eq 'https://notreal.keen.io/3.0/projects/12345/queries/count?timeframe=last_20_minutes&event_collection=users'
+      response = client.query_url('count', event_collection)
+      expect(response).to eq 'https://notreal.keen.io/3.0/projects/12345/queries/count?event_collection=users'
     end
 
     it "should not run the query" do
