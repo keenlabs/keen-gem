@@ -323,7 +323,7 @@ EventMachine itself won't do this because it runs in a different thread. Here's 
 
 ### Changelog
 
-##### 0.8.5
+##### 0.8.6
 + Add support for getting [query URLs](https://github.com/keenlabs/keen-gem/pull/47)
 + Make the `query` method public so code supporting dynamic analysis types is easier to write
 
