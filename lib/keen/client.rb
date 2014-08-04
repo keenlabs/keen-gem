@@ -104,13 +104,7 @@ module Keen
       preprocess_percentile(params)
       preprocess_property_names(params)
 
-      query_params = ""
-      params.each do |param, value|
-        query_params << "#{param}=#{CGI.escape(value)}&"
-      end
-
-      query_params.chop!
-      query_params
+      params.map { |key, value| "#{key}=#{CGI.escape(value)}" }.join('&')
     end
 
     def preprocess_encodables(params)
