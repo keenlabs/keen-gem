@@ -1,3 +1,5 @@
+require 'uri'
+
 module Keen
   class Client
     module QueryingMethods
