@@ -200,6 +200,20 @@ Keen.delete(:signups, filters: [{
 
 ### Other code examples
 
+#### Overwriting event timestamps
+
+Two time-related properties are included in your event automatically. The properties “keen.timestamp” and “keen.created_at” are set at the time your event is recorded. You have the ability to overwrite the keen.timestamp property. This could be useful, for example, if you are backfilling historical data. Be sure to use [ISO-8601 Format](https://keen.io/docs/event-data-modeling/event-data-intro/#iso-8601-format).
+
+Keen stores all date and time information in UTC!
+
+```ruby
+Keen.publish(:sign_ups, {
+  :keen => { :timestamp => "2012-12-14T20:24:01.123000+00:00" },
+  :username => "lloyd",
+  :referred_by => "harry" 
+})
+```
+
 #### Batch publishing
 
 The keen-gem supports publishing events in batches via the `publish_batch` method. Here's an example usage:
