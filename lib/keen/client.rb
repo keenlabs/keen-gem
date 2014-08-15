@@ -80,15 +80,15 @@ module Keen
     end
 
     def ensure_write_key!
-      raise ConfigurationError, "Write Key must be set for sending events" unless self.write_key
+      raise ConfigurationError, "Write Key must be set for this operation" unless self.write_key
     end
 
     def ensure_master_key!
-      raise ConfigurationError, "Master Key must be set for delete event collections" unless self.master_key
+      raise ConfigurationError, "Master Key must be set for this operation" unless self.master_key
     end
 
     def ensure_read_key!
-      raise ConfigurationError, "Read Key must be set for queries" unless self.read_key
+      raise ConfigurationError, "Read Key must be set for this operation" unless self.read_key
     end
 
     def api_event_collection_resource_path(event_collection)
