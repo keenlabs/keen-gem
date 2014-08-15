@@ -43,7 +43,7 @@ describe Keen::Client do
       it "should require a read key" do
         expect {
           Keen::Client.new(:project_id => project_id).count("users", {})
-        }.to raise_error(Keen::ConfigurationError, "Keen IO Exception: Read Key must be set for queries")
+        }.to raise_error(Keen::ConfigurationError, "Keen IO Exception: Read Key must be set for this operation")
       end
     end
 

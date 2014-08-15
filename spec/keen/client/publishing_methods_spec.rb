@@ -69,7 +69,7 @@ describe Keen::Client::PublishingMethods do
         Keen::Client.new(
           :project_id => "12345"
         ).publish(collection, event_properties)
-      }.to raise_error(Keen::ConfigurationError, "Keen IO Exception: Write Key must be set for sending events")
+      }.to raise_error(Keen::ConfigurationError, "Keen IO Exception: Write Key must be set for this operation")
     end
   end
 
@@ -100,7 +100,7 @@ describe Keen::Client::PublishingMethods do
         Keen::Client.new(
           :project_id => "12345"
         ).publish_batch(events)
-      }.to raise_error(Keen::ConfigurationError, "Keen IO Exception: Write Key must be set for sending events")
+      }.to raise_error(Keen::ConfigurationError, "Keen IO Exception: Write Key must be set for this operation")
     end
 
     it "should publish a batch of events" do
@@ -240,7 +240,7 @@ describe Keen::Client::PublishingMethods do
           Keen::Client.new(
             :project_id => "12345"
           ).publish_batch_async(events)
-        }.to raise_error(Keen::ConfigurationError, "Keen IO Exception: Write Key must be set for sending events")
+        }.to raise_error(Keen::ConfigurationError, "Keen IO Exception: Write Key must be set for this operation")
       end
 
       describe "deferrable callbacks" do
