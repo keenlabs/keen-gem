@@ -153,6 +153,12 @@ Keen.query("median", "purchases", :target_property => "price")  # => 60
 
 This simplifes querying code where the analysis type is dynamic.
 
+##### Query Options
+
+Each query method or alias takes an optional hash of options as an additional parameter. Possible keys are:
+
+`:response` – Set to `:all_keys` to return the full API response (usually only the value of the `"result"` key is returned).
+
 ##### Getting Query URLs
 
 Sometimes you just want the URL for a query, but don't actually need to run it. Maybe to paste into a dashboard, or open in your browser. In that case, use the `query_url` method:
@@ -336,6 +342,9 @@ If you write a script that uses `publish_async`, you need to keep the script ali
 EventMachine itself won't do this because it runs in a different thread. Here's an [example gist](https://gist.github.com/dzello/7472823) that shows how to exit the process after the event has been recorded.
 
 ### Changelog
+
+##### 0.8.7
++ Add support for returning all keys back from query API responses
 
 ##### 0.8.6
 + Add support for getting [query URLs](https://github.com/keenlabs/keen-gem/pull/47)
