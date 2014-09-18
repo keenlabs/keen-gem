@@ -238,6 +238,18 @@ describe "Keen IO API" do
       results.should == [2, 1]
     end
 
+    it "should return all keys of valid funnel if full result option is passed" do
+      steps = [{
+        :event_collection => event_collection,
+        :actor_property => "username"
+      }, {
+        :event_collection => @returns_event_collection,
+        :actor_property => "username"
+      }]
+      results = Keen.funnel({ :steps => steps }, { :response => :all_keys })
+      results["result"].should == [2, 1]
+    end
+
     it "should apply filters" do
       Keen.count(event_collection, :filters => [{
         :property_name => "username",

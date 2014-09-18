@@ -19,14 +19,14 @@ describe Keen::Client do
 
     ["minimum", "maximum", "sum", "average", "count", "count_unique", "select_unique", "extraction", "multi_analysis", "median", "percentile"].each do |query_name|
       it "should call keen query passing the query name" do
-        client.should_receive(:query).with(query_name.to_sym, event_collection, params)
+        client.should_receive(:query).with(query_name.to_sym, event_collection, params, {})
         client.send(query_name, event_collection, params)
       end
     end
 
     describe "funnel" do
       it "should call keen query w/o event collection" do
-        client.should_receive(:query).with(:funnel, nil, params)
+        client.should_receive(:query).with(:funnel, nil, params, {})
         client.funnel(params)
       end
     end
@@ -139,6 +139,13 @@ describe Keen::Client do
 
         test_query("&timeframe=#{timeframe_str}", options = {:timeframe => timeframe})
         options.should eq({:timeframe => timeframe})
+      end
+
+      it "should return the full API response if the response option is set to all_keys" do
+        expected_url = query_url("funnel", "?steps=#{MultiJson.encode([])}")
+        stub_keen_get(expected_url, 200, :result => [1])
+        api_response = query.call("funnel", nil, { :steps => [] }, { :response => :all_keys })
+        api_response.should == { "result" => [1] }
       end
     end
   end

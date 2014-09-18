@@ -15,8 +15,8 @@ module Keen
       #   interval (optional)
       #   filters (optional) [Array]
       #   timezone (optional)
-      def count(event_collection, params={})
-        query(__method__, event_collection, params)
+      def count(event_collection, params={}, options={})
+        query(__method__, event_collection, params, options)
       end
 
       # Runs a count unique query.
@@ -31,8 +31,8 @@ module Keen
       #   interval (optional)
       #   filters (optional) [Array]
       #   timezone (optional)
-      def count_unique(event_collection, params)
-        query(__method__, event_collection, params)
+      def count_unique(event_collection, params, options={})
+        query(__method__, event_collection, params, options)
       end
 
       # Runs a minimum query.
@@ -47,8 +47,8 @@ module Keen
       #   interval (optional)
       #   filters (optional) [Array]
       #   timezone (optional)
-      def minimum(event_collection, params)
-        query(__method__, event_collection, params)
+      def minimum(event_collection, params, options={})
+        query(__method__, event_collection, params, options)
       end
 
       # Runs a maximum query.
@@ -63,8 +63,8 @@ module Keen
       #   interval (optional)
       #   filters (optional) [Array]
       #   timezone (optional)
-      def maximum(event_collection, params)
-        query(__method__, event_collection, params)
+      def maximum(event_collection, params, options={})
+        query(__method__, event_collection, params, options)
       end
 
       # Runs a sum query.
@@ -79,8 +79,8 @@ module Keen
       #   interval (optional)
       #   filters (optional) [Array]
       #   timezone (optional)
-      def sum(event_collection, params)
-        query(__method__, event_collection, params)
+      def sum(event_collection, params, options={})
+        query(__method__, event_collection, params, options)
       end
 
       # Runs a average query.
@@ -95,8 +95,8 @@ module Keen
       #   interval (optional)
       #   filters (optional) [Array]
       #   timezone (optional)
-      def average(event_collection, params)
-        query(__method__, event_collection, params)
+      def average(event_collection, params, options={})
+        query(__method__, event_collection, params, options)
       end
 
       # Runs a median query.
@@ -111,8 +111,8 @@ module Keen
       #   interval (optional)
       #   filters (optional) [Array]
       #   timezone (optional)
-      def median(event_collection, params)
-        query(__method__, event_collection, params)
+      def median(event_collection, params, options={})
+        query(__method__, event_collection, params, options)
       end
 
       # Runs a percentile query.
@@ -128,8 +128,8 @@ module Keen
       #   interval (optional)
       #   filters (optional) [Array]
       #   timezone (optional)
-      def percentile(event_collection, params)
-        query(__method__, event_collection, params)
+      def percentile(event_collection, params, options={})
+        query(__method__, event_collection, params, options)
       end
 
       # Runs a select_unique query.
@@ -144,8 +144,8 @@ module Keen
       #   interval (optional)
       #   filters (optional) [Array]
       #   timezone (optional)
-      def select_unique(event_collection, params)
-        query(__method__, event_collection, params)
+      def select_unique(event_collection, params, options={})
+        query(__method__, event_collection, params, options)
       end
 
       # Runs a extraction query.
@@ -161,8 +161,8 @@ module Keen
       #   filters (optional) [Array]
       #   timezone (optional)
       #   latest (optional)
-      def extraction(event_collection, params={})
-        query(__method__, event_collection, params)
+      def extraction(event_collection, params={}, options={})
+        query(__method__, event_collection, params, options)
       end
 
       # Runs a funnel query.
@@ -172,8 +172,8 @@ module Keen
       # @param event_collection
       # @param params [Hash] (optional)
       #   steps (required)
-      def funnel(params)
-        query(__method__, nil, params)
+      def funnel(params, options={})
+        query(__method__, nil, params, options)
       end
 
       # Runs a multi-analysis query
@@ -189,8 +189,8 @@ module Keen
       #     label (required)
       #     analysis_type (required)
       #     target_property (optional)
-      def multi_analysis(event_collection, params)
-        query(__method__, event_collection, params)
+      def multi_analysis(event_collection, params, options={})
+        query(__method__, event_collection, params, options)
       end
 
       # Returns the URL for a Query without running it
@@ -205,7 +205,7 @@ module Keen
       # @param options
       #   exclude_api_key
       def query_url(analysis_type, event_collection, params={}, options={})
-        str = _query_url(analysis_type, event_collection, params)
+        str = _query_url(analysis_type, event_collection, params, options)
         str << "&api_key=#{self.read_key}" unless options[:exclude_api_key]
         str
       end
@@ -219,16 +219,18 @@ module Keen
       #   interval (optional)
       #   filters (optional) [Array]
       #   timezone (optional)
-      def query(analysis_type, event_collection, params={})
-        url = _query_url(analysis_type, event_collection, params)
+      def query(analysis_type, event_collection, params={}, options={})
+        url = _query_url(analysis_type, event_collection, params, options)
         response = get_response(url)
         response_body = response.body.chomp
-        process_response(response.code, response_body)["result"]
+        api_result = process_response(response.code, response_body)
+        api_result = api_result["result"] unless options[:response] == :all_keys
+        api_result
       end
 
       private
 
-      def _query_url(analysis_type, event_collection, params={})
+      def _query_url(analysis_type, event_collection, params={}, options={})
         ensure_project_id!
         ensure_read_key!
 
