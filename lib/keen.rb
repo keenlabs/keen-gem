@@ -73,7 +73,8 @@ module Keen
         :master_key => ENV['KEEN_MASTER_KEY'],
         :api_url => ENV['KEEN_API_URL'],
         :proxy_url => ENV['KEEN_PROXY_URL'],
-        :proxy_type => ENV['KEEN_PROXY_TYPE']
+        :proxy_type => ENV['KEEN_PROXY_TYPE'],
+        :read_timeout => ENV['KEEN_READ_TIMEOUT']
       )
     end
   end

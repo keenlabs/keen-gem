@@ -241,7 +241,7 @@ module Keen
 
       def get_response(url)
         uri = URI.parse(url)
-        Keen::HTTP::Sync.new(self.api_url, self.proxy_url).get(
+        Keen::HTTP::Sync.new(self.api_url, self.proxy_url, self.read_timeout).get(
           :path => "#{uri.path}?#{uri.query}",
           :headers => api_headers(self.read_key, "sync")
         )
