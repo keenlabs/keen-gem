@@ -6,16 +6,10 @@ module Keen
         require 'net/http'
 
         uri = URI.parse(base_url)
-        if proxy_url
-          proxy_uri = URI.parse(proxy_url)
-          @http = Net::HTTP::Proxy(
-              proxy_uri.host,
-              proxy_uri.port,
-              proxy_uri.user,
-              proxy_uri.password).new(uri.host, uri.port)
-        else
-          @http = Net::HTTP.new(uri.host, uri.port)
-        end
+        arguments = [uri.host, uri.port]
+        arguments+= proxy_arguments_for(proxy_url) if proxy_url
+
+        @http = Net::HTTP.new(*arguments)
 
         if uri.scheme == "https"
           require 'net/https'
@@ -24,6 +18,11 @@ module Keen
           @http.verify_depth = 5
           @http.ca_file = File.expand_path("../../../config/cacert.pem", __FILE__)
         end
+      end
+
+      def proxy_arguments_for(uri)
+        proxy_uri = URI.parse(proxy_url)
+        [proxy_uri.host, proxy_uri.port, proxy_uri.user, proxy_uri.password]
       end
 
       def post(options)
