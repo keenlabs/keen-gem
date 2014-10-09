@@ -67,5 +67,9 @@ end
 
 RSpec.configure do |config|
   config.include(Keen::SpecHelpers)
+
+  config.color      = true
+  config.tty        = true
+  config.formatter  = :progress # :progress, :documentation, :html, :textmate
 end
 
