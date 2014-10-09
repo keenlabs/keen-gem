@@ -92,7 +92,7 @@ describe Keen::Client do
     end
 
     it "strips out nil parameters" do
-      params = { timeframe: nil, group_by: "foo.bar" }
+      params = { :timeframe => nil, :group_by => "foo.bar" }
       expect(
         client.instance_eval{preprocess_params(params)}
       ).to eq("group_by=foo.bar")
@@ -101,17 +101,17 @@ describe Keen::Client do
 
   describe "preprocess_timeframe" do
     it "does nothing for string values" do
-      params = { timeframe: 'this_3_days' }
+      params = { :timeframe => 'this_3_days' }
       expect {
         client.instance_eval{preprocess_timeframe(params)}
       }.to_not change { params }
     end
 
     it "multi encodes for hash values" do
-      params = {timeframe: {start: '2012-08-13T19:00:00.000Z', end: '2013-09-20T19:00:00.000Z'} }
+      params = {:timeframe => {:start => '2012-08-13T19:00:00.000Z', :end => '2013-09-20T19:00:00.000Z'} }
       expect {
         client.instance_eval{preprocess_timeframe(params)}
-      }.to change {params}.to({timeframe: "{\"start\":\"2012-08-13T19:00:00.000Z\",\"end\":\"2013-09-20T19:00:00.000Z\"}"})
+      }.to change {params}.to({:timeframe => "{\"start\":\"2012-08-13T19:00:00.000Z\",\"end\":\"2013-09-20T19:00:00.000Z\"}"})
     end
   end
 end
