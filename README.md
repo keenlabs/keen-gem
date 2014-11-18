@@ -3,7 +3,7 @@
 [![Build Status](https://secure.travis-ci.org/keenlabs/keen-gem.png?branch=master)](http://travis-ci.org/keenlabs/keen-gem) [![Code Climate](https://codeclimate.com/github/keenlabs/keen-gem.png)](https://codeclimate.com/github/keenlabs/keen-gem)
 [![Gem Version](https://badge.fury.io/rb/keen.svg)](http://badge.fury.io/rb/keen)
 
-keen-gem is the official Ruby Client for the [Keen IO](https://keen.io/) API. The
+keen-gem is the official Ruby Client for the [Keen IO](https://keen.io/?s=gh-gem) API. The
 Keen IO API lets developers build analytics features directly into their apps.
 
 ### Installation
@@ -25,11 +25,11 @@ keen is tested with Ruby 1.8 and 1.9 on:
 ### Usage
 
 Before making any API calls, you must supply keen-gem with a Project ID and one or more authentication keys.
-(If you need a Keen IO account, [sign up here](https://keen.io/signup) - it's free.) 
+(If you need a Keen IO account, [sign up here](https://keen.io/signup?s=gh-gem) - it's free.) 
 
 Setting a write key is required for publishing events. Setting a read key is required for running queries. 
 Setting a master key is required for performing deletes. You can find keys for all of your projects
-on [keen.io](https://keen.io).
+on [keen.io](https://keen.io?s=gh-gem).
 
 The recommended way to set keys is via the environment. The keys you can set are 
 `KEEN_PROJECT_ID`, `KEEN_WRITE_KEY`, `KEEN_READ_KEY`, and `KEEN_MASTER_KEY`.
@@ -58,7 +58,7 @@ Keen.publish(:sign_ups, { :username => "lloyd", :referred_by => "harry" })
 ```
 
 This will publish an event to the `sign_ups` collection with the `username` and `referred_by` properties set. 
-The event properties can be any valid Ruby hash. Nested properties are allowed. Lists of objects are also allowed, but not recommended because they can be difficult to query over. See alternatives to lists of objects [here](http://stackoverflow.com/questions/24620330/nested-json-objects-in-keen-io). You can learn more about data modeling with Keen IO with the [Data Modeling Guide](https://keen.io/docs/event-data-modeling/event-data-intro/). 
+The event properties can be any valid Ruby hash. Nested properties are allowed. Lists of objects are also allowed, but not recommended because they can be difficult to query over. See alternatives to lists of objects [here](http://stackoverflow.com/questions/24620330/nested-json-objects-in-keen-io). You can learn more about data modeling with Keen IO with the [Data Modeling Guide](https://keen.io/docs/event-data-modeling/event-data-intro/?s=gh-gem). 
 
 Protip: Marshalling gems like [Blockhead](https://github.com/vinniefranco/blockhead) make converting structs or objects to hashes easier.
 
@@ -106,7 +106,7 @@ to resume processing immediately.
 
 ### Running queries
 
-The Keen IO API provides rich querying capabilities against your event data set. For more information, see the [Data Analysis API Guide](https://keen.io/docs/data-analysis/).
+The Keen IO API provides rich querying capabilities against your event data set. For more information, see the [Data Analysis API Guide](https://keen.io/docs/data-analysis/?s=gh-gem).
 
 Running queries requires that `KEEN_READ_KEY` is set.
 
@@ -141,7 +141,7 @@ Keen.multi_analysis("purchases", analyses: {
 
 Many of these queries can be performed with group by, filters, series and intervals. The response is returned as a Ruby Hash or Array.
 
-Detailed information on available parameters for each API resource can be found on the [API Technical Reference](https://keen.io/docs/api/reference/).
+Detailed information on available parameters for each API resource can be found on the [API Technical Reference](https://keen.io/docs/api/reference/?s=gh-gem).
 
 ##### The Query Method
 
@@ -187,7 +187,7 @@ Getting the list of event collections requires that the `KEEN_MASTER_KEY` is set
 
 ### Deleting events
 
-The Keen IO API allows you to [delete events](https://keen.io/docs/maintenance/#deleting-event-collections)
+The Keen IO API allows you to [delete events](https://keen.io/docs/maintenance/#deleting-event-collections?s=gh-gem)
 from event collections, optionally supplying a filter to narrow the scope of what you would like to delete.
 
 Deleting events requires that the `KEEN_MASTER_KEY` is set.
@@ -208,7 +208,7 @@ Keen.delete(:signups, filters: [{
 
 #### Overwriting event timestamps
 
-Two time-related properties are included in your event automatically. The properties “keen.timestamp” and “keen.created_at” are set at the time your event is recorded. You have the ability to overwrite the keen.timestamp property. This could be useful, for example, if you are backfilling historical data. Be sure to use [ISO-8601 Format](https://keen.io/docs/event-data-modeling/event-data-intro/#iso-8601-format).
+Two time-related properties are included in your event automatically. The properties “keen.timestamp” and “keen.created_at” are set at the time your event is recorded. You have the ability to overwrite the keen.timestamp property. This could be useful, for example, if you are backfilling historical data. Be sure to use [ISO-8601 Format](https://keen.io/docs/event-data-modeling/event-data-intro/#iso-8601-format?s=gh-gem).
 
 Keen stores all date and time information in UTC!
 
@@ -299,7 +299,7 @@ Keen.beacon_url("sign_ups", :recipient => "foo@foo.com")
   # => "https://api.keen.io/3.0/projects/xxxxxx/events/email_opens?api_key=yyyyyy&data=eyJyZWNpcGllbnQiOiJmb29AZm9vLmNvbSJ9"
 ```
 
-To track email opens, simply add an image to your email template that points to this URL. For further information on how to do this, see the [image beacon documentation](https://keen.io/docs/data-collection/image-beacon/).
+To track email opens, simply add an image to your email template that points to this URL. For further information on how to do this, see the [image beacon documentation](https://keen.io/docs/data-collection/image-beacon/?s=gh-gem).
 
 #### Redirect URLs
 Redirect URLs are just like image beacon URLs with the addition of a `redirect` query parameter. This parameter is used
@@ -310,11 +310,11 @@ Keen.redirect_url("sign_ups", { :recipient => "foo@foo.com" }, "http://foo.com")
   # => "https://api.keen.io/3.0/projects/xxxxxx/events/email_opens?api_key=yyyyyy&data=eyJyZWNpcGllbnQiOiJmb29AZm9vLmNvbSJ9&redirect=http://foo.com"
 ```
 
-This is helpful for tracking email clickthroughs. See the [redirect documentation](https://keen.io/docs/data-collection/redirect/) for further information.
+This is helpful for tracking email clickthroughs. See the [redirect documentation](https://keen.io/docs/data-collection/redirect/?s=gh-gem) for further information.
 
 #### Generating scoped keys
 
-A [scoped key](https://keen.io/docs/security/#scoped-key) is a string, generated with your API Key, that represents some encrypted authentication and query options.
+A [scoped key](https://keen.io/docs/security/#scoped-key?s=gh-gem) is a string, generated with your API Key, that represents some encrypted authentication and query options.
 Use them to control what data queries have access to.
 
 ``` ruby
@@ -351,10 +351,10 @@ EventMachine itself won't do this because it runs in a different thread. Here's 
 + Make the `query` method public so code supporting dynamic analysis types is easier to write
 
 ##### 0.8.4
-+ Add support for getting [project details](https://keen.io/docs/api/reference/#project-row-resource)
++ Add support for getting [project details](https://keen.io/docs/api/reference/#project-row-resource?s=gh-gem)
 
 ##### 0.8.3
-+ Add support for getting a list of a [project's collections](https://keen.io/docs/api/reference/#event-resource)
++ Add support for getting a list of a [project's collections](https://keen.io/docs/api/reference/#event-resource?s=gh-gem)
 
 ##### 0.8.2
 + Add support for `median` and `percentile` analysis
@@ -365,9 +365,9 @@ EventMachine itself won't do this because it runs in a different thread. Here's 
 
 ##### 0.8.0
 + **UPGRADE WARNING** Do you use spaces in collection names? Or other special characters? Read [this post](https://groups.google.com/forum/?fromgroups#!topic/keen-io-devs/VtCgPuNKrgY) from the mailing list to make sure your collection names don't change.
-+ Add support for generating [scoped keys](https://keen.io/docs/security/#scoped-key).
++ Add support for generating [scoped keys](https://keen.io/docs/security/#scoped-key?s=gh-gem).
 + Make collection name encoding more robust. Make sure collection names are encoded identically for publishing events, running queries, and performing deletes.
-+ Add support for [grouping by multiple properties](https://keen.io/docs/data-analysis/group-by/#grouping-by-multiple-properties).
++ Add support for [grouping by multiple properties](https://keen.io/docs/data-analysis/group-by/#grouping-by-multiple-properties?s=gh-gem).
 
 ##### 0.7.8
 + Add support for redirect URL creation.
@@ -426,9 +426,14 @@ server-side querying processes require a Read key that should not be made public
 
 ### Questions & Support
 
-If you have any questions, bugs, or suggestions, please
-report them via Github Issues. Or, come chat with us anytime
-at [users.keen.io](http://users.keen.io). We'd love to hear your feedback and ideas!
+For questions, bugs, or suggestions about this gem:
+[File a Github Issue](https://github.com/keenlabs/keen-gem/issues). 
+
+For other Keen-IO related technical questions:
+['keen-io' on Stack Overflow](http://stackoverflow.com/questions/tagged/keen-io)
+
+For general Keen IO discussion & feedback:
+['keen-io-devs' Google Group](https://groups.google.com/forum/#!forum/keen-io-devs)
 
 ### Contributing
 keen-gem is an open source project and we welcome your contributions.
