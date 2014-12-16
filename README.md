@@ -114,6 +114,7 @@ Here are some examples of querying with keen-gem. Let's assume you've added some
 
 ```ruby
 Keen.count("purchases") # => 100
+Keen.count("purchases", :filters =>  [{"property_name" => "referred_by", "operator" => "eq", "property_value" => "harry}]) # => 2
 Keen.sum("purchases", :target_property => "price")  # => 10000
 Keen.minimum("purchases", :target_property => "price")  # => 20
 Keen.maximum("purchases", :target_property => "price")  # => 100
