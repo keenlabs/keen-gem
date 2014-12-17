@@ -121,6 +121,10 @@ Keen.average("purchases", :target_property => "price")  # => 60
 Keen.median("purchases", :target_property => "price")  # => 60
 Keen.percentile("purchases", :target_property => "price", :percentile => 90)  # => 100
 
+Keen.count("purchases", :timeframe => "today", :filters =>  [
+  {"property_name" => "referred_by", "operator" => "eq", "property_value" => "harry"},
+  {...}]) # => 2
+
 Keen.sum("purchases", :target_property => "price", :group_by => "item.id")  # => [{ "item.id": 123, "result": 240 }, { ... }]
 
 Keen.count_unique("purchases", :target_property => "username")  # => 3
