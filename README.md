@@ -121,26 +121,26 @@ Keen.average("purchases", :target_property => "price")  # => 60
 Keen.median("purchases", :target_property => "price")  # => 60
 Keen.percentile("purchases", :target_property => "price", :percentile => 90)  # => 100
 
-Keen.count("purchases", :timeframe => "today", :filters =>  [
-  {"property_name" => "referred_by", "operator" => "eq", "property_value" => "harry"},
-  {...}]) # => 2
-
-Keen.sum("purchases", :target_property => "price", :group_by => "item.id")  # => [{ "item.id": 123, "result": 240 }, { ... }]
+Keen.sum("purchases", :target_property => "price", :group_by => "item.id")  # => [{ "item.id": 123, "result": 240 }]
+Keen.count("purchases", :timeframe => "today", :filters => [{
+    "property_name" => "referred_by",
+    "operator" => "eq",
+    "property_value" => "harry"
+  }]) # => 2
 
 Keen.count_unique("purchases", :target_property => "username")  # => 3
 Keen.select_unique("purchases", :target_property => "username")  # => ["Bob", "Linda", "Travis"]
 
-Keen.extraction("purchases")  # => [{ "price" => 20, ... }, { ... }]
+Keen.extraction("purchases")  # => [{ "keen" => { "timestamp" => "2014-01-01T00:00:00Z" }, "price" => 20 }]
 
-Keen.funnel(:steps => [
-  { :actor_property => "username", :event_collection => "purchases" },
-  { :actor_property => "username", :event_collection => "referrals" },
-  { ... }])  # => [20, 15 ...]
+Keen.funnel(:steps => [{ 
+  :actor_property => "username", :event_collection => "purchases" }, {
+  :actor_property => "username", :event_collection => "referrals" }]) # => [20, 15]
 
 Keen.multi_analysis("purchases", analyses: {
   :gross =>      { :analysis_type => "sum", :target_property => "price" },
   :customers =>  { :analysis_type => "count_unique", :target_property => "username" } },
-  :timeframe => 'today', :group_by => "item.id") # => [{"item.id"=>2, "gross"=>314.49, "customers"=> 8}, { ... }]
+  :timeframe => 'today', :group_by => "item.id") # => [{ "item.id" => 2, "gross" => 314.49, "customers" => 8 } }]
 ```
 
 Many of these queries can be performed with group by, filters, series and intervals. The response is returned as a Ruby Hash or Array.
