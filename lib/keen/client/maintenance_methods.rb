@@ -16,7 +16,7 @@ module Keen
         query_params = preprocess_params(params) if params != {}
 
         begin
-          response = Keen::HTTP::Sync.new(self.api_url, self.proxy_url).delete(
+          response = http_sync.delete(
               :path => [api_event_collection_resource_path(event_collection), query_params].compact.join('?'),
               :headers => api_headers(self.master_key, "sync"))
         rescue Exception => http_error
@@ -35,7 +35,7 @@ module Keen
         ensure_master_key!
 
         begin
-          response = Keen::HTTP::Sync.new(self.api_url, self.proxy_url).get(
+          response = http_sync.get(
               :path => "/#{api_version}/projects/#{project_id}/events",
               :headers => api_headers(self.master_key, "sync"))
         rescue Exception => http_error
@@ -54,7 +54,7 @@ module Keen
         ensure_master_key!
 
         begin
-          response = Keen::HTTP::Sync.new(self.api_url, self.proxy_url).get(
+          response = http_sync.get(
               :path => "/#{api_version}/projects/#{project_id}",
               :headers => api_headers(self.master_key, "sync"))
         rescue Exception => http_error
@@ -63,6 +63,12 @@ module Keen
 
         response_body = response.body ? response.body.chomp : ''
         process_response(response.code, response_body)
+      end
+
+      private
+
+      def http_sync
+        @http_sync ||= Keen::HTTP::Sync.new(self.api_url, self.proxy_url, self.read_timeout)
       end
 
     end
