@@ -270,7 +270,6 @@ Keen.project_id = 'xxxxxxxxxxxxxxx'
 Keen.write_key = 'yyyyyyyyyyyyyyy'
 Keen.read_key = 'zzzzzzzzzzzzzzz'
 Keen.master_key = 'aaaaaaaaaaaaaaa'
-Keen.read_timeoout = 60
 ```
 
 You can also configure unique client instances as follows:
@@ -279,8 +278,7 @@ You can also configure unique client instances as follows:
 keen = Keen::Client.new(:project_id => 'xxxxxxxxxxxxxxx',
                         :write_key  => 'yyyyyyyyyyyyyyy',
                         :read_key   => 'zzzzzzzzzzzzzzz',
-                        :master_key => 'aaaaaaaaaaaaaaa',
-                        :read_timeout => 60)
+                        :master_key => 'aaaaaaaaaaaaaaa')
 ```
 
 #### em-synchrony
@@ -340,14 +338,17 @@ You can use the scoped key created in Ruby for API requests from any client. Sco
 
 The default `Net:HTTP` timeout is 60 seconds. That's usually enough, but if you're querying over a large collection you may need to increase it. The timeout on the API side is 300 seconds, so that's as far as you'd want to go. You can configure a read timeout (in seconds) by setting a `KEEN_READ_TIMEOUT` environment variable, or by passing in a `read_timeout` option to the client constructor as follows:
 
-```
+``` ruby
 keen = Keen::Client.new(:read_timeout => 300)
 ```
 
 ##### HTTP Proxy
 
-You can set the `KEEN_PROXY_TYPE` and `KEEN_PROXY_URL` environment variables to enable HTTP proxying. `KEEN_PROXY_TYPE` should most likely be set to `socks5`. You can also configure this on client instances by passing in `proxy_type` and `proxy_url` keys.
+You can set the `KEEN_PROXY_TYPE` and `KEEN_PROXY_URL` environment variables to enable HTTP proxying. `KEEN_PROXY_TYPE` should be set to `socks5`. You can also configure this on client instances by passing in `proxy_type` and `proxy_url` keys.
 
+``` ruby
+keen = Keen::Client.new(:proxy_type => 'socks5', :proxy_url => 'http://localhost:8888')
+```
 
 ### Troubleshooting
 
