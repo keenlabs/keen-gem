@@ -32,7 +32,7 @@ Setting a master key is required for performing deletes. You can find keys for a
 on [keen.io](https://keen.io?s=gh-gem).
 
 The recommended way to set keys is via the environment. The keys you can set are 
-`KEEN_PROJECT_ID`, `KEEN_WRITE_KEY`, `KEEN_READ_KEY`, `KEEN_MASTER_KEY`, `KEEN_READ_TIMEOUT`.
+`KEEN_PROJECT_ID`, `KEEN_WRITE_KEY`, `KEEN_READ_KEY` and `KEEN_MASTER_KEY`.
 You only need to specify the keys that correspond to the API calls you'll be performing. 
 If you're using [foreman](http://ddollar.github.com/foreman/), add this to your `.env` file:
 
@@ -40,7 +40,6 @@ If you're using [foreman](http://ddollar.github.com/foreman/), add this to your 
     KEEN_MASTER_KEY=xxxxxxxxxxxxxxx
     KEEN_WRITE_KEY=yyyyyyyyyyyyyyy
     KEEN_READ_KEY=zzzzzzzzzzzzzzz
-    KEEN_READ_TIMEOUT=60
 
 If not, make a script to export the variables into your shell or put it before the command you use to start your server.
 
@@ -312,7 +311,7 @@ To track email opens, simply add an image to your email template that points to 
 Redirect URLs are just like image beacon URLs with the addition of a `redirect` query parameter. This parameter is used
 to issue a redirect to a certain URL after an event is recorded.
 
-```
+``` ruby
 Keen.redirect_url("sign_ups", { :recipient => "foo@foo.com" }, "http://foo.com")
   # => "https://api.keen.io/3.0/projects/xxxxxx/events/email_opens?api_key=yyyyyy&data=eyJyZWNpcGllbnQiOiJmb29AZm9vLmNvbSJ9&redirect=http://foo.com"
 ```
@@ -335,6 +334,21 @@ scoped_key = Keen::ScopedKey.new("my-api-key", { "filters" => [{
 
 You can use the scoped key created in Ruby for API requests from any client. Scoped keys are commonly used in JavaScript, where credentials are visible and need to be protected.
 
+### Additional options
+
+##### HTTP Read Timeout
+
+The default `Net:HTTP` timeout is 60 seconds. That's usually enough, but if you're querying over a large collection you may need to increase it. The timeout on the API side is 300 seconds, so that's as far as you'd want to go. You can configure a read timeout (in seconds) by setting a `KEEN_READ_TIMEOUT` environment variable, or by passing in a `read_timeout` option to the client constructor as follows:
+
+```
+keen = Keen::Client.new(:read_timeout => 300)
+```
+
+##### HTTP Proxy
+
+You can set the `KEEN_PROXY_TYPE` and `KEEN_PROXY_URL` environment variables to enable HTTP proxying. `KEEN_PROXY_TYPE` should most likely be set to `socks5`. You can also configure this on client instances by passing in `proxy_type` and `proxy_url` keys.
+
+
 ### Troubleshooting
 
 ##### EventMachine
@@ -349,6 +363,9 @@ If you write a script that uses `publish_async`, you need to keep the script ali
 EventMachine itself won't do this because it runs in a different thread. Here's an [example gist](https://gist.github.com/dzello/7472823) that shows how to exit the process after the event has been recorded.
 
 ### Changelog
+
+##### 0.8.8
++ Add support for a configurable read timeout
 
 ##### 0.8.7
 + Add support for returning all keys back from query API responses
