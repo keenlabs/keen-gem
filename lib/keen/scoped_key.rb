@@ -27,7 +27,6 @@ module Keen
     def encrypt!
       json_str = MultiJson.dump(self.data)
       padded_api_key = pad(self.api_key)
-      padded_data = pad(json_str)
       encrypted, iv = aes256_encrypt(padded_api_key, json_str)
       hexlify(iv) + hexlify(encrypted)
     end
