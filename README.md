@@ -113,6 +113,7 @@ Running queries requires that `KEEN_READ_KEY` is set.
 Here are some examples of querying with keen-gem. Let's assume you've added some events to the "purchases" collection.
 
 ```ruby
+# Various analysis types
 Keen.count("purchases") # => 100
 Keen.sum("purchases", :target_property => "price")  # => 10000
 Keen.minimum("purchases", :target_property => "price")  # => 20
@@ -120,23 +121,35 @@ Keen.maximum("purchases", :target_property => "price")  # => 100
 Keen.average("purchases", :target_property => "price")  # => 60
 Keen.median("purchases", :target_property => "price")  # => 60
 Keen.percentile("purchases", :target_property => "price", :percentile => 90)  # => 100
+Keen.count_unique("purchases", :target_property => "username")  # => 3
+Keen.select_unique("purchases", :target_property => "username")  # => ["Bob", "Linda", "Travis"]
 
+# Group by's and filters
 Keen.sum("purchases", :target_property => "price", :group_by => "item.id")  # => [{ "item.id": 123, "result": 240 }]
 Keen.count("purchases", :timeframe => "today", :filters => [{
     "property_name" => "referred_by",
     "operator" => "eq",
     "property_value" => "harry"
   }]) # => 2
+  
+# Relative timeframes
+Keen.count("purchases", :timeframe => "today") # => 10
 
-Keen.count_unique("purchases", :target_property => "username")  # => 3
-Keen.select_unique("purchases", :target_property => "username")  # => ["Bob", "Linda", "Travis"]
+# Absolute timeframes
+Keen.count("purchases", :timeframe => { 
+  :start => "2015-01-01T00:00:00Z", 
+  :end => "2015-31-01T00:00:00Z" 
+}) # => 5
 
+# Extractions
 Keen.extraction("purchases")  # => [{ "keen" => { "timestamp" => "2014-01-01T00:00:00Z" }, "price" => 20 }]
 
+# Funnels
 Keen.funnel(:steps => [{ 
   :actor_property => "username", :event_collection => "purchases" }, {
   :actor_property => "username", :event_collection => "referrals" }]) # => [20, 15]
 
+# Multi-analysis
 Keen.multi_analysis("purchases", analyses: {
   :gross =>      { :analysis_type => "sum", :target_property => "price" },
   :customers =>  { :analysis_type => "count_unique", :target_property => "username" } },
