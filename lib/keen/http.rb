@@ -22,7 +22,7 @@ module Keen
       end
 
       def proxy_arguments_for(uri)
-        proxy_uri = URI.parse(proxy_url)
+        proxy_uri = URI.parse(uri)
         [proxy_uri.host, proxy_uri.port, proxy_uri.user, proxy_uri.password]
       end
 

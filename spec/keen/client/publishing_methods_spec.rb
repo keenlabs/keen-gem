@@ -71,6 +71,22 @@ describe Keen::Client::PublishingMethods do
         ).publish(collection, event_properties)
       }.to raise_error(Keen::ConfigurationError, "Keen IO Exception: Write Key must be set for this operation")
     end
+
+    context "when using proxy" do
+      let(:client) do
+        Keen::Client.new(:project_id => project_id,
+                         :write_key => write_key,
+                         :api_url => api_url,
+                         :proxy_url => "http://localhost:8888",
+                         :proxy_type => "socks5")
+      end
+
+      it "should return the proper response" do
+        api_response = { "created" => true }
+        stub_keen_post(api_event_collection_resource_url(api_url, collection), 201, api_response)
+        client.publish(collection, event_properties).should == api_response
+      end
+    end
   end
 
   describe "publish_batch" do
