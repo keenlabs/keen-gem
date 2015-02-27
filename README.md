@@ -378,6 +378,9 @@ EventMachine itself won't do this because it runs in a different thread. Here's 
 
 ### Changelog
 
+##### 0.8.9
++ Fix proxy support for sync client. Thanks [@nvieirafelipe](https://github.com/nvieirafelipe)!
+
 ##### 0.8.8
 + Add support for a configurable read timeout
 
