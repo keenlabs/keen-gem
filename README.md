@@ -175,6 +175,7 @@ This simplifes querying code where the analysis type is dynamic.
 Each query method or alias takes an optional hash of options as an additional parameter. Possible keys are:
 
 `:response` – Set to `:all_keys` to return the full API response (usually only the value of the `"result"` key is returned).
+`:method` - Set to `:post` to enable post body based query (https://keen.io/docs/data-analysis/post-queries/).
 
 ##### Getting Query URLs
 

@@ -222,7 +222,7 @@ module Keen
       def query(analysis_type, event_collection, params={}, options={})
         response =
           if options[:method] == :post
-            post_query(analysis_type, event_colection, params)
+            post_query(analysis_type, event_collection, params)
           else
             url = _query_url(analysis_type, event_collection, params, options)
             get_response(url)
