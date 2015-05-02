@@ -10,7 +10,7 @@ describe Keen::Client do
     :project_id => project_id, :read_key => read_key,
     :api_url => api_url ) }
 
-  def query_url(query_name, query_params)
+  def query_url(query_name, query_params = "")
     "#{api_url}/#{api_version}/projects/#{project_id}/queries/#{query_name}#{query_params}"
   end
 
@@ -146,6 +146,19 @@ describe Keen::Client do
         stub_keen_get(expected_url, 200, :result => [1])
         api_response = query.call("funnel", nil, { :steps => [] }, { :response => :all_keys })
         api_response.should == { "result" => [1] }
+      end
+
+      it "should call API with post body if method opton is set to post " do
+        steps = [{
+          :event_collection => "sign ups",
+          :actor_property => "user.id"
+        }]
+        expected_url = query_url("funnel")
+        stub_keen_post(expected_url, 200, :result => 1)
+        response = query.call("funnel", nil, { :steps => steps }, { :method => :post })
+
+        expect_keen_post(expected_url, { :steps => steps }, "sync", read_key)
+        response.should == api_response["result"]
       end
     end
   end
