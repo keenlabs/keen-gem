@@ -5,8 +5,8 @@ require "keen/version"
 Gem::Specification.new do |s|
   s.name        = "keen"
   s.version     = Keen::VERSION
-  s.authors     = ["Kyle Wild", "Josh Dzielak", "Daniel Kador"]
-  s.email       = "josh@keen.io"
+  s.authors     = ["Alex Kleissner", "Josh Dzielak", "Joe Wegner"]
+  s.email       = "opensource@keen.io"
   s.homepage    = "https://github.com/keenlabs/keen-gem"
   s.summary     = "Keen IO API Client"
   s.description = "Send events and build analytics features into your Ruby applications."
