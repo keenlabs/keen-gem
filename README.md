@@ -387,6 +387,9 @@ If you want some bot protection, check out the [Voight-Kampff](https://github.co
 
 ### Changelog
 
+##### 0.8.10
++ Added support for posting queries. Thanks [@soloman1124](https://github.com/soloman1124).
+
 ##### 0.8.9
 + Fix proxy support for sync client. Thanks [@nvieirafelipe](https://github.com/nvieirafelipe)!
 
