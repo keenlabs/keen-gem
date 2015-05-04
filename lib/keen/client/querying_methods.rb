@@ -220,8 +220,14 @@ module Keen
       #   filters (optional) [Array]
       #   timezone (optional)
       def query(analysis_type, event_collection, params={}, options={})
-        url = _query_url(analysis_type, event_collection, params, options)
-        response = get_response(url)
+        response =
+          if options[:method] == :post
+            post_query(analysis_type, event_collection, params)
+          else
+            url = _query_url(analysis_type, event_collection, params, options)
+            get_response(url)
+          end
+
         response_body = response.body.chomp
         api_result = process_response(response.code, response_body)
         api_result = api_result["result"] unless options[:response] == :all_keys
@@ -229,6 +235,21 @@ module Keen
       end
 
       private
+
+      def post_query(analysis_type, event_collection, params={})
+        ensure_project_id!
+        ensure_read_key!
+
+        query_params = params.dup
+        query_params[:event_collection] = event_collection.to_s if event_collection
+        Keen::HTTP::Sync.new(self.api_url, self.proxy_url, self.read_timeout).post(
+          :path => api_query_resource_path(analysis_type),
+          :headers => api_headers(self.read_key, "sync"),
+          :body => MultiJson.encode(query_params)
+        )
+      rescue Exception => http_error
+        raise HttpError.new("Couldn't perform #{@analysis_type} on Keen IO: #{http_error.message}", http_error)
+      end
 
       def _query_url(analysis_type, event_collection, params={}, options={})
         ensure_project_id!
