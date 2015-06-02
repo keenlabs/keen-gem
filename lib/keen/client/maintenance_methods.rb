@@ -65,6 +65,25 @@ module Keen
         process_response(response.code, response_body)
       end
 
+      # Return the named collection for the configured project
+      # See detailed documentation here:
+      # https://keen.io/docs/api/reference/#event-collection-resource
+      def event_collection(event_collection)
+        ensure_project_id!
+        ensure_master_key!
+
+        begin
+          response = http_sync.get(
+              :path => "/#{api_version}/projects/#{project_id}/events/#{event_collection}",
+              :headers => api_headers(self.master_key, "sync"))
+        rescue Exception => http_error
+          raise HttpError.new("Couldn't perform events on Keen IO: #{http_error.message}", http_error)
+        end
+
+        response_body = response.body ? response.body.chomp : ''
+        process_response(response.code, response_body)
+      end
+
       private
 
       def http_sync

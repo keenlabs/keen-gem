@@ -280,10 +280,20 @@ describe "Keen IO API" do
   end
 
    describe "project methods" do
-     describe "event_collection" do
+     let(:event_collection) { "test_collection" }
+
+     describe "event_collections" do
        # requires a project with at least 1 collection
        it "should return the project's collections as JSON" do
          first_collection = Keen.event_collections.first
+         first_collection["properties"]["keen.timestamp"].should == "datetime"
+       end
+     end
+
+     describe "event_collection" do
+       # requires a project with at least 1 collection
+       it "should return the project's named collection as JSON" do
+         first_collection = Keen.event_collection(:event_collection)
          first_collection["properties"]["keen.timestamp"].should == "datetime"
        end
      end
