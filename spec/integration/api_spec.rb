@@ -292,7 +292,7 @@ describe "Keen IO API" do
 
      describe "event_collection" do
        # requires a project with at least 1 collection
-       it "should return the project's named collections as JSON" do
+       it "should return the project's named collection as JSON" do
          first_collection = Keen.event_collection(:event_collection)
          first_collection["properties"]["keen.timestamp"].should == "datetime"
        end
