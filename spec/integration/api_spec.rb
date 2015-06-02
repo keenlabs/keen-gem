@@ -280,7 +280,7 @@ describe "Keen IO API" do
   end
 
    describe "project methods" do
-     let(:event_collection) { "delete_test_#{rand(10000)}" }
+     let(:event_collection) { "test_collection" }
 
      describe "event_collections" do
        # requires a project with at least 1 collection
