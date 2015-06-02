@@ -5,6 +5,7 @@ describe Keen::Client do
   let(:master_key) { 'pastor_of_muppets' }
   let(:api_url) { "https://notreal.keen.io" }
   let(:api_version) { "3.0" }
+
   let(:client) { Keen::Client.new(
     :project_id => project_id, :master_key => master_key,
     :api_url => api_url ) }
@@ -47,12 +48,12 @@ describe Keen::Client do
   end
 
   describe '#event_collection' do
-    let(:collection_name) { :foodstuffs }
-    let(:events_url) { "#{api_url}/#{api_version}/projects/#{project_id}/events/#{collection_name}" }
+    let(:event_collection) { "foodstuffs" }
+    let(:events_url) { "#{api_url}/#{api_version}/projects/#{project_id}/events/#{event_collection}" }
 
     it "should fetch the project's named event resource" do
-      stub_keen_get(events_url, 200, [{ "a" => 1 }, { "b" => 2 }] )
-      client.event_collection(:collection_name).should == [{ "a" => 1 }, { "b" => 2 }]
+      stub_keen_get(events_url, 200, [{ "b" => 2 }] )
+      client.event_collection(event_collection).should == [{ "b" => 2 }]
       expect_keen_get(events_url, "sync", master_key)
     end
   end
