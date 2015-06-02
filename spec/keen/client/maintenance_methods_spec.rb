@@ -46,7 +46,18 @@ describe Keen::Client do
     end
   end
 
-  describe '#event_collections' do
+  describe '#event_collection' do
+    let(:collection_name) { :foodstuffs }
+    let(:events_url) { "#{api_url}/#{api_version}/projects/#{project_id}/events/#{collection_name}" }
+
+    it "should fetch the project's named event resource" do
+      stub_keen_get(events_url, 200, [{ "a" => 1 }, { "b" => 2 }] )
+      client.event_collection(:collection_name).should == [{ "a" => 1 }, { "b" => 2 }]
+      expect_keen_get(events_url, "sync", master_key)
+    end
+  end
+
+  describe '#project_info' do
     let(:project_url) { "#{api_url}/#{api_version}/projects/#{project_id}" }
 
     it "should fetch the project resource" do
