@@ -100,6 +100,8 @@ module Keen
     end
 
     def preprocess_params(params)
+      params = params.delete_if {|key, val| val.nil?}
+
       preprocess_encodables(params)
       preprocess_timeframe(params)
       preprocess_group_by(params)
