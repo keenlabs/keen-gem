@@ -29,6 +29,24 @@ describe Keen::ScopedKey do
       other_api_key.data.should == data
     end
 
+    describe "when an IV is not provided" do
+      it "should not produce the same encrypted key text" do
+        new_scoped_key.encrypt!.should_not == (new_scoped_key.encrypt!)
+      end
+    end
+
+    describe "when an IV is provided" do
+      it "should produce the same encrypted key text for a " do
+        iv = "\0" * 32
+        new_scoped_key.encrypt!(iv).should == (new_scoped_key.encrypt!(iv))
+      end
+
+      it "should raise error when an invalid IV is supplied" do
+        iv = "fakeiv"
+        expect { new_scoped_key.encrypt!(iv) }.to raise_error(OpenSSL::Cipher::CipherError)
+      end
+    end
+
     it "should not decrypt the scoped key with a bad api key" do
       encrypted_str = new_scoped_key.encrypt!
       expect {

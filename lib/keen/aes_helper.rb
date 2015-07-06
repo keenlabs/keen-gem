@@ -7,11 +7,12 @@ module Keen
 
     BLOCK_SIZE = 32
 
-    def aes256_encrypt(key, plaintext)
+    def aes256_encrypt(key, plaintext, iv = nil)
       aes = OpenSSL::Cipher::AES.new(256, :CBC)
       aes.encrypt
       aes.key = key
-      iv = aes.random_iv
+      aes.iv = iv unless iv.nil?
+      iv ||= aes.random_iv
       [aes.update(plaintext) + aes.final, iv]
     end
 
