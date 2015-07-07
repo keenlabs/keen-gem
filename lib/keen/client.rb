@@ -104,6 +104,7 @@ module Keen
 
       preprocess_encodables(params)
       preprocess_timeframe(params)
+      preprocess_max_age(params)
       preprocess_group_by(params)
       preprocess_percentile(params)
       preprocess_property_names(params)
@@ -130,6 +131,15 @@ module Keen
       group_by = params[:group_by]
       if group_by.is_a?(Array)
         params[:group_by] = MultiJson.encode(group_by)
+      end
+    end
+
+    def preprocess_max_age(params)
+      max_age = params[:max_age]
+      if max_age.is_a? Numeric
+        params[:max_age] = params[:max_age].to_s
+      else
+        params.delete(:max_age)
       end
     end
 

@@ -103,6 +103,22 @@ describe Keen::Client do
     end
   end
 
+  describe "preprocess_max_age" do
+    it "stringifies numbers" do
+      params = { :group_by => "foo.bar", :max_age => 3000 }
+      expect(
+        client.instance_eval{preprocess_params(params)}
+      ).to eq("group_by=foo.bar&max_age=3000")
+    end
+
+    it "ignores non-numbers" do
+      params = { :max_age => 'one hundred', :group_by => "foo.bar" }
+      expect(
+        client.instance_eval{preprocess_params(params)}
+      ).to eq("group_by=foo.bar")
+    end
+  end
+
   describe "preprocess_timeframe" do
     it "does nothing for string values" do
       params = { :timeframe => 'this_3_days' }
