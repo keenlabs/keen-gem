@@ -24,10 +24,10 @@ module Keen
       self.data = data
     end
 
-    def encrypt!
+    def encrypt!(iv = nil)
       json_str = MultiJson.dump(self.data)
       padded_api_key = pad(self.api_key)
-      encrypted, iv = aes256_encrypt(padded_api_key, json_str)
+      encrypted, iv = aes256_encrypt(padded_api_key, json_str, iv)
       hexlify(iv) + hexlify(encrypted)
     end
   end
