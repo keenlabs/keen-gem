@@ -177,6 +177,10 @@ Each query method or alias takes an optional hash of options as an additional pa
 `:response` – Set to `:all_keys` to return the full API response (usually only the value of the `"result"` key is returned).
 `:method` - Set to `:post` to enable post body based query (https://keen.io/docs/data-analysis/post-queries/).
 
+##### Query Caching
+
+You can specify a `max_age` parameter as part of your query request, but make sure you send the request as a `:post` request.
+
 ##### Getting Query URLs
 
 Sometimes you just want the URL for a query, but don't actually need to run it. Maybe to paste into a dashboard, or open in your browser. In that case, use the `query_url` method:
@@ -386,6 +390,12 @@ It's not just us humans that browse the web. Spiders, crawlers, and bots share t
 If you want some bot protection, check out the [Voight-Kampff](https://github.com/biola/Voight-Kampff) gem. Use the gem's `request.bot?` method to detect bots and avoid logging events.
 
 ### Changelog
+
+##### 0.9.2
++ Added support for max_age as an integer.
+
+##### 0.9.1
++ Added support for setting an IV for scoped keys. Thanks [@anatolydwnld](https://github.com/anatolydwnld)
 
 ##### 0.8.10
 + Added support for posting queries. Thanks [@soloman1124](https://github.com/soloman1124).
