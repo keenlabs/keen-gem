@@ -328,7 +328,7 @@ describe Keen::Client::PublishingMethods do
   describe "redirect_url" do
     it "should return a url with a base-64 encoded json param and an encoded redirect url" do
       client.redirect_url("sign_ups", { :name => "Bob" }, "http://keen.io/?foo=bar&bar=baz").should ==
-        "#{api_url}/3.0/projects/12345/events/sign_ups?api_key=#{write_key}&data=eyJuYW1lIjoiQm9iIn0=&redirect=http://keen.io/?foo=bar&bar=baz"
+        "#{api_url}/3.0/projects/12345/events/sign_ups?api_key=#{write_key}&data=eyJuYW1lIjoiQm9iIn0=&redirect=http%3A%2F%2Fkeen.io%2F%3Ffoo%3Dbar%26bar%3Dbaz"
     end
   end
 
