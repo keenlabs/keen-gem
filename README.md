@@ -115,17 +115,17 @@ Here are some examples of querying with keen-gem. Let's assume you've added some
 ```ruby
 # Various analysis types
 Keen.count("purchases") # => 100
-Keen.sum("purchases", :target_property => "price")  # => 10000
-Keen.minimum("purchases", :target_property => "price")  # => 20
-Keen.maximum("purchases", :target_property => "price")  # => 100
-Keen.average("purchases", :target_property => "price")  # => 60
-Keen.median("purchases", :target_property => "price")  # => 60
-Keen.percentile("purchases", :target_property => "price", :percentile => 90)  # => 100
-Keen.count_unique("purchases", :target_property => "username")  # => 3
-Keen.select_unique("purchases", :target_property => "username")  # => ["Bob", "Linda", "Travis"]
+Keen.sum("purchases", :target_property => "price", :timeframe => "today")  # => 10000
+Keen.minimum("purchases", :target_property => "price", :timeframe => "today")  # => 20
+Keen.maximum("purchases", :target_property => "price", :timeframe => "today")  # => 100
+Keen.average("purchases", :target_property => "price", :timeframe => "today")  # => 60
+Keen.median("purchases", :target_property => "price", :timeframe => "today")  # => 60
+Keen.percentile("purchases", :target_property => "price", :percentile => 90, :timeframe => "today")  # => 100
+Keen.count_unique("purchases", :target_property => "username", :timeframe => "today")  # => 3
+Keen.select_unique("purchases", :target_property => "username", :timeframe => "today")  # => ["Bob", "Linda", "Travis"]
 
 # Group by's and filters
-Keen.sum("purchases", :target_property => "price", :group_by => "item.id")  # => [{ "item.id": 123, "result": 240 }]
+Keen.sum("purchases", :target_property => "price", :group_by => "item.id", :timeframe => "this_14_days")  # => [{ "item.id": 123, "result": 240 }]
 Keen.count("purchases", :timeframe => "today", :filters => [{
     "property_name" => "referred_by",
     "operator" => "eq",
@@ -142,12 +142,12 @@ Keen.count("purchases", :timeframe => {
 }) # => 5
 
 # Extractions
-Keen.extraction("purchases")  # => [{ "keen" => { "timestamp" => "2014-01-01T00:00:00Z" }, "price" => 20 }]
+Keen.extraction("purchases", :timeframe => "today")  # => [{ "keen" => { "timestamp" => "2014-01-01T00:00:00Z" }, "price" => 20 }]
 
 # Funnels
 Keen.funnel(:steps => [{ 
-  :actor_property => "username", :event_collection => "purchases" }, {
-  :actor_property => "username", :event_collection => "referrals" }]) # => [20, 15]
+  :actor_property => "username", :event_collection => "purchases", :timeframe => "yesterday" }, {
+  :actor_property => "username", :event_collection => "referrals", :timeframe => "yesterday" }]) # => [20, 15]
 
 # Multi-analysis
 Keen.multi_analysis("purchases", analyses: {
@@ -186,14 +186,14 @@ You can specify a `max_age` parameter as part of your query request, but make su
 Sometimes you just want the URL for a query, but don't actually need to run it. Maybe to paste into a dashboard, or open in your browser. In that case, use the `query_url` method:
 
 ``` ruby
-Keen.query_url("median", "purchases", :target_property => "price")
+Keen.query_url("median", "purchases", :target_property => "price", { :timeframe => "today" })
 # => "https://api.keen.io/3.0/projects/<project-id>/queries/median?target_property=price&event_collection=purchases&api_key=<api-key>"
 ```
 
 If you don't want the API key included, pass the `:exclude_api_key` option:
 
 ``` ruby
-Keen.query_url("median", "purchases", { :target_property => "price" }, :exclude_api_key => true)
+Keen.query_url("median", "purchases", { :target_property => "price", :timeframe => "today" }, :exclude_api_key => true)
 # => "https://api.keen.io/3.0/projects/<project-id>/queries/median?target_property=price&event_collection=purchases"
 ```
 
