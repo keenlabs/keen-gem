@@ -121,7 +121,7 @@ module Keen
       # @return a URL that will track an event when hit
       def redirect_url(event_collection, properties, redirect_url)
         require 'open-uri'
-        encoded_url = URI::encode(redirect_url)
+        encoded_url = CGI::escape(redirect_url)
         json = MultiJson.encode(properties)
         data = [json].pack("m0").tr("+/", "-_").gsub("\n", "")
         "#{self.api_url}#{api_event_collection_resource_path(event_collection)}?api_key=#{self.write_key}&data=#{data}&redirect=#{encoded_url}"
