@@ -51,7 +51,8 @@ module Keen
                    :event_collections,
                    :project_info,
                    :query_url,
-                   :query
+                   :query,
+                   :saved_queries
 
     attr_writer :logger
 
