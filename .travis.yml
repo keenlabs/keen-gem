@@ -2,7 +2,6 @@ language: ruby
 bundler_args: --without development
 
 rvm:
-  - 1.8.7
   - 1.9.3
   - 2.0.0
   - 2.2.2
@@ -21,8 +20,6 @@ before_install:
 
 matrix:
   exclude:
-    - rvm: 1.8.7
-      env: PATTERN=synchrony
     - rvm: jruby-19mode
       env: PATTERN=synchrony
 

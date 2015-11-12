@@ -19,6 +19,10 @@ module Keen::SpecHelpers
     stub_keen_request(:post, url, status, MultiJson.encode(response_body))
   end
 
+  def stub_keen_put(url, status, response_body)
+    stub_keen_request(:put, url, status, MultiJson.encode(response_body))
+  end
+
   def stub_keen_get(url, status, response_body)
     stub_keen_request(:get, url, status, MultiJson.encode(response_body))
   end

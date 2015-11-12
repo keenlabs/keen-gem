@@ -3,6 +3,7 @@ require 'keen/version'
 require 'keen/client/publishing_methods'
 require 'keen/client/querying_methods'
 require 'keen/client/maintenance_methods'
+require 'keen/client/saved_queries'
 require 'openssl'
 require 'multi_json'
 require 'base64'
@@ -51,6 +52,10 @@ module Keen
       self.proxy_url, self.proxy_type = options.values_at(:proxy_url, :proxy_type)
 
       self.read_timeout = options[:read_timeout].to_f unless options[:read_timeout].nil?
+    end
+
+    def saved_queries
+      @saved_queries ||= SavedQueries.new(self)
     end
 
     private

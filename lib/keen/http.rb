@@ -32,6 +32,12 @@ module Keen
         @http.post(path, body, headers)
       end
 
+      def put(options)
+        path, headers, body = options.values_at(
+          :path, :headers, :body)
+        @http.put(path, body, headers)
+      end
+
       def get(options)
         path, headers = options.values_at(
           :path, :headers)

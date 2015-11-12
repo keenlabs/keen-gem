@@ -16,7 +16,7 @@ or install from Rubygems:
 
     gem install keen
 
-keen is tested with Ruby 1.8 and 1.9 on:
+keen is tested with Ruby 1.9.3 + and on:
 
 * MRI
 * Rubinius
@@ -177,9 +177,30 @@ Each query method or alias takes an optional hash of options as an additional pa
 `:response` – Set to `:all_keys` to return the full API response (usually only the value of the `"result"` key is returned).
 `:method` - Set to `:post` to enable post body based query (https://keen.io/docs/data-analysis/post-queries/).
 
-##### Query Caching
+### Saved Queries
 
-You can specify a `max_age` parameter as part of your query request, but make sure you send the request as a `:post` request.
+You can manage your saved queries from the Keen ruby client.
+
+```ruby
+# Create a saved query
+Keen.saved_queries.create("name", saved_query_attributes)
+
+# Get all saved queries
+Keen.saved_queries.all
+
+# Get one saved query
+Keen.saved_queries.get("saved-query-slug")
+
+# Get saved query with results
+Keen.saved_queries.get("saved-query-slug", results: true)
+
+# Update a saved query
+saved_query_attributes = { refresh_rate: 14400 }
+Keen.saved_queries.update("saved-query-slug", saved_query_attributes)
+
+# Delete a saved query
+Keen.saved_queries.delete("saved-query-slug")
+```
 
 ##### Getting Query URLs
 
