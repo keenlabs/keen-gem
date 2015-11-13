@@ -412,6 +412,10 @@ If you want some bot protection, check out the [Voight-Kampff](https://github.co
 
 ### Changelog
 
+##### 0.9.4
++ Add SDK support for Saved Queries
++ Removed support for Ruby MRI 1.8.7
+
 ##### 0.9.2
 + Added support for max_age as an integer.
 
