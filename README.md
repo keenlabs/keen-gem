@@ -355,22 +355,6 @@ Keen.redirect_url("sign_ups", { :recipient => "foo@foo.com" }, "http://foo.com")
 
 This is helpful for tracking email clickthroughs. See the [redirect documentation](https://keen.io/docs/data-collection/redirect/?s=gh-gem) for further information.
 
-#### Generating scoped keys
-
-A [scoped key](https://keen.io/docs/security/#scoped-key?s=gh-gem) is a string, generated with your API Key, that represents some encrypted authentication and query options.
-Use them to control what data queries have access to.
-
-``` ruby
-# "my-api-key" should be your MASTER API key
-scoped_key = Keen::ScopedKey.new("my-api-key", { "filters" => [{
-  "property_name" => "accountId",
-  "operator" => "eq",
-  "property_value" => "123456"
-}]}).encrypt! # "4d1982fe601b359a5cab7ac7845d3bf27026936cdbf8ce0ab4ebcb6930d6cf7f139e..."
-```
-
-You can use the scoped key created in Ruby for API requests from any client. Scoped keys are commonly used in JavaScript, where credentials are visible and need to be protected.
-
 ### Additional options
 
 ##### HTTP Read Timeout
