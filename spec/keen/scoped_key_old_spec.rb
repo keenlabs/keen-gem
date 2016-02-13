@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Keen::ScopedKey do
-  let(:api_key) {     "24077ACBCB198BAAA2110EDDB673282F8E34909FD823A15C55A6253A664BE368" }
-  let(:bad_api_key) { "24077ACBCB198BAAA2110EDDB673282F8E34909FD823A15C55A6253A664BE369" }
+  let(:api_key) { "ab428324dbdbcfe744" }
+  let(:bad_api_key) { "badbadbadbad" }
   let(:data) { {
    "filters" => [{
       "property_name" => "accountId",
