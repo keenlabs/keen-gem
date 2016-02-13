@@ -1,19 +1,20 @@
 require 'multi_json'
 require 'keen/aes_helper'
+require 'keen/aes_helper_old'
 
 module Keen
   class ScopedKey
-    include AESHelper
-    extend AESHelper
 
     attr_accessor :api_key
     attr_accessor :data
 
     class << self
       def decrypt!(api_key, scoped_key)
-        encrypted = unhexlify(scoped_key)
-        padded_api_key = pad(api_key)
-        decrypted = aes256_decrypt(padded_api_key, encrypted)
+        if api_key.length == 64
+          decrypted = Keen::AESHelper.aes256_decrypt(api_key, scoped_key)
+        else
+          decrypted = Keen::AESHelperOld.aes256_decrypt(api_key, scoped_key)
+        end
         data = MultiJson.load(decrypted)
         self.new(api_key, data)
       end
@@ -26,9 +27,11 @@ module Keen
 
     def encrypt!(iv = nil)
       json_str = MultiJson.dump(self.data)
-      padded_api_key = pad(self.api_key)
-      encrypted, iv = aes256_encrypt(padded_api_key, json_str, iv)
-      hexlify(iv) + hexlify(encrypted)
+      if self.api_key.length == 64
+        Keen::AESHelper.aes256_encrypt(self.api_key, json_str, iv)
+      else
+        Keen::AESHelperOld.aes256_encrypt(self.api_key, json_str, iv)
+      end
     end
   end
 end

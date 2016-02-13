@@ -412,6 +412,9 @@ If you want some bot protection, check out the [Voight-Kampff](https://github.co
 
 ### Changelog
 
+##### 0.9.5
++ Fix bug with scoped key generation not working with newer Keen projects.
+
 ##### 0.9.4
 + Add SDK support for Saved Queries
 + Removed support for Ruby MRI 1.8.7
