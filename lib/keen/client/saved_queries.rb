@@ -14,7 +14,7 @@ class SavedQueries
     if results
       saved_query_path += "/result"
     end
-    response = saved_query_response(saved_query_path)
+    response = saved_query_response(saved_query_path, client.read_key)
     response_body = JSON.parse(response.body, symbolize_names: true)
     process_response(response)
   end
@@ -41,10 +41,10 @@ class SavedQueries
 
   attr_reader :client
 
-  def saved_query_response(path = "")
+  def saved_query_response(path = "", api_key = client.master_key)
     Keen::HTTP::Sync.new(client.api_url, client.proxy_url, client.read_timeout).get(
       path: saved_query_base_url + path,
-      headers: api_headers(client.master_key, "sync")
+      headers: api_headers(api_key, "sync")
     )
   end
 
