@@ -3,7 +3,8 @@ require File.expand_path("../spec_helper", __FILE__)
 describe "Saved Queries" do
   let(:project_id) { ENV["KEEN_PROJECT_ID"] }
   let(:master_key) { ENV["KEEN_MASTER_KEY"] }
-  let(:client) { Keen::Client.new(project_id: project_id, master_key: master_key) }
+  let(:read_key) { ENV["KEEN_READ_KEY"] }
+  let(:client) { Keen::Client.new(project_id: project_id, master_key: master_key, read_key: read_key) }
 
   describe "#all" do
     it "gets all saved_queries" do
