@@ -25,15 +25,15 @@ keen is tested with Ruby 1.9.3 + and on:
 ### Usage
 
 Before making any API calls, you must supply keen-gem with a Project ID and one or more authentication keys.
-(If you need a Keen IO account, [sign up here](https://keen.io/signup?s=gh-gem) - it's free.) 
+(If you need a Keen IO account, [sign up here](https://keen.io/signup?s=gh-gem) - it's free.)
 
-Setting a write key is required for publishing events. Setting a read key is required for running queries. 
+Setting a write key is required for publishing events. Setting a read key is required for running queries.
 Setting a master key is required for performing deletes. You can find keys for all of your projects
 on [keen.io](https://keen.io?s=gh-gem).
 
-The recommended way to set keys is via the environment. The keys you can set are 
+The recommended way to set keys is via the environment. The keys you can set are
 `KEEN_PROJECT_ID`, `KEEN_WRITE_KEY`, `KEEN_READ_KEY` and `KEEN_MASTER_KEY`.
-You only need to specify the keys that correspond to the API calls you'll be performing. 
+You only need to specify the keys that correspond to the API calls you'll be performing.
 If you're using [foreman](http://ddollar.github.com/foreman/), add this to your `.env` file:
 
     KEEN_PROJECT_ID=aaaaaaaaaaaaaaa
@@ -57,8 +57,8 @@ Publishing events requires that `KEEN_WRITE_KEY` is set. Publish an event like t
 Keen.publish(:sign_ups, { :username => "lloyd", :referred_by => "harry" })
 ```
 
-This will publish an event to the `sign_ups` collection with the `username` and `referred_by` properties set. 
-The event properties can be any valid Ruby hash. Nested properties are allowed. Lists of objects are also allowed, but not recommended because they can be difficult to query over. See alternatives to lists of objects [here](http://stackoverflow.com/questions/24620330/nested-json-objects-in-keen-io). You can learn more about data modeling with Keen IO with the [Data Modeling Guide](https://keen.io/docs/event-data-modeling/event-data-intro/?s=gh-gem). 
+This will publish an event to the `sign_ups` collection with the `username` and `referred_by` properties set.
+The event properties can be any valid Ruby hash. Nested properties are allowed. Lists of objects are also allowed, but not recommended because they can be difficult to query over. See alternatives to lists of objects [here](http://stackoverflow.com/questions/24620330/nested-json-objects-in-keen-io). You can learn more about data modeling with Keen IO with the [Data Modeling Guide](https://keen.io/docs/event-data-modeling/event-data-intro/?s=gh-gem).
 
 Protip: Marshalling gems like [Blockhead](https://github.com/vinniefranco/blockhead) make converting structs or objects to hashes easier.
 
@@ -131,21 +131,21 @@ Keen.count("purchases", :timeframe => "today", :filters => [{
     "operator" => "eq",
     "property_value" => "harry"
   }]) # => 2
-  
+
 # Relative timeframes
 Keen.count("purchases", :timeframe => "today") # => 10
 
 # Absolute timeframes
-Keen.count("purchases", :timeframe => { 
-  :start => "2015-01-01T00:00:00Z", 
-  :end => "2015-31-01T00:00:00Z" 
+Keen.count("purchases", :timeframe => {
+  :start => "2015-01-01T00:00:00Z",
+  :end => "2015-31-01T00:00:00Z"
 }) # => 5
 
 # Extractions
 Keen.extraction("purchases", :timeframe => "today")  # => [{ "keen" => { "timestamp" => "2014-01-01T00:00:00Z" }, "price" => 20 }]
 
 # Funnels
-Keen.funnel(:steps => [{ 
+Keen.funnel(:steps => [{
   :actor_property => "username", :event_collection => "purchases", :timeframe => "yesterday" }, {
   :actor_property => "username", :event_collection => "referrals", :timeframe => "yesterday" }]) # => [20, 15]
 
@@ -259,7 +259,7 @@ Keen stores all date and time information in UTC!
 Keen.publish(:sign_ups, {
   :keen => { :timestamp => "2012-12-14T20:24:01.123000+00:00" },
   :username => "lloyd",
-  :referred_by => "harry" 
+  :referred_by => "harry"
 })
 ```
 
@@ -283,7 +283,7 @@ Keen.publish_batch(
 This call would publish 2 `signups` events and 2 `purchases` events - all in just one API call.
 Batch publishing is ideal for loading historical events into Keen IO.
 
-#### Asynchronous batch publishing 
+#### Asynchronous batch publishing
 
 Ensuring the above guidance is followed for asynchronous publishing, batch publishing logic can used asynchronously with `publish_batch_async`:
 
@@ -393,7 +393,7 @@ keen = Keen::Client.new(:proxy_type => 'socks5', :proxy_url => 'http://localhost
 
 ##### EventMachine
 
-If you run into `Keen::Error: Keen IO Exception: An EventMachine loop must be running to use publish_async calls` or 
+If you run into `Keen::Error: Keen IO Exception: An EventMachine loop must be running to use publish_async calls` or
 `Uncaught RuntimeError: eventmachine not initialized: evma_set_pending_connect_timeout`, this means that the EventMachine
 loop has died. This can happen for a variety of reasons, and every app is different. [Issue #22](https://github.com/keenlabs/keen-gem/issues/22) shows how to add some extra protection to avoid this situation.
 
@@ -411,6 +411,9 @@ It's not just us humans that browse the web. Spiders, crawlers, and bots share t
 If you want some bot protection, check out the [Voight-Kampff](https://github.com/biola/Voight-Kampff) gem. Use the gem's `request.bot?` method to detect bots and avoid logging events.
 
 ### Changelog
+
+##### 0.9.6
++ Updated behavior of saved queries to allow fetching results using the READ KEY as opposed to requiring the MASTER KEY, making the gem consistent with https://keen.io/docs/api/#getting-saved-query-results 
 
 ##### 0.9.5
 + Fix bug with scoped key generation not working with newer Keen projects.
@@ -518,7 +521,7 @@ server-side querying processes require a Read key that should not be made public
 ### Questions & Support
 
 For questions, bugs, or suggestions about this gem:
-[File a Github Issue](https://github.com/keenlabs/keen-gem/issues). 
+[File a Github Issue](https://github.com/keenlabs/keen-gem/issues).
 
 For other Keen-IO related technical questions:
 ['keen-io' on Stack Overflow](http://stackoverflow.com/questions/tagged/keen-io)
