@@ -70,8 +70,6 @@ Publishing events shouldn't slow your application down or make users wait longer
 
 The Keen IO API is fast, but any synchronous network call you make will negatively impact response times. For this reason, we recommend you use the `publish_async` method to send events when latency is a concern. Alternatively, you can drop events into a background queue e.g. Delayed Jobs and publish synchronously from there.
 
-To compare asychronous vs. synchronous performance, check out the [keen-gem-example](http://keen-gem-example.herokuapp.com/) app.
-
 To publish asynchronously, first add
 [em-http-request](https://github.com/igrigorik/em-http-request) to your Gemfile. Make sure it's version 1.0 or above.
 
