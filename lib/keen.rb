@@ -31,7 +31,8 @@ module Keen
                    :write_key, :write_key=,
                    :read_key, :read_key=,
                    :master_key, :master_key=,
-                   :api_url, :api_url=
+                   :api_url, :api_url=,
+                   :log_queries, :log_queries=
 
     def_delegators :default_client,
                    :proxy_url, :proxy_url=,

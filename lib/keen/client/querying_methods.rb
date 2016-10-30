@@ -240,6 +240,8 @@ module Keen
         ensure_project_id!
         ensure_read_key!
 
+        log_query("#{self.api_url}#{api_query_resource_path(analysis_type)}", 'POST', params) if log_queries
+
         query_params = params.dup
         query_params[:event_collection] = event_collection.to_s if event_collection
         Keen::HTTP::Sync.new(self.api_url, self.proxy_url, self.read_timeout).post(
@@ -261,6 +263,7 @@ module Keen
       end
 
       def get_response(url)
+        log_query(url) if log_queries
         uri = URI.parse(url)
         Keen::HTTP::Sync.new(self.api_url, self.proxy_url, self.read_timeout).get(
           :path => "#{uri.path}?#{uri.query}",
@@ -272,6 +275,10 @@ module Keen
 
       def api_query_resource_path(analysis_type)
         "/#{self.api_version}/projects/#{self.project_id}/queries/#{analysis_type}"
+      end
+
+      def log_query(url, method='GET', options={})
+        Keen.logger.info { "[KEEN] Send #{method} query to #{url} with options #{options}" }
       end
     end
   end
