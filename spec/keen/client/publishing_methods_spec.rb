@@ -52,7 +52,7 @@ describe Keen::Client::PublishingMethods do
       end
 
       e.class.should == Keen::HttpError
-      e.original_error.class.should == Net::OpenTimeout
+      e.original_error.should be_kind_of(Timeout::Error)
       e.message.should == "Keen IO Exception: HTTP publish failure: execution expired"
     end
 
