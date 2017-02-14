@@ -4,6 +4,7 @@ require 'keen/client/publishing_methods'
 require 'keen/client/querying_methods'
 require 'keen/client/maintenance_methods'
 require 'keen/client/saved_queries'
+require 'keen/version'
 require 'openssl'
 require 'multi_json'
 require 'base64'
@@ -29,7 +30,8 @@ module Keen
         end
         { "Content-Type" => "application/json",
           "User-Agent" => user_agent,
-          "Authorization" => authorization }
+          "Authorization" => authorization,
+          "X-Keensdkversion-X" => "ruby-#{Keen::VERSION}" }
       }
     }
 
