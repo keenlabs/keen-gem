@@ -66,7 +66,7 @@ class SavedQueries
     { "Content-Type" => "application/json",
       "User-Agent" => user_agent,
       "Authorization" => authorization,
-      "X-Keensdkversion-X" => "ruby-#{Keen::VERSION}" }
+      "Keen-Sdk" => "ruby-#{Keen::VERSION}" }
   end
 
   def process_response(response)

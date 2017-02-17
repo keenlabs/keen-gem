@@ -31,7 +31,7 @@ module Keen
         { "Content-Type" => "application/json",
           "User-Agent" => user_agent,
           "Authorization" => authorization,
-          "X-Keensdkversion-X" => "ruby-#{Keen::VERSION}" }
+          "Keen-Sdk" => "ruby-#{Keen::VERSION}" }
       }
     }
 

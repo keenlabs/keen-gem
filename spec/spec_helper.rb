@@ -41,7 +41,7 @@ module Keen::SpecHelpers
     headers = { "Content-Type" => "application/json",
                 "User-Agent" => user_agent,
                 "Authorization" => read_or_write_key,
-                "X-Keensdkversion-X" => "ruby-#{Keen::VERSION}" }
+                "Keen-Sdk" => "ruby-#{Keen::VERSION}" }
 
     WebMock.should have_requested(method, url).with(
       :body => body,
