@@ -1,3 +1,4 @@
+require 'keen/version'
 require "json"
 
 class SavedQueries
@@ -17,6 +18,7 @@ class SavedQueries
       # The results path should use the READ KEY
       api_key = client.read_key
     end
+
     response = saved_query_response(api_key, saved_query_path)
     response_body = JSON.parse(response.body, symbolize_names: true)
     process_response(response)
@@ -63,7 +65,8 @@ class SavedQueries
     end
     { "Content-Type" => "application/json",
       "User-Agent" => user_agent,
-      "Authorization" => authorization }
+      "Authorization" => authorization,
+      "Keen-Sdk" => "ruby-#{Keen::VERSION}" }
   end
 
   def process_response(response)

@@ -412,6 +412,9 @@ If you want some bot protection, check out the [Voight-Kampff](https://github.co
 
 ### Changelog
 
+##### 0.9.7
++ Added a new header `Keen-Sdk` that sends the SDK version information on all requests.
+
 ##### 0.9.6
 + Updated behavior of saved queries to allow fetching results using the READ KEY as opposed to requiring the MASTER KEY, making the gem consistent with https://keen.io/docs/api/#getting-saved-query-results 
 
