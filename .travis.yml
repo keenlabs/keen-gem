@@ -1,11 +1,13 @@
 language: ruby
 bundler_args: --without development
 
+jdk: openjdk7
+
 rvm:
   - 1.9.3
   - 2.0.0
   - 2.2.2
-  - jruby-19mode
+  - jruby-9.1.6.0
 
 env:
   - PATTERN=keen
@@ -20,7 +22,7 @@ before_install:
 
 matrix:
   exclude:
-    - rvm: jruby-19mode
+    - rvm: jruby-9.1.6.0
       env: PATTERN=synchrony
 
 script:
