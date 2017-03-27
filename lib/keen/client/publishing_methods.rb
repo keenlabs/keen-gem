@@ -10,7 +10,7 @@ module Keen
       #
       # @return the JSON response from the API
       def add_event(event_collection, properties, options={})
-        self.publish(event_collection, properties, options)
+        self.publish(event_collection, properties)
       end
 
       # Publishes a synchronous event
