@@ -112,6 +112,8 @@ Running queries requires that `KEEN_READ_KEY` is set.
 
 Here are some examples of querying with keen-gem. Let's assume you've added some events to the "purchases" collection.
 
+Note: Once the API acknowledges that your event has been stored, it may take up to 10 seconds before it will appear in query results.
+
 ```ruby
 # Various analysis types
 Keen.count("purchases") # => 100
