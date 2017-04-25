@@ -37,7 +37,7 @@ describe Keen::ScopedKey do
 
     describe "when an IV is provided" do
       it "should produce the same encrypted key text for a " do
-        iv = "\0" * 32
+        iv = "\0" * 16
         new_scoped_key.encrypt!(iv).should == (new_scoped_key.encrypt!(iv))
       end
 
