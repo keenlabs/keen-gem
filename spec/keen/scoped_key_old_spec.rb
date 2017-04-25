@@ -53,5 +53,11 @@ describe Keen::ScopedKey do
         other_api_key = Keen::ScopedKey.decrypt!(bad_api_key, encrypted_str)
       }.to raise_error(OpenSSL::Cipher::CipherError)
     end
+
+    it "should properly encrypt with master keys that are 32 characters long" do
+       master_key = "\0" * 32
+       scoped_key = Keen::ScopedKey.new(master_key, data).encrypt!
+       Keen::ScopedKey.decrypt!(master_key, scoped_key).data.should == data
+    end
   end
 end

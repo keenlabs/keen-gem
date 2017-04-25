@@ -21,6 +21,7 @@ module Keen
       end
 
       def aes256_encrypt(key, plaintext, iv = nil)
+        raise OpenSSL::Cipher::CipherError.new("iv must be 16 bytes") if !iv.nil? && iv.length != 16
         padded_key = pad(key)
         aes = OpenSSL::Cipher::AES.new(256, :CBC)
         aes.encrypt
@@ -40,7 +41,11 @@ module Keen
       end
 
       def pad(msg)
-        pad_len = BLOCK_SIZE - (msg.length % BLOCK_SIZE)
+        missing_chars = msg.length % BLOCK_SIZE
+        return msg if missing_chars == 0
+        
+        pad_len = BLOCK_SIZE - missing_chars
+
         padding = pad_len.chr * pad_len
         padded = msg + padding
         padded
