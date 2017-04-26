@@ -9,44 +9,26 @@ module Keen
 
     class << self
       def aes256_decrypt(key, iv_plus_encrypted)
-        puts 'start'
         padded_key = pad(key)
-        puts 'pad key'
         unhexed_iv_plus_encrypted = unhexlify(iv_plus_encrypted)
-        puts 'get iv'
         iv = unhexed_iv_plus_encrypted[0, 16]
-        puts 'clean iv'
         encrypted = unhexed_iv_plus_encrypted[16, unhexed_iv_plus_encrypted.length]
-        puts 'get encrypted'
         aes = OpenSSL::Cipher::AES.new(256, :CBC)
-        puts 'build cipher'
         aes.decrypt
-        puts 'decrypt'
         aes.key = padded_key
-        puts 'set key'
         aes.iv = iv
-        puts 'set iv'
         aes.update(encrypted) + aes.final
       end
 
       def aes256_encrypt(key, plaintext, iv = nil)
-        puts 'start encrypt'
         raise OpenSSL::Cipher::CipherError.new("iv must be 16 bytes") if !iv.nil? && iv.length != 16
-        puts 'raise'
         padded_key = pad(key)
-        puts 'pad key'
         aes = OpenSSL::Cipher::AES.new(256, :CBC)
-        puts 'get cipher'
         aes.encrypt
-        puts 'encrypt'
         aes.key = padded_key
-        puts 'set key'
         aes.iv = iv unless iv.nil?
-        puts 'set iv'
         iv ||= aes.random_iv
-        puts 'random_iv'
         encrypted = aes.update(plaintext) + aes.final
-        puts 'get encrypted'
         hexlify(iv) + hexlify(encrypted)
       end
 
