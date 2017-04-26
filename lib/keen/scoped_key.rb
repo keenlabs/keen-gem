@@ -11,11 +11,15 @@ module Keen
     class << self
       def decrypt!(api_key, scoped_key)
         if api_key.length == 64
+          puts 'new'
           decrypted = Keen::AESHelper.aes256_decrypt(api_key, scoped_key)
         else
+          puts 'old'
           decrypted = Keen::AESHelperOld.aes256_decrypt(api_key, scoped_key)
         end
+        puts 'load json'
         data = MultiJson.load(decrypted)
+        puts 'return new self'
         self.new(api_key, data)
       end
     end

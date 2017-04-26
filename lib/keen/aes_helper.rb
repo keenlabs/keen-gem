@@ -7,13 +7,21 @@ module Keen
 
     class << self
       def aes256_decrypt(key, iv_plus_encrypted)
+        puts 'start dec'
         aes = OpenSSL::Cipher::AES.new(256, :CBC)
+        puts 'create cipher'
         iv = iv_plus_encrypted[0, aes.key_len]
+        puts 'create iv'
         encrypted = iv_plus_encrypted[aes.key_len, iv_plus_encrypted.length]
+        puts 'get encrypted'
         aes.decrypt
+        puts 'decrypt'
         aes.key = unhexlify(key)
+        puts 'set key'
         aes.iv = unhexlify(iv)
+        puts 'set iv'
         aes.update(unhexlify(encrypted)) + aes.final
+        puts 'finish'
       end
 
       def aes256_encrypt(key, plaintext, iv = nil)
