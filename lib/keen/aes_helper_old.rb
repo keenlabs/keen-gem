@@ -27,7 +27,6 @@ module Keen
         aes.iv = iv
         puts 'set iv'
         aes.update(encrypted) + aes.final
-        puts 'finish 2'
       end
 
       def aes256_encrypt(key, plaintext, iv = nil)
@@ -49,7 +48,6 @@ module Keen
         encrypted = aes.update(plaintext) + aes.final
         puts 'get encrypted'
         hexlify(iv) + hexlify(encrypted)
-        puts 'finish 2'
       end
 
       def hexlify(msg)
