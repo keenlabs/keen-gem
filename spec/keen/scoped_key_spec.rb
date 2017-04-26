@@ -22,7 +22,7 @@ describe Keen::ScopedKey do
     end
   end
 
-  describe "encrypt! and decrypt!" do
+  describe "encrypt and decrypt" do
     it "should encrypt and hex encode the data using the api key" do
       puts 'start'
       encrypted_str = new_scoped_key.encrypt!
