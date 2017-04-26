@@ -75,6 +75,7 @@ RSpec.configure do |config|
 
   config.color      = true
   config.tty        = true
-  config.formatter  = :progress # :progress, :documentation, :html, :textmate
+  # config.formatter  = :progress # :progress, :documentation, :html, :textmate
+  config.formatter    = :documentation
 end
 
