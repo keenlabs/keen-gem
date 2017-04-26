@@ -6,7 +6,7 @@ rvm:
   - 2.0.0
   - 2.2.2
   - 2.4.0
-  - jruby-19mode
+  - jruby
 
 env:
   - PATTERN=keen
@@ -21,7 +21,7 @@ before_install:
 
 matrix:
   exclude:
-    - rvm: jruby-19mode
+    - rvm: jruby
       env: PATTERN=synchrony
 
 script:
