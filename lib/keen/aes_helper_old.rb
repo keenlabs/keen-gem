@@ -31,15 +31,25 @@ module Keen
       end
 
       def aes256_encrypt(key, plaintext, iv = nil)
+        puts 'start encrypt'
         raise OpenSSL::Cipher::CipherError.new("iv must be 16 bytes") if !iv.nil? && iv.length != 16
+        puts 'raise'
         padded_key = pad(key)
+        puts 'pad key'
         aes = OpenSSL::Cipher::AES.new(256, :CBC)
+        puts 'get cipher'
         aes.encrypt
+        puts 'encrypt'
         aes.key = padded_key
+        puts 'set key'
         aes.iv = iv unless iv.nil?
+        puts 'set iv'
         iv ||= aes.random_iv
+        puts 'random_iv'
         encrypted = aes.update(plaintext) + aes.final
+        puts 'get encrypted'
         hexlify(iv) + hexlify(encrypted)
+        puts 'finish 2'
       end
 
       def hexlify(msg)

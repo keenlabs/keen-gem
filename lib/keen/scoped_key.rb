@@ -30,10 +30,13 @@ module Keen
     end
 
     def encrypt!(iv = nil)
+      puts 'start encrypt'
       json_str = MultiJson.dump(self.data)
+      puts 'got json'
       if self.api_key.length == 64
         Keen::AESHelper.aes256_encrypt(self.api_key, json_str, iv)
       else
+        puts 'old'
         Keen::AESHelperOld.aes256_encrypt(self.api_key, json_str, iv)
       end
     end
