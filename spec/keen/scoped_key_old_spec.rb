@@ -22,11 +22,15 @@ describe Keen::ScopedKey do
     end
   end
 
-  describe "encrypt! and decrypt!" do
+  describe "encrypt and decrypt" do
     it "should encrypt and hex encode the data using the api key" do
+      puts 'start 2'
       encrypted_str = new_scoped_key.encrypt!
+      puts 'get encrypted string;'
       other_api_key = Keen::ScopedKey.decrypt!(api_key, encrypted_str)
+      puts 'decrypt'
       other_api_key.data.should == data
+      puts 'finish'
     end
 
     describe "when an IV is not provided" do

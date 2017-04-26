@@ -9,15 +9,25 @@ module Keen
 
     class << self
       def aes256_decrypt(key, iv_plus_encrypted)
+        puts 'start'
         padded_key = pad(key)
+        puts 'pad key'
         unhexed_iv_plus_encrypted = unhexlify(iv_plus_encrypted)
+        puts 'get iv'
         iv = unhexed_iv_plus_encrypted[0, 16]
+        puts 'clean iv'
         encrypted = unhexed_iv_plus_encrypted[16, unhexed_iv_plus_encrypted.length]
+        puts 'get encrypted'
         aes = OpenSSL::Cipher::AES.new(256, :CBC)
+        puts 'build cipher'
         aes.decrypt
+        puts 'decrypt'
         aes.key = padded_key
+        puts 'set key'
         aes.iv = iv
+        puts 'set iv'
         aes.update(encrypted) + aes.final
+        puts 'finish 2'
       end
 
       def aes256_encrypt(key, plaintext, iv = nil)
