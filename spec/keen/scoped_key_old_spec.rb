@@ -37,7 +37,7 @@ describe Keen::ScopedKey do
 
     describe "when an IV is provided" do
       it "should produce the same encrypted key text for a " do
-        iv = "\0" * 32
+        iv = "\0" * 16
         new_scoped_key.encrypt!(iv).should == (new_scoped_key.encrypt!(iv))
       end
 
@@ -52,6 +52,12 @@ describe Keen::ScopedKey do
       expect {
         other_api_key = Keen::ScopedKey.decrypt!(bad_api_key, encrypted_str)
       }.to raise_error(OpenSSL::Cipher::CipherError)
+    end
+
+    it "should properly encrypt with master keys that are 32 characters long" do
+       master_key = "\0" * 32
+       scoped_key = Keen::ScopedKey.new(master_key, data).encrypt!
+       Keen::ScopedKey.decrypt!(master_key, scoped_key).data.should == data
     end
   end
 end

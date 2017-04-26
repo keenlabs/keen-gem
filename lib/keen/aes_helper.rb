@@ -17,6 +17,7 @@ module Keen
       end
 
       def aes256_encrypt(key, plaintext, iv = nil)
+        raise OpenSSL::Cipher::CipherError.new("iv must be 16 bytes") if !iv.nil? && iv.length != 16
         aes = OpenSSL::Cipher::AES.new(256, :CBC)
         aes.encrypt
         aes.key = unhexlify(key)

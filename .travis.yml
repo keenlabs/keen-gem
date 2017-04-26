@@ -5,7 +5,7 @@ rvm:
   - 1.9.3
   - 2.0.0
   - 2.2.2
-  - jruby-19mode
+  - 2.4.0
 
 env:
   - PATTERN=keen
@@ -17,11 +17,6 @@ before_install:
   - bundle --version
   - gem update --system
   - gem --version
-
-matrix:
-  exclude:
-    - rvm: jruby-19mode
-      env: PATTERN=synchrony
 
 script:
   - bundle exec rake pattern

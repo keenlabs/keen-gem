@@ -59,7 +59,7 @@ describe Keen::Client do
     end
 
     it "should return empty for bad json on a 200/201" do
-      process_response.call(200, "invalid json").should == {}
+      expect(process_response.call(200, "invalid json")).to eq({})
     end
 
     it "should raise a bad request error for a 400" do
