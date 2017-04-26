@@ -13,26 +13,26 @@ Gem::Specification.new do |s|
   s.license     = "MIT"
 
   s.add_dependency "multi_json", "~> 1.3"
-  s.add_dependency "addressable", "~> 2.3.5"
+  s.add_dependency "addressable", "~> 2.3"
   s.add_dependency "jruby-openssl" if defined?(JRUBY_VERSION)
 
   s.add_dependency 'rubysl', '~> 2.0' if defined?(RUBY_ENGINE) && RUBY_ENGINE == 'rbx'
 
   # guard
   unless RUBY_VERSION.start_with? '1.8'
-    s.add_development_dependency 'guard'
-    s.add_development_dependency 'guard-rspec'
+    s.add_development_dependency 'guard', '~> 2.14'
+    s.add_development_dependency 'guard-rspec', '~> 4.7'
 
     # guard cross-platform listener trick
-    s.add_development_dependency 'rb-inotify'
-    s.add_development_dependency 'rb-fsevent'
-    s.add_development_dependency 'rb-fchange'
+    s.add_development_dependency 'rb-inotify', '~> 0.9'
+    s.add_development_dependency 'rb-fsevent', '~> 0.9'
+    s.add_development_dependency 'rb-fchange', '~> 0.0.6'
 
     # guard notifications
-    s.add_development_dependency 'ruby_gntp'
+    s.add_development_dependency 'ruby_gntp', '~> 0.3'
 
     # fix guard prompt
-    s.add_development_dependency 'rb-readline' # or compile ruby w/ readline
+    s.add_development_dependency 'rb-readline', '~> 0.5' # or compile ruby w/ readline
   end
 
   # debuggers
