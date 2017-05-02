@@ -222,10 +222,10 @@ module Keen
       def query(analysis_type, event_collection, params={}, options={})
         response =
           if options[:method] == :post
-            post_query(analysis_type, event_collection, params)
+            post_query(analysis_type, event_collection, params, options)
           else
             url = _query_url(analysis_type, event_collection, params, options)
-            get_response(url)
+            get_response(url, options)
           end
 
         response_body = response.body.chomp
@@ -236,7 +236,7 @@ module Keen
 
       private
 
-      def post_query(analysis_type, event_collection, params={})
+      def post_query(analysis_type, event_collection, params={}, options={})
         ensure_project_id!
         ensure_read_key!
 
@@ -244,7 +244,7 @@ module Keen
         query_params[:event_collection] = event_collection.to_s if event_collection
         Keen::HTTP::Sync.new(self.api_url, self.proxy_url, self.read_timeout).post(
           :path => api_query_resource_path(analysis_type),
-          :headers => api_headers(self.read_key, "sync"),
+          :headers => request_headers(options),
           :body => MultiJson.encode(query_params)
         )
       rescue Exception => http_error
@@ -260,11 +260,11 @@ module Keen
         "#{self.api_url}#{api_query_resource_path(analysis_type)}?#{preprocess_params(query_params)}"
       end
 
-      def get_response(url)
+      def get_response(url, options={})
         uri = URI.parse(url)
         Keen::HTTP::Sync.new(self.api_url, self.proxy_url, self.read_timeout).get(
           :path => "#{uri.path}?#{uri.query}",
-          :headers => api_headers(self.read_key, "sync")
+          :headers => request_headers(options)
         )
       rescue Exception => http_error
         raise HttpError.new("Couldn't perform #{@analysis_type} on Keen IO: #{http_error.message}", http_error)
@@ -272,6 +272,11 @@ module Keen
 
       def api_query_resource_path(analysis_type)
         "/#{self.api_version}/projects/#{self.project_id}/queries/#{analysis_type}"
+      end
+
+      def request_headers(options={})
+        base_headers = api_headers(self.read_key, "sync")
+        options.has_key?(:headers) ? base_headers.merge(options[:headers]) : base_headers
       end
     end
   end

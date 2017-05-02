@@ -20,7 +20,7 @@ describe Keen::Client do
     it 'should not require filters' do
       url = delete_url(event_collection)
       stub_keen_delete(url, 204)
-      client.delete(event_collection).should == true
+      expect(client.delete(event_collection)).to be true
       expect_keen_delete(url, "sync", master_key)
     end
 
@@ -42,7 +42,7 @@ describe Keen::Client do
 
     it "should fetch the project's event resource" do
       stub_keen_get(events_url, 200, [{ "a" => 1 }, { "b" => 2 }] )
-      client.event_collections.should == [{ "a" => 1 }, { "b" => 2 }]
+      expect(client.event_collections).to match_array([{ "a" => 1 }, { "b" => 2 }])
       expect_keen_get(events_url, "sync", master_key)
     end
   end
@@ -53,7 +53,7 @@ describe Keen::Client do
 
     it "should fetch the project's named event resource" do
       stub_keen_get(events_url, 200, [{ "b" => 2 }] )
-      client.event_collection(event_collection).should == [{ "b" => 2 }]
+      expect(client.event_collection(event_collection)).to match_array([{ "b" => 2 }])
       expect_keen_get(events_url, "sync", master_key)
     end
   end
@@ -63,7 +63,7 @@ describe Keen::Client do
 
     it "should fetch the project resource" do
       stub_keen_get(project_url, 200, [{ "a" => 1 }, { "b" => 2 }] )
-      client.project_info.should == [{ "a" => 1 }, { "b" => 2 }]
+      expect(client.project_info).to match_array([{ "a" => 1 }, { "b" => 2 }])
       expect_keen_get(project_url, "sync", master_key)
     end
   end

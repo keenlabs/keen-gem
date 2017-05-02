@@ -17,31 +17,31 @@ describe Keen do
       let(:client) { Keen.send(:default_client) }
 
       it "should set a project id from the environment" do
-        client.project_id.should == "12345"
+        expect(client.project_id).to eq("12345")
       end
 
       it "should set a write key from the environment" do
-        client.write_key.should == "abcdewrite"
+        expect(client.write_key).to eq("abcdewrite")
       end
 
       it "should set a read key from the environment" do
-        client.read_key.should == "abcderead"
+        expect(client.read_key).to eq("abcderead")
       end
 
       it "should set a master key from the environment" do
-        client.master_key.should == "lalalala"
+        expect(client.master_key).to eq("lalalala")
       end
 
       it "should set an api host from the environment" do
-        client.api_url.should == "http://fake.keen.io:fakeport"
+        expect(client.api_url).to eq("http://fake.keen.io:fakeport")
       end
 
       it "should set an proxy host from the environment" do
-        client.proxy_url.should == "http://proxy.keen.io:proxyport"
+        expect(client.proxy_url).to eq("http://proxy.keen.io:proxyport")
       end
 
       it "should set an proxy type from the environment" do
-        client.proxy_type.should == "http"
+        expect(client.proxy_type).to eq("http")
       end
     end
   end
@@ -49,7 +49,7 @@ describe Keen do
   describe "Keen delegation" do
     it "should memoize the default client, retaining settings" do
       Keen.project_id = "new-abcde"
-      Keen.project_id.should == "new-abcde"
+      expect(Keen.project_id).to eq("new-abcde")
     end
 
     after do
@@ -60,33 +60,33 @@ describe Keen do
   describe "forwardable" do
     before do
       @default_client = double("client")
-      Keen.stub(:default_client).and_return(@default_client)
+      allow(Keen).to receive(:default_client).and_return(@default_client)
     end
 
     [:project_id, :write_key, :read_key, :api_url, :proxy_url, :proxy_type].each do |_method|
       it "should forward the #{_method} method" do
-        @default_client.should_receive(_method)
+        expect(@default_client).to receive(_method)
         Keen.send(_method)
       end
     end
 
     [:project_id, :write_key, :read_key, :master_key, :api_url].each do |_method|
       it "should forward the #{_method} method" do
-        @default_client.should_receive(_method)
+        expect(@default_client).to receive(_method)
         Keen.send(_method)
       end
     end
 
     [:project_id=, :write_key=, :read_key=, :master_key=, :api_url=].each do |_method|
       it "should forward the #{_method} method" do
-        @default_client.should_receive(_method).with("12345")
+        expect(@default_client).to receive(_method).with("12345")
         Keen.send(_method, "12345")
       end
     end
 
     [:publish, :publish_async, :publish_batch, :publish_batch_async].each do |_method|
       it "should forward the #{_method} method" do
-        @default_client.should_receive(_method).with("users", {})
+        expect(@default_client).to receive(_method).with("users", {})
         Keen.send(_method, "users", {})
       end
     end
@@ -95,7 +95,7 @@ describe Keen do
     # any new methods have a corresponding delegator
     Keen::Client::QueryingMethods.instance_methods.each do |_method|
       it "should forward the #{_method} query method" do
-        @default_client.should_receive(_method).with("users", {})
+        expect(@default_client).to receive(_method).with("users", {})
         Keen.send(_method, "users", {})
       end
     end
@@ -103,7 +103,7 @@ describe Keen do
 
   describe "logger" do
     it "should be set to info" do
-      Keen.logger.level.should == Logger::INFO
+      expect(Keen.logger.level).to eq(Logger::INFO)
     end
   end
 end

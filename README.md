@@ -412,6 +412,9 @@ If you want some bot protection, check out the [Voight-Kampff](https://github.co
 
 ### Changelog
 
+##### 0.9.9
++ Added the ability to send additional optional headers.
+
 ##### 0.9.7
 + Added a new header `Keen-Sdk` that sends the SDK version information on all requests.
 
