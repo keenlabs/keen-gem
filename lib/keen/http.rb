@@ -10,8 +10,8 @@ module Keen
         arguments+= proxy_arguments_for(proxy_url) if proxy_url
 
         @http = Net::HTTP.new(*arguments)
-        @http.read_timeout = read_timeout if read_timeout
         @http.open_timeout = open_timeout if open_timeout
+        @http.read_timeout = read_timeout if read_timeout
 
         if uri.scheme == "https"
           require 'net/https'
