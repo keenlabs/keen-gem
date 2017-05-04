@@ -419,6 +419,9 @@ If you want some bot protection, check out the [Voight-Kampff](https://github.co
 
 ### Changelog
 
+##### 0.9.10
++ Add ability to set the `open_time` setting for the http client.
+
 ##### 0.9.9
 + Added the ability to send additional optional headers.
 
