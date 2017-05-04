@@ -375,13 +375,13 @@ You can use the scoped key created in Ruby for API requests from any client. Sco
 
 ##### HTTP Read Timeout
 
-The default `Net:HTTP` timeout is 60 seconds. That's usually enough, but if you're querying over a large collection you may need to increase it. The timeout on the API side is 300 seconds, so that's as far as you'd want to go. You can configure a read timeout (in seconds) by setting a `KEEN_READ_TIMEOUT` environment variable, or by passing in a `read_timeout` option to the client constructor as follows:
+The default `Net::HTTP` timeout is 60 seconds. That's usually enough, but if you're querying over a large collection you may need to increase it. The timeout on the API side is 300 seconds, so that's as far as you'd want to go. You can configure a read timeout (in seconds) by setting a `KEEN_READ_TIMEOUT` environment variable, or by passing in a `read_timeout` option to the client constructor as follows:
 
 ``` ruby
 keen = Keen::Client.new(:read_timeout => 300)
 ```
 
-You can also configure the `NET:HTTP` open timeout, default is 60 seconds. To configure the timeout (in seconds) either set `KEEN_OPEN_TIMEOUT` environment variable, or by passing in a `open_timeout` option to the client constructor as follows:
+You can also configure the `NET::HTTP` open timeout, default is 60 seconds. To configure the timeout (in seconds) either set `KEEN_OPEN_TIMEOUT` environment variable, or by passing in a `open_timeout` option to the client constructor as follows:
 
 ``` ruby
 keen = Keen::Client.new(:open_timeout => 30)
