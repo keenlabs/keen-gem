@@ -8,9 +8,13 @@ rvm:
   - 2.4.0
 
 env:
-  - PATTERN=keen
-  #- PATTERN=integration KEEN_MASTER_KEY=f806128f31c349fda124b62d1f4cf4b2 KEEN_WRITE_KEY=f806128f31c349fda124b62d1f4cf4b2 KEEN_READ_KEY=f806128f31c349fda124b62d1f4cf4b2 KEEN_PROJECT_ID=50e5ffa6897a2c319b000000
-  - PATTERN=synchrony
+  matrix:
+    - PATTERN=keen
+    #- PATTERN=integration KEEN_MASTER_KEY=f806128f31c349fda124b62d1f4cf4b2 KEEN_WRITE_KEY=f806128f31c349fda124b62d1f4cf4b2 KEEN_READ_KEY=f806128f31c349fda124b62d1f4cf4b2 KEEN_PROJECT_ID=50e5ffa6897a2c319b000000
+    - PATTERN=synchrony
+  global:
+    - JAVA_OPTS='-Djava.security.egd=file:///dev/urandom'
+    - JRUBY_OPTS='--server -Xcompile.invokedynamic=false'
 
 before_install:
   - gem update bundler

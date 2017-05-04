@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.license     = "MIT"
 
   s.add_dependency "multi_json", "~> 1.3"
-  s.add_dependency "addressable", "~> 2.3.5"
+  s.add_dependency "addressable", "~> 2.3"
   s.add_dependency "jruby-openssl" if defined?(JRUBY_VERSION)
 
   s.add_dependency 'rubysl', '~> 2.0' if defined?(RUBY_ENGINE) && RUBY_ENGINE == 'rbx'
