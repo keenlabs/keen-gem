@@ -242,7 +242,7 @@ module Keen
 
         query_params = params.dup
         query_params[:event_collection] = event_collection.to_s if event_collection
-        Keen::HTTP::Sync.new(self.api_url, self.proxy_url, self.read_timeout).post(
+        Keen::HTTP::Sync.new(self.api_url, self.proxy_url, self.read_timeout, self.open_timeout).post(
           :path => api_query_resource_path(analysis_type),
           :headers => request_headers(options),
           :body => MultiJson.encode(query_params)
@@ -262,7 +262,7 @@ module Keen
 
       def get_response(url, options={})
         uri = URI.parse(url)
-        Keen::HTTP::Sync.new(self.api_url, self.proxy_url, self.read_timeout).get(
+        Keen::HTTP::Sync.new(self.api_url, self.proxy_url, self.read_timeout, self.open_timeout).get(
           :path => "#{uri.path}?#{uri.query}",
           :headers => request_headers(options)
         )

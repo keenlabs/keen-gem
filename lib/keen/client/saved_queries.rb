@@ -25,7 +25,7 @@ class SavedQueries
   end
 
   def create(saved_query_name, saved_query_body)
-    response = Keen::HTTP::Sync.new(client.api_url, client.proxy_url, client.read_timeout).put(
+    response = Keen::HTTP::Sync.new(client.api_url, client.proxy_url, client.read_timeout, client.open_timeout).put(
       path: "#{saved_query_base_url}/#{saved_query_name}",
       headers: api_headers(client.master_key, "sync"),
       body: saved_query_body
@@ -35,7 +35,7 @@ class SavedQueries
   alias_method :update, :create
 
   def delete(saved_query_name)
-    response = Keen::HTTP::Sync.new(client.api_url, client.proxy_url, client.read_timeout).delete(
+    response = Keen::HTTP::Sync.new(client.api_url, client.proxy_url, client.read_timeout, client.open_timeout).delete(
       path: "#{saved_query_base_url}/#{saved_query_name}",
       headers: api_headers(client.master_key, "sync")
     )
@@ -47,7 +47,7 @@ class SavedQueries
   attr_reader :client
 
   def saved_query_response(api_key, path = "")
-    Keen::HTTP::Sync.new(client.api_url, client.proxy_url, client.read_timeout).get(
+    Keen::HTTP::Sync.new(client.api_url, client.proxy_url, client.read_timeout, client.open_timeout).get(
       path: saved_query_base_url + path,
       headers: api_headers(api_key, "sync")
     )

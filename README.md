@@ -381,6 +381,13 @@ The default `Net:HTTP` timeout is 60 seconds. That's usually enough, but if you'
 keen = Keen::Client.new(:read_timeout => 300)
 ```
 
+You can also configure the `NET:HTTP` open timeout, default is 60 seconds. To configure the timeout (in seconds) either set `KEEN_OPEN_TIMEOUT` environment variable, or by passing in a `open_timeout` option to the client constructor as follows:
+
+``` ruby
+keen = Keen::Client.new(:open_timeout => 30)
+```
+
+
 ##### HTTP Proxy
 
 You can set the `KEEN_PROXY_TYPE` and `KEEN_PROXY_URL` environment variables to enable HTTP proxying. `KEEN_PROXY_TYPE` should be set to `socks5`. You can also configure this on client instances by passing in `proxy_type` and `proxy_url` keys.
@@ -419,7 +426,7 @@ If you want some bot protection, check out the [Voight-Kampff](https://github.co
 + Added a new header `Keen-Sdk` that sends the SDK version information on all requests.
 
 ##### 0.9.6
-+ Updated behavior of saved queries to allow fetching results using the READ KEY as opposed to requiring the MASTER KEY, making the gem consistent with https://keen.io/docs/api/#getting-saved-query-results 
++ Updated behavior of saved queries to allow fetching results using the READ KEY as opposed to requiring the MASTER KEY, making the gem consistent with https://keen.io/docs/api/#getting-saved-query-results
 
 ##### 0.9.5
 + Fix bug with scoped key generation not working with newer Keen projects.

@@ -7,6 +7,7 @@ describe Keen::Client do
   let(:api_url) { "http://fake.keen.io:fakeport" }
   let(:client) { Keen::Client.new(:project_id => project_id) }
   let(:read_timeout) { 40 }
+  let(:open_timeout) { 10 }
 
   before do
     ENV["KEEN_PROJECT_ID"] = nil
@@ -14,6 +15,7 @@ describe Keen::Client do
     ENV["KEEN_READ_KEY"] = nil
     ENV["KEEN_API_URL"] = nil
     ENV["KEEN_READ_TIMEOUT"] = nil
+    ENV["KEEN_OPEN_TIMEOUT"] = nil
   end
 
   describe "#initialize" do
@@ -32,12 +34,14 @@ describe Keen::Client do
         :write_key => write_key,
         :read_key => read_key,
         :api_url => api_url,
-        :read_timeout => read_timeout)
+        :read_timeout => read_timeout,
+        :open_timeout => open_timeout)
       expect(client.write_key).to eq(write_key)
       expect(client.read_key).to eq(read_key)
       expect(client.project_id).to eq(project_id)
       expect(client.api_url).to eq(api_url)
       expect(client.read_timeout).to eq(read_timeout)
+      expect(client.open_timeout).to eq(open_timeout)
     end
 
     it "should set a default api_url" do

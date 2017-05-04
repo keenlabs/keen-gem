@@ -1,7 +1,7 @@
 module Keen
   module HTTP
     class Sync
-      def initialize(base_url, proxy_url=nil, read_timeout=nil)
+      def initialize(base_url, proxy_url=nil, read_timeout=nil, open_timeout=nil)
         require 'uri'
         require 'net/http'
 
@@ -11,6 +11,7 @@ module Keen
 
         @http = Net::HTTP.new(*arguments)
         @http.read_timeout = read_timeout if read_timeout
+        @http.open_timeout = open_timeout if open_timeout
 
         if uri.scheme == "https"
           require 'net/https'

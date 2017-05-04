@@ -75,7 +75,8 @@ module Keen
         :api_url => ENV['KEEN_API_URL'],
         :proxy_url => ENV['KEEN_PROXY_URL'],
         :proxy_type => ENV['KEEN_PROXY_TYPE'],
-        :read_timeout => ENV['KEEN_READ_TIMEOUT']
+        :read_timeout => ENV['KEEN_READ_TIMEOUT'],
+        :open_timeout => ENV['KEEN_OPEN_TIMEOUT']
       )
     end
   end
