@@ -87,7 +87,7 @@ module Keen
       private
 
       def http_sync
-        @http_sync ||= Keen::HTTP::Sync.new(self.api_url, self.proxy_url, self.read_timeout)
+        @http_sync ||= Keen::HTTP::Sync.new(self.api_url, self.proxy_url, self.read_timeout, self.open_timeout)
       end
 
     end
