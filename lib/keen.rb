@@ -2,6 +2,7 @@ require 'logger'
 require 'forwardable'
 
 require 'keen/client'
+require 'keen/saved_queries'
 require 'keen/scoped_key'
 
 module Keen
