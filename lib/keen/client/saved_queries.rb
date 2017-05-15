@@ -7,10 +7,14 @@ class SavedQueries
   end
 
   def all
+    ensure_master_key!
+
     process_response(saved_query_response(client.master_key))
   end
 
   def get(saved_query_name, results = false)
+    ensure_master_key!
+
     saved_query_path = "/#{saved_query_name}"
     api_key = client.master_key
     if results
@@ -25,6 +29,8 @@ class SavedQueries
   end
 
   def create(saved_query_name, saved_query_body)
+    ensure_master_key!
+
     response = Keen::HTTP::Sync.new(client.api_url, client.proxy_url, client.read_timeout, client.open_timeout).put(
       path: "#{saved_query_base_url}/#{saved_query_name}",
       headers: api_headers(client.master_key, "sync"),
@@ -35,6 +41,8 @@ class SavedQueries
   alias_method :update, :create
 
   def delete(saved_query_name)
+    ensure_master_key!
+
     response = Keen::HTTP::Sync.new(client.api_url, client.proxy_url, client.read_timeout, client.open_timeout).delete(
       path: "#{saved_query_base_url}/#{saved_query_name}",
       headers: api_headers(client.master_key, "sync")
