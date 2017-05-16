@@ -21,5 +21,10 @@ RSpec::Core::RakeTask.new(:pattern) do |t|
   t.pattern = "spec/#{ENV['PATTERN']}/**/*_spec.rb"
 end
 
+desc "Start a development console with local code loaded"
+task :console do
+  exec "irb -r keen -I ./lib"
+end
+
 task :default => :spec
 task :test => [:spec]
