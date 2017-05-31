@@ -3,7 +3,6 @@ require 'keen/version'
 require 'keen/client/publishing_methods'
 require 'keen/client/querying_methods'
 require 'keen/client/maintenance_methods'
-require 'keen/client/saved_queries'
 require 'keen/version'
 require 'openssl'
 require 'multi_json'
@@ -62,8 +61,6 @@ module Keen
       @saved_queries ||= SavedQueries.new(self)
     end
 
-    private
-
     def process_response(status_code, response_body)
       case status_code.to_i
       when 200..201
@@ -101,6 +98,8 @@ module Keen
     def ensure_read_key!
       raise ConfigurationError, "Read Key must be set for this operation" unless self.read_key
     end
+
+    private
 
     def api_event_collection_resource_path(event_collection)
       encoded_collection_name = Addressable::URI.encode_component(event_collection.to_s)
