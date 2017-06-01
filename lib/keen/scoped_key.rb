@@ -3,6 +3,7 @@ require 'keen/aes_helper'
 require 'keen/aes_helper_old'
 
 module Keen
+  # <b>DEPRECATED:</b> Please use <tt>access keys</tt> instead.
   class ScopedKey
 
     attr_accessor :api_key
@@ -26,6 +27,8 @@ module Keen
     end
 
     def encrypt!(iv = nil)
+      warn "[DEPRECATION] Scoped keys are deprecated. Please use `access_keys` instead."
+
       json_str = MultiJson.dump(self.data)
       if self.api_key.length == 64
         Keen::AESHelper.aes256_encrypt(self.api_key, json_str, iv)
