@@ -1,6 +1,7 @@
 require 'logger'
 require 'forwardable'
 
+require 'keen/access_keys'
 require 'keen/client'
 require 'keen/saved_queries'
 require 'keen/scoped_key'
@@ -53,7 +54,8 @@ module Keen
                    :project_info,
                    :query_url,
                    :query,
-                   :saved_queries
+                   :saved_queries,
+                   :access_keys
 
     attr_writer :logger
 

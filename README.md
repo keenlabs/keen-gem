@@ -355,6 +355,8 @@ This is helpful for tracking email clickthroughs. See the [redirect documentatio
 
 #### Generating scoped keys
 
+Note, Scoped Keys are now *deprecated* in favor of [access keys](https://keen.io/docs/api/#access-keys?s=gh-gem).
+
 A [scoped key](https://keen.io/docs/security/#scoped-key?s=gh-gem) is a string, generated with your API Key, that represents some encrypted authentication and query options.
 Use them to control what data queries have access to.
 
@@ -368,6 +370,34 @@ scoped_key = Keen::ScopedKey.new("my-api-key", { "filters" => [{
 ```
 
 You can use the scoped key created in Ruby for API requests from any client. Scoped keys are commonly used in JavaScript, where credentials are visible and need to be protected.
+
+#### Access Keys
+
+You can use access keys to restrict the functionality of a key you use with the Keen API. Access keys can also enrich events that you send.
+
+[Read up](https://keen.io/docs/api/#access-keys?s=gh-gem) on the full key body options.
+
+Create a key that automatically adds information to each event published with that key:
+
+``` ruby
+key_body = {
+  "name" => "autofill foo",
+  "is_active" => true,
+  "permitted" => ["writes"],
+  "options" => {
+    "writes" => {
+      "autofill": {
+        "foo": "bar"
+      }
+    }
+  }
+}
+
+new_key = client.access_keys.create(key_body)
+autofill_write_key = new_key["key"]
+```
+
+You can `revoke` and `unrevoke` keys to disable or enable access. `all` will return all current keys for the project, while `get("key-value-here")` will return info for a single key. You can also `update` and `delete` keys.
 
 ### Additional options
 
@@ -416,6 +446,11 @@ It's not just us humans that browse the web. Spiders, crawlers, and bots share t
 If you want some bot protection, check out the [Voight-Kampff](https://github.com/biola/Voight-Kampff) gem. Use the gem's `request.bot?` method to detect bots and avoid logging events.
 
 ### Changelog
+
+##### 1.1.0
++ Add support for access keys
++ Move saved queries into the Keen namespace
++ Deprecate scoped keys in favor of access keys
 
 ##### 1.0.0
 + Remove support for ruby 1.9.3

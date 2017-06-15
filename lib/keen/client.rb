@@ -61,6 +61,10 @@ module Keen
       @saved_queries ||= SavedQueries.new(self)
     end
 
+    def access_keys
+      @access_keys ||= AccessKeys.new(self)
+    end
+
     def process_response(status_code, response_body)
       case status_code.to_i
       when 200..201
