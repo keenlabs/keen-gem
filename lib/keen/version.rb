@@ -1,3 +1,3 @@
 module Keen
-  VERSION = "0.9.6"
+  VERSION = "1.1.0"
 end

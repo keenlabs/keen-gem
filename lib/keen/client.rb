@@ -3,7 +3,7 @@ require 'keen/version'
 require 'keen/client/publishing_methods'
 require 'keen/client/querying_methods'
 require 'keen/client/maintenance_methods'
-require 'keen/client/saved_queries'
+require 'keen/version'
 require 'openssl'
 require 'multi_json'
 require 'base64'
@@ -16,7 +16,7 @@ module Keen
     include Keen::Client::QueryingMethods
     include Keen::Client::MaintenanceMethods
 
-    attr_accessor :project_id, :write_key, :read_key, :master_key, :api_url, :proxy_url, :proxy_type, :read_timeout, :log_queries
+    attr_accessor :project_id, :write_key, :read_key, :master_key, :api_url, :proxy_url, :proxy_type, :read_timeout, :log_queries, :open_timeout
 
     CONFIG = {
       :api_url => "https://api.keen.io",
@@ -29,7 +29,8 @@ module Keen
         end
         { "Content-Type" => "application/json",
           "User-Agent" => user_agent,
-          "Authorization" => authorization }
+          "Authorization" => authorization,
+          "Keen-Sdk" => "ruby-#{Keen::VERSION}" }
       }
     }
 
@@ -52,13 +53,17 @@ module Keen
       self.proxy_url, self.proxy_type = options.values_at(:proxy_url, :proxy_type)
 
       self.read_timeout = options[:read_timeout].to_f unless options[:read_timeout].nil?
+
+      self.open_timeout = options[:open_timeout].to_f unless options[:open_timeout].nil?
     end
 
     def saved_queries
       @saved_queries ||= SavedQueries.new(self)
     end
 
-    private
+    def access_keys
+      @access_keys ||= AccessKeys.new(self)
+    end
 
     def process_response(status_code, response_body)
       case status_code.to_i
@@ -98,10 +103,12 @@ module Keen
       raise ConfigurationError, "Read Key must be set for this operation" unless self.read_key
     end
 
+    private
+
     def api_event_collection_resource_path(event_collection)
-        encoded_collection_name = Addressable::URI.escape(event_collection.to_s)
-        encoded_collection_name.gsub! '/', '%2F'
-        "/#{api_version}/projects/#{project_id}/events/#{encoded_collection_name}"
+      encoded_collection_name = Addressable::URI.encode_component(event_collection.to_s)
+      encoded_collection_name.gsub! '/', '%2F'
+      "/#{api_version}/projects/#{project_id}/events/#{encoded_collection_name}"
     end
 
     def preprocess_params(params)

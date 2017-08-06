@@ -2,26 +2,20 @@ language: ruby
 bundler_args: --without development
 
 rvm:
-  - 1.9.3
-  - 2.0.0
-  - 2.2.2
-  - jruby-19mode
+  - 2.1.10
+  - 2.2.7
+  - 2.4.1
 
 env:
-  - PATTERN=keen
-  #- PATTERN=integration KEEN_MASTER_KEY=f806128f31c349fda124b62d1f4cf4b2 KEEN_WRITE_KEY=f806128f31c349fda124b62d1f4cf4b2 KEEN_READ_KEY=f806128f31c349fda124b62d1f4cf4b2 KEEN_PROJECT_ID=50e5ffa6897a2c319b000000
-  - PATTERN=synchrony
+  matrix:
+    - PATTERN=keen
+    - PATTERN=synchrony
 
 before_install:
   - gem update bundler
   - bundle --version
   - gem update --system
   - gem --version
-
-matrix:
-  exclude:
-    - rvm: jruby-19mode
-      env: PATTERN=synchrony
 
 script:
   - bundle exec rake pattern

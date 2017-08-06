@@ -31,7 +31,7 @@ module Keen::SpecHelpers
     stub_keen_request(:delete, url, status, "")
   end
 
-  def expect_keen_request(method, url, body, sync_or_async_ua, read_or_write_key)
+  def expect_keen_request(method, url, body, sync_or_async_ua, read_or_write_key, extra_headers={})
     user_agent = "keen-gem, v#{Keen::VERSION}, #{sync_or_async_ua}"
     user_agent += ", #{RUBY_VERSION}, #{RUBY_PLATFORM}, #{RUBY_PATCHLEVEL}"
     if defined?(RUBY_ENGINE)
@@ -40,24 +40,27 @@ module Keen::SpecHelpers
 
     headers = { "Content-Type" => "application/json",
                 "User-Agent" => user_agent,
-                "Authorization" => read_or_write_key }
+                "Authorization" => read_or_write_key,
+                "Keen-Sdk" => "ruby-#{Keen::VERSION}" }
 
-    WebMock.should have_requested(method, url).with(
+    headers = headers.merge(extra_headers) if not extra_headers.empty?
+
+    expect(WebMock).to have_requested(method, url).with(
       :body => body,
       :headers => headers)
 
   end
 
-  def expect_keen_get(url, sync_or_async_ua, read_key)
-    expect_keen_request(:get, url, "", sync_or_async_ua, read_key)
+  def expect_keen_get(url, sync_or_async_ua, read_key, extra_headers={})
+    expect_keen_request(:get, url, "", sync_or_async_ua, read_key, extra_headers)
   end
 
-  def expect_keen_post(url, event_properties, sync_or_async_ua, write_key)
-    expect_keen_request(:post, url, MultiJson.encode(event_properties), sync_or_async_ua, write_key)
+  def expect_keen_post(url, event_properties, sync_or_async_ua, write_key, extra_headers={})
+    expect_keen_request(:post, url, MultiJson.encode(event_properties), sync_or_async_ua, write_key, extra_headers)
   end
 
-  def expect_keen_delete(url, sync_or_async_ua, master_key)
-    expect_keen_request(:delete, url, "", sync_or_async_ua, master_key)
+  def expect_keen_delete(url, sync_or_async_ua, master_key, extra_headers={})
+    expect_keen_request(:delete, url, "", sync_or_async_ua, master_key, extra_headers)
   end
 
   def api_event_collection_resource_url(base_url, collection)
@@ -76,4 +79,3 @@ RSpec.configure do |config|
   config.tty        = true
   config.formatter  = :progress # :progress, :documentation, :html, :textmate
 end
-

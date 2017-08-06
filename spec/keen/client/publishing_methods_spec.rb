@@ -21,7 +21,7 @@ describe Keen::Client::PublishingMethods do
     it "should return the proper response" do
       api_response = { "created" => true }
       stub_keen_post(api_event_collection_resource_url(api_url, collection), 201, api_response)
-      client.publish(collection, event_properties).should == api_response
+      expect(client.publish(collection, event_properties)).to eq(api_response)
     end
 
     it "should raise an argument error if no event collection is specified" do
@@ -51,9 +51,9 @@ describe Keen::Client::PublishingMethods do
         e = exception
       end
 
-      e.class.should == Keen::HttpError
-      e.original_error.should be_kind_of(Timeout::Error)
-      e.message.should == "Keen IO Exception: HTTP publish failure: execution expired"
+      expect(e.class).to eq(Keen::HttpError)
+      expect(e.original_error).to be_kind_of(Timeout::Error)
+      expect(e.message).to eq("Keen IO Exception: HTTP publish failure: execution expired")
     end
 
     it "should raise an exception if client has no project_id" do
@@ -84,7 +84,7 @@ describe Keen::Client::PublishingMethods do
       it "should return the proper response" do
         api_response = { "created" => true }
         stub_keen_post(api_event_collection_resource_url(api_url, collection), 201, api_response)
-        client.publish(collection, event_properties).should == api_response
+        expect(client.publish(collection, event_properties)).to eq(api_response)
       end
     end
   end
@@ -187,7 +187,7 @@ describe Keen::Client::PublishingMethods do
           EM.run {
             client.publish_async(collection, event_properties).callback { |response|
               begin
-                response.should == api_success
+                expect(response).to eq(api_success)
               ensure
                 EM.stop
               end
@@ -200,8 +200,8 @@ describe Keen::Client::PublishingMethods do
           EM.run {
             client.publish_async(collection, event_properties).errback { |error|
               begin
-                error.should_not be_nil
-                error.message.should == "Keen IO Exception: HTTP publish_async failure: WebMock timeout error"
+                expect(error).to_not be_nil
+                expect(error.message).to eq("Keen IO Exception: HTTP publish_async failure: WebMock timeout error")
               ensure
                 EM.stop
               end
@@ -221,7 +221,7 @@ describe Keen::Client::PublishingMethods do
                 end
               }
             }
-          }.to raise_error
+          }.to raise_error(NameError)
         end
       end
     end
@@ -265,7 +265,7 @@ describe Keen::Client::PublishingMethods do
           EM.run {
             client.publish_batch_async(events).callback { |response|
               begin
-                response.should == api_success
+                expect(response).to eq(api_success)
               ensure
                 EM.stop
               end
@@ -278,8 +278,8 @@ describe Keen::Client::PublishingMethods do
           EM.run {
             client.publish_batch_async(events).errback { |error|
               begin
-                error.should_not be_nil
-                error.message.should == "Keen IO Exception: HTTP publish_async failure: WebMock timeout error"
+                expect(error).to_not be_nil
+                expect(error.message).to eq("Keen IO Exception: HTTP publish_async failure: WebMock timeout error")
               ensure
                 EM.stop
               end
@@ -299,7 +299,7 @@ describe Keen::Client::PublishingMethods do
                 end
               }
             }
-          }.to raise_error
+          }.to raise_error(NameError)
         end
       end
     end
@@ -313,22 +313,20 @@ describe Keen::Client::PublishingMethods do
 
   describe "#add_event" do
     it "should alias to publish" do
-      client.should_receive(:publish).with("users", {:a => 1}, {:b => 2})
-      client.add_event("users", {:a => 1}, {:b => 2})
+      expect(client).to receive(:publish).with(collection, {:a => 1})
+      client.add_event(collection, {:a => 1}, {:b => 2})
     end
   end
 
   describe "beacon_url" do
     it "should return a url with a base-64 encoded json param" do
-      client.beacon_url("sign_ups", { :name => "Bob" }).should ==
-        "#{api_url}/3.0/projects/12345/events/sign_ups?api_key=#{write_key}&data=eyJuYW1lIjoiQm9iIn0="
+      expect(client.beacon_url("sign_ups", { :name => "Bob" })).to eq("#{api_url}/3.0/projects/12345/events/sign_ups?api_key=#{write_key}&data=eyJuYW1lIjoiQm9iIn0=")
     end
   end
 
   describe "redirect_url" do
     it "should return a url with a base-64 encoded json param and an encoded redirect url" do
-      client.redirect_url("sign_ups", { :name => "Bob" }, "http://keen.io/?foo=bar&bar=baz").should ==
-        "#{api_url}/3.0/projects/12345/events/sign_ups?api_key=#{write_key}&data=eyJuYW1lIjoiQm9iIn0=&redirect=http%3A%2F%2Fkeen.io%2F%3Ffoo%3Dbar%26bar%3Dbaz"
+      expect(client.redirect_url("sign_ups", { :name => "Bob" }, "http://keen.io/?foo=bar&bar=baz")).to eq("#{api_url}/3.0/projects/12345/events/sign_ups?api_key=#{write_key}&data=eyJuYW1lIjoiQm9iIn0=&redirect=http%3A%2F%2Fkeen.io%2F%3Ffoo%3Dbar%26bar%3Dbaz")
     end
   end
 

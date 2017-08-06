@@ -10,7 +10,7 @@ module Keen
       #
       # @return the JSON response from the API
       def add_event(event_collection, properties, options={})
-        self.publish(event_collection, properties, options)
+        self.publish(event_collection, properties)
       end
 
       # Publishes a synchronous event
@@ -161,7 +161,7 @@ module Keen
       def publish_body(path, body, error_method)
         begin
           response = Keen::HTTP::Sync.new(
-            self.api_url, self.proxy_url, self.read_timeout).post(
+            self.api_url, self.proxy_url, self.read_timeout, self.open_timeout).post(
               :path => path,
               :headers => api_headers(self.write_key, "sync"),
               :body => body)

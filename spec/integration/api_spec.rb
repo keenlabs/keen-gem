@@ -7,7 +7,7 @@ describe "Keen IO API" do
   def wait_for_count(event_collection, count)
     attempts = 0
     while attempts < 30
-      break if Keen.count(event_collection) == count
+      break if Keen.count(event_collection, {:timeframe => "this_2_hours"}) == count
       attempts += 1
       sleep(1)
     end
@@ -20,7 +20,7 @@ describe "Keen IO API" do
 
     describe "success" do
       it "should return a created status for a valid post" do
-        Keen.publish(collection, event_properties).should == api_success
+        expect(Keen.publish(collection, event_properties)).to eq(api_success)
       end
     end
 
@@ -33,7 +33,7 @@ describe "Keen IO API" do
       end
 
       it "should succeed if a non-url-safe event collection is specified" do
-        Keen.publish("infinite possibilities", event_properties).should == api_success
+        expect(Keen.publish("infinite possibilities", event_properties)).to eq(api_success)
       end
     end
 
@@ -45,7 +45,7 @@ describe "Keen IO API" do
           EM.run {
             Keen.publish_async(collection, event_properties).callback { |response|
               begin
-                response.should == api_success
+                expect(response).to eq(api_success)
               ensure
                 EM.stop
               end
@@ -60,7 +60,7 @@ describe "Keen IO API" do
           EM.run {
             Keen.publish_async("foo bar", event_properties).callback { |response|
               begin
-                response.should == api_success
+                expect(response).to eq(api_success)
               ensure
                 EM.stop
               end
@@ -72,7 +72,7 @@ describe "Keen IO API" do
 
     describe "batch" do
       it "should publish a batch of events" do
-        Keen.publish_batch(
+        expect(Keen.publish_batch(
           :batch_signups => [
             { :name => "bob" },
             { :name => "ted" }
@@ -81,7 +81,7 @@ describe "Keen IO API" do
             { :price => 30 },
             { :price => 40 }
           ]
-        ).should == {
+        )).to eq({
           "batch_purchases" => [
             { "success" => true },
             { "success" => true }
@@ -89,7 +89,7 @@ describe "Keen IO API" do
           "batch_signups" => [
             { "success" => true },
             { "success"=>true }
-          ]}
+          ]})
       end
     end
   end
@@ -110,7 +110,7 @@ describe "Keen IO API" do
                 { :price => 40 }
               ]).callback { |response|
               begin
-                response.should == api_success
+                expect(response).to eq(api_success)
               ensure
                 EM.stop
               end
@@ -151,111 +151,115 @@ describe "Keen IO API" do
     end
 
     it "should return a valid count_unique" do
-      Keen.count_unique(event_collection, :target_property => "price").should == 2
+      expect(Keen.count_unique(event_collection, :timeframe => "this_2_hours", :target_property => "price")).to eq(2)
     end
 
     it "should return a valid count with group_by" do
-      response = Keen.average(event_collection, :group_by => "username", :target_property => "price")
+      response = Keen.average(event_collection, :timeframe => "this_2_hours", :group_by => "username", :target_property => "price")
       bobs_response = response.select { |result| result["username"] == "bob" }.first
-      bobs_response["result"].should == 10
+      expect(bobs_response["result"]).to eq(10)
       teds_response = response.select { |result| result["username"] == "ted" }.first
-      teds_response["result"].should == 20
+      expect(teds_response["result"]).to eq(20)
     end
 
     it "should return a valid count with multi-group_by" do
-      response = Keen.average(event_collection, :group_by => ["username", "price"], :target_property => "price")
+      response = Keen.average(event_collection, :timeframe => "this_2_hours", :group_by => ["username", "price"], :target_property => "price")
       bobs_response = response.select { |result| result["username"] == "bob" }.first
-      bobs_response["result"].should == 10
-      bobs_response["price"].should == 10
+      expect(bobs_response["result"]).to eq(10)
+      expect(bobs_response["price"]).to eq(10)
       teds_response = response.select { |result| result["username"] == "ted" }.first
-      teds_response["result"].should == 20
-      teds_response["price"].should == 20
+      expect(teds_response["result"]).to eq(20)
+      expect(teds_response["price"]).to eq(20)
     end
 
     it "should return a valid sum" do
-      Keen.sum(event_collection, :target_property => "price").should == 30
+      expect(Keen.sum(event_collection, :timeframe => "this_2_hours", :target_property => "price")).to eq(30)
     end
 
     it "should return a valid minimum" do
-      Keen.minimum(event_collection, :target_property => "price").should == 10
+      expect(Keen.minimum(event_collection, :timeframe => "this_2_hours", :target_property => "price")).to eq(10)
     end
 
     it "should return a valid maximum" do
-      Keen.maximum(event_collection, :target_property => "price").should == 20
+      expect(Keen.maximum(event_collection, :timeframe => "this_2_hours", :target_property => "price")).to eq(20)
     end
 
     it "should return a valid average" do
-      Keen.average(event_collection, :target_property => "price").should == 15
+      expect(Keen.average(event_collection, :timeframe => "this_2_hours", :target_property => "price")).to eq(15)
     end
 
     it "should return a valid median" do
-      Keen.median(event_collection, :target_property => "price").should == 10
+      expect(Keen.median(event_collection, :timeframe => "this_2_hours", :target_property => "price")).to eq(10)
     end
 
     it "should return a valid percentile" do
-      Keen.percentile(event_collection, :target_property => "price", :percentile => 50).should == 10
-      Keen.percentile(event_collection, :target_property => "price", :percentile => 100).should == 20
+      expect(Keen.percentile(event_collection, :timeframe => "this_2_hours", :target_property => "price", :percentile => 50)).to eq(10)
+      expect(Keen.percentile(event_collection, :timeframe => "this_2_hours", :target_property => "price", :percentile => 100)).to eq(20)
     end
 
     it "should return a valid select_unique" do
-      results = Keen.select_unique(event_collection, :target_property => "price")
-      results.sort.should == [10, 20].sort
+      results = Keen.select_unique(event_collection, :timeframe => "this_2_hours", :target_property => "price")
+      expect(results.sort).to eq([10, 20].sort)
     end
 
     it "should return a valid extraction" do
-      results = Keen.extraction(event_collection)
-      results.length.should == 2
-      results.all? { |result| result["keen"] }.should be_true
-      results.map { |result| result["price"] }.sort.should == [10, 20]
-      results.map { |result| result["username"] }.sort.should == ["bob", "ted"]
+      results = Keen.extraction(event_collection, :timeframe => "this_2_hours")
+      expect(results.length).to eq(2)
+      expect(results.all? { |result| result["keen"] }).to be_truthy
+      expect(results.map { |result| result["price"] }.sort).to eq([10, 20])
+      expect(results.map { |result| result["username"] }.sort).to eq(["bob", "ted"])
     end
 
     it "should return a valid extraction of one property name" do
-      results = Keen.extraction(event_collection, :property_names => "price")
-      results.length.should == 2
-      results.any? { |result| result["keen"] }.should be_false
-      results.map { |result| result["price"] }.sort.should == [10, 20]
-      results.map { |result| result["username"] }.sort.should == [nil, nil]
+      results = Keen.extraction(event_collection, :timeframe => "this_2_hours", :property_names => "price")
+      expect(results.length).to eq(2)
+      expect(results.any? { |result| result["keen"] }).to be_falsey
+      expect(results.map { |result| result["price"] }.sort).to eq([10, 20])
+      expect(results.map { |result| result["username"] }.sort).to eq([nil, nil])
     end
 
     it "should return a valid extraction of more than one property name" do
-      results = Keen.extraction(event_collection, :property_names => ["price", "username"])
-      results.length.should == 2
-      results.any? { |result| result["keen"] }.should be_false
-      results.map { |result| result["price"] }.sort.should == [10, 20]
-      results.map { |result| result["username"] }.sort.should == ["bob", "ted"]
+      results = Keen.extraction(event_collection, :timeframe => "this_2_hours", :property_names => ["price", "username"])
+      expect(results.length).to eq(2)
+      expect(results.any? { |result| result["keen"] }).to be_falsey
+      expect(results.map { |result| result["price"] }.sort).to eq([10, 20])
+      expect(results.map { |result| result["username"] }.sort).to eq(["bob", "ted"])
     end
 
     it "should return a valid funnel" do
       steps = [{
         :event_collection => event_collection,
-        :actor_property => "username"
+        :actor_property => "username",
+        :timeframe => "this_2_hours"
       }, {
         :event_collection => @returns_event_collection,
-        :actor_property => "username"
+        :actor_property => "username",
+        :timeframe => "this_2_hours"
       }]
       results = Keen.funnel(:steps => steps)
-      results.should == [2, 1]
+      expect(results).to eq([2, 1])
     end
 
     it "should return all keys of valid funnel if full result option is passed" do
       steps = [{
+        :timeframe => "this_2_hours",
         :event_collection => event_collection,
         :actor_property => "username"
       }, {
+        :timeframe => "this_2_hours",
         :event_collection => @returns_event_collection,
         :actor_property => "username"
       }]
       results = Keen.funnel({ :steps => steps }, { :response => :all_keys })
-      results["result"].should == [2, 1]
+      expect(results["result"]).to eq([2, 1])
     end
 
     it "should apply filters" do
-      Keen.count(event_collection, :filters => [{
+      expect(Keen.count(event_collection, :timeframe => "this_2_hours", :filters => [{
         :property_name => "username",
         :operator => "eq",
         :property_value => "ted"
-      }]).should == 1
+      }])).to eq(1)
     end
   end
 
@@ -273,9 +277,9 @@ describe "Keen IO API" do
         { :property_name => "delete", :operator => "eq", :property_value => "me" }
       ])
       wait_for_count(event_collection, 1)
-      results = Keen.extraction(event_collection)
-      results.length.should == 1
-      results.first["delete"].should == "you"
+      results = Keen.extraction(event_collection, :timeframe => "this_2_hours")
+      expect(results.length).to eq(1)
+      expect(results.first["delete"]).to eq("you")
     end
   end
 
@@ -286,21 +290,13 @@ describe "Keen IO API" do
        # requires a project with at least 1 collection
        it "should return the project's collections as JSON" do
          first_collection = Keen.event_collections.first
-         first_collection["properties"]["keen.timestamp"].should == "datetime"
-       end
-     end
-
-     describe "event_collection" do
-       # requires a project with at least 1 collection
-       it "should return the project's named collection as JSON" do
-         first_collection = Keen.event_collection(:event_collection)
-         first_collection["properties"]["keen.timestamp"].should == "datetime"
+         expect(first_collection["properties"]["keen.timestamp"]).to eq("datetime")
        end
      end
 
      describe "project_info" do
        it "should return the project info as JSON" do
-         Keen.project_info["url"].should =~ Regexp.new(project_id)
+         expect(Keen.project_info["url"]).to include(project_id)
 
        end
      end

@@ -70,8 +70,6 @@ Publishing events shouldn't slow your application down or make users wait longer
 
 The Keen IO API is fast, but any synchronous network call you make will negatively impact response times. For this reason, we recommend you use the `publish_async` method to send events when latency is a concern. Alternatively, you can drop events into a background queue e.g. Delayed Jobs and publish synchronously from there.
 
-To compare asychronous vs. synchronous performance, check out the [keen-gem-example](http://keen-gem-example.herokuapp.com/) app.
-
 To publish asynchronously, first add
 [em-http-request](https://github.com/igrigorik/em-http-request) to your Gemfile. Make sure it's version 1.0 or above.
 
@@ -367,6 +365,8 @@ This is helpful for tracking email clickthroughs. See the [redirect documentatio
 
 #### Generating scoped keys
 
+Note, Scoped Keys are now *deprecated* in favor of [access keys](https://keen.io/docs/api/#access-keys?s=gh-gem).
+
 A [scoped key](https://keen.io/docs/security/#scoped-key?s=gh-gem) is a string, generated with your API Key, that represents some encrypted authentication and query options.
 Use them to control what data queries have access to.
 
@@ -381,15 +381,50 @@ scoped_key = Keen::ScopedKey.new("my-api-key", { "filters" => [{
 
 You can use the scoped key created in Ruby for API requests from any client. Scoped keys are commonly used in JavaScript, where credentials are visible and need to be protected.
 
+#### Access Keys
+
+You can use access keys to restrict the functionality of a key you use with the Keen API. Access keys can also enrich events that you send.
+
+[Read up](https://keen.io/docs/api/#access-keys?s=gh-gem) on the full key body options.
+
+Create a key that automatically adds information to each event published with that key:
+
+``` ruby
+key_body = {
+  "name" => "autofill foo",
+  "is_active" => true,
+  "permitted" => ["writes"],
+  "options" => {
+    "writes" => {
+      "autofill": {
+        "foo": "bar"
+      }
+    }
+  }
+}
+
+new_key = client.access_keys.create(key_body)
+autofill_write_key = new_key["key"]
+```
+
+You can `revoke` and `unrevoke` keys to disable or enable access. `all` will return all current keys for the project, while `get("key-value-here")` will return info for a single key. You can also `update` and `delete` keys.
+
 ### Additional options
 
 ##### HTTP Read Timeout
 
-The default `Net:HTTP` timeout is 60 seconds. That's usually enough, but if you're querying over a large collection you may need to increase it. The timeout on the API side is 300 seconds, so that's as far as you'd want to go. You can configure a read timeout (in seconds) by setting a `KEEN_READ_TIMEOUT` environment variable, or by passing in a `read_timeout` option to the client constructor as follows:
+The default `Net::HTTP` timeout is 60 seconds. That's usually enough, but if you're querying over a large collection you may need to increase it. The timeout on the API side is 300 seconds, so that's as far as you'd want to go. You can configure a read timeout (in seconds) by setting a `KEEN_READ_TIMEOUT` environment variable, or by passing in a `read_timeout` option to the client constructor as follows:
 
 ``` ruby
 keen = Keen::Client.new(:read_timeout => 300)
 ```
+
+You can also configure the `NET::HTTP` open timeout, default is 60 seconds. To configure the timeout (in seconds) either set `KEEN_OPEN_TIMEOUT` environment variable, or by passing in a `open_timeout` option to the client constructor as follows:
+
+``` ruby
+keen = Keen::Client.new(:open_timeout => 30)
+```
+
 
 ##### HTTP Proxy
 
@@ -422,8 +457,26 @@ If you want some bot protection, check out the [Voight-Kampff](https://github.co
 
 ### Changelog
 
+##### 1.1.0
++ Add support for access keys
++ Move saved queries into the Keen namespace
++ Deprecate scoped keys in favor of access keys
+
+##### 1.0.0
++ Remove support for ruby 1.9.3
++ Update a few dependencies
+
+##### 0.9.10
++ Add ability to set the `open_time` setting for the http client.
+
+##### 0.9.9
++ Added the ability to send additional optional headers.
+
+##### 0.9.7
++ Added a new header `Keen-Sdk` that sends the SDK version information on all requests.
+
 ##### 0.9.6
-+ Updated behavior of saved queries to allow fetching results using the READ KEY as opposed to requiring the MASTER KEY, making the gem consistent with https://keen.io/docs/api/#getting-saved-query-results 
++ Updated behavior of saved queries to allow fetching results using the READ KEY as opposed to requiring the MASTER KEY, making the gem consistent with https://keen.io/docs/api/#getting-saved-query-results
 
 ##### 0.9.5
 + Fix bug with scoped key generation not working with newer Keen projects.

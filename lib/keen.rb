@@ -1,7 +1,9 @@
 require 'logger'
 require 'forwardable'
 
+require 'keen/access_keys'
 require 'keen/client'
+require 'keen/saved_queries'
 require 'keen/scoped_key'
 
 module Keen
@@ -53,7 +55,8 @@ module Keen
                    :project_info,
                    :query_url,
                    :query,
-                   :saved_queries
+                   :saved_queries,
+                   :access_keys
 
     attr_writer :logger
 
@@ -76,7 +79,8 @@ module Keen
         :api_url => ENV['KEEN_API_URL'],
         :proxy_url => ENV['KEEN_PROXY_URL'],
         :proxy_type => ENV['KEEN_PROXY_TYPE'],
-        :read_timeout => ENV['KEEN_READ_TIMEOUT']
+        :read_timeout => ENV['KEEN_READ_TIMEOUT'],
+        :open_timeout => ENV['KEEN_OPEN_TIMEOUT']
       )
     end
   end

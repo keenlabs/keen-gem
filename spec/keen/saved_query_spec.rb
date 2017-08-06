@@ -14,18 +14,18 @@ describe Keen do
 
       it "returns all saved queries" do
         all_saved_queries = [ {
-          refresh_rate: 0,
-          last_modified_date: "2015-10-19T20:14:29.797000+00:00",
-          query_name: "Analysis-API-Calls-this-1-day",
-          query: {
-            filters: [],
-            analysis_type: "count",
-            timezone: "UTC",
-            timeframe: "this_1_days",
-            event_collection: "analysis_api_call"
+          "refresh_rate" => 0,
+          "last_modified_date" => "2015-10-19T20:14:29.797000+00:00",
+          "query_name" => "Analysis-API-Calls-this-1-day",
+          "query" => {
+            "filters" => [],
+            "analysis_type" => "count",
+            "timezone" => "UTC",
+            "timeframe" => "this_1_days",
+            "event_collection" => "analysis_api_call"
           },
-          metadata: {
-            visualization: { chart_type: "metric"}
+          "metadata" => {
+            "visualization" => { "chart_type" => "metric"}
           }
         } ]
         stub_keen_get(saved_query_endpoint, 200, all_saved_queries)
@@ -39,22 +39,22 @@ describe Keen do
     describe "#get" do
       it "returns a specific saved query given a query id" do
         saved_query = {
-          refresh_rate: 0,
-          last_modified_date: "2015-10-19T20:14:29.797000+00:00",
-          query_name: "Analysis-API-Calls-this-1-day",
-          query: {
-            filters: [],
-            analysis_type: "count",
-            timezone: "UTC",
-            timeframe: "this_1_days",
-            event_collection: "analysis_api_call"
+          "refresh_rate" => 0,
+          "last_modified_date" => "2015-10-19T20:14:29.797000+00:00",
+          "query_name" => "Analysis-API-Calls-this-1-day",
+          "query" => {
+            "filters" => [],
+            "analysis_type" => "count",
+            "timezone" => "UTC",
+            "timeframe" => "this_1_days",
+            "event_collection" => "analysis_api_call"
           },
-          metadata: {
-            visualization: { chart_type: "metric"}
+          "metadata" => {
+            "visualization" => { "chart_type" => "metric"}
           }
         }
         stub_keen_get(
-          saved_query_endpoint + "/#{saved_query[:query_name]}",
+          saved_query_endpoint + "/#{saved_query["query_name"]}",
           200,
           saved_query
         )
@@ -84,18 +84,18 @@ describe Keen do
     describe "#create" do
       it "returns the created saved query when creation is successful" do
         saved_query = {
-          refresh_rate: 0,
-          last_modified_date: "2015-10-19T20:14:29.797000+00:00",
-          query_name: "new-query",
-          query: {
-            filters: [],
-            analysis_type: "count",
-            timezone: "UTC",
-            timeframe: "this_1_days",
-            event_collection: "analysis_api_call"
+          "refresh_rate" => 0,
+          "last_modified_date" => "2015-10-19T20:14:29.797000+00:00",
+          "query_name" => "new-query",
+          "query" => {
+            "filters" => [],
+            "analysis_type" => "count",
+            "timezone" => "UTC",
+            "timeframe" => "this_1_days",
+            "event_collection" => "analysis_api_call"
           },
-          metadata: {
-            visualization: { chart_type: "metric"}
+          "metadata" => {
+            "visualization" => { "chart_type" => "metric"}
           }
         }
         stub_keen_put(
@@ -121,18 +121,18 @@ describe Keen do
     describe "#update" do
       it "returns the created saved query when update is successful" do
         saved_query = {
-          refresh_rate: 0,
-          last_modified_date: "2015-10-19T20:14:29.797000+00:00",
-          query_name: "new-query",
-          query: {
-            filters: [],
-            analysis_type: "count",
-            timezone: "UTC",
-            timeframe: "this_1_days",
-            event_collection: "analysis_api_call"
+          "refresh_rate" => 0,
+          "last_modified_date" => "2015-10-19T20:14:29.797000+00:00",
+          "query_name" => "new-query",
+          "query" => {
+            "filters" => [],
+            "analysis_type" => "count",
+            "timezone" => "UTC",
+            "timeframe" => "this_1_days",
+            "event_collection" => "analysis_api_call"
           },
-          metadata: {
-            visualization: { chart_type: "metric"}
+          "metadata" => {
+            "visualization" => { "chart_type" => "metric"}
           }
         }
         stub_keen_put(
