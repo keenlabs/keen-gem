@@ -612,6 +612,16 @@ Similarly, you can use guard to listen for changes to files and run specs.
 
 `bundle exec guard -g synchrony`
 
+#### Running a Local Console
+
+You can spawn an `irb` session with the local files already loaded for debugging
+or experimentation.
+
+```
+$ bundle exec rake console
+2.2.6 :001 > Keen
+ => Keen 
+```
 ### Community Contributors
 + [alexkwolfe](https://github.com/alexkwolfe)
 + [peteygao](https://github.com/peteygao)
