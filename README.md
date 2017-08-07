@@ -175,6 +175,16 @@ Each query method or alias takes an optional hash of options as an additional pa
 `:response` – Set to `:all_keys` to return the full API response (usually only the value of the `"result"` key is returned).
 `:method` - Set to `:post` to enable post body based query (https://keen.io/docs/data-analysis/post-queries/).
 
+##### Query Logging
+
+You can log all GET and POST queries automatically by setting the `log_queries` option.
+
+``` ruby
+Keen.log_queries = true
+Keen.count('purchases')
+# I, [2016-10-30T11:45:24.678745 #9978]  INFO -- : [KEEN] Send GET query to https://api.keen.io/3.0/projects/<YOUR_PROJECT_ID>/queries/count?event_collection=purchases with options {}
+```
+
 ### Saved Queries
 
 You can manage your saved queries from the Keen ruby client.

@@ -148,17 +148,45 @@ describe Keen::Client do
         expect(api_response).to eq({ "result" => [1] })
       end
 
-      it "should call API with post body if method opton is set to post " do
-        steps = [{
-          :event_collection => "sign ups",
-          :actor_property => "user.id"
-        }]
-        expected_url = query_url("funnel")
-        stub_keen_post(expected_url, 200, :result => 1)
-        response = query.call("funnel", nil, { :steps => steps }, { :method => :post })
+      context "if log_queries is true" do
+        before(:each) { client.log_queries = true }
 
-        expect_keen_post(expected_url, { :steps => steps }, "sync", read_key)
-        expect(response).to eq(api_response["result"])
+        it "logs the query" do
+          expect(client).to receive(:log_query).with(query_url("count", "?event_collection=users"))
+          test_query
+        end
+
+        after(:each) { client.log_queries = false }
+      end
+
+      context "if method option is set to post" do
+        let(:steps) do
+          [{
+            :event_collection => "sign ups",
+            :actor_property => "user.id"
+          }]
+        end
+        let(:expected_url) { query_url("funnel") }
+        before(:each) { stub_keen_post(expected_url, 200, :result => 1) }
+
+        it "should call API with post body" do
+          response = query.call("funnel", nil, { :steps => steps }, { :method => :post })
+
+          expect_keen_post(expected_url, { :steps => steps }, "sync", read_key)
+          expect(response).to eq(api_response["result"])
+        end
+
+        context "if log_queries is true" do
+          before(:each) { client.log_queries = true }
+
+          it "logs the query" do
+            expected_params = {:steps=>[{:event_collection=>"sign ups", :actor_property=>"user.id"}]}
+            expect(client).to receive(:log_query).with(expected_url, 'POST', expected_params)
+            query.call("funnel", nil, { :steps => steps }, { :method => :post })
+          end
+
+          after(:each) { client.log_queries = false }
+        end
       end
 
       it "should add extra headers if you supply them as an option" do
