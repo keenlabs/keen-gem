@@ -457,6 +457,10 @@ If you want some bot protection, check out the [Voight-Kampff](https://github.co
 
 ### Changelog
 
+##### 1.1.1
++ Added an option to log queries
++ Added a cli option that includes the Keen code
+
 ##### 1.1.0
 + Add support for access keys
 + Move saved queries into the Keen namespace
@@ -627,5 +631,6 @@ $ bundle exec rake console
 + [peteygao](https://github.com/peteygao)
 + [obieq](https://github.com/obieq)
 + [cbartlett](https://github.com/cbartlett)
++ [myrridin](https://github.com/myrridin)
 
 Thanks everyone, you rock!
