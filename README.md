@@ -185,7 +185,7 @@ Keen.count('purchases')
 # I, [2016-10-30T11:45:24.678745 #9978]  INFO -- : [KEEN] Send GET query to https://api.keen.io/3.0/projects/<YOUR_PROJECT_ID>/queries/count?event_collection=purchases with options {}
 ```
 
-### Saved Queries
+### Saved and Cached Queries
 
 You can manage your saved queries from the Keen ruby client.
 
@@ -202,7 +202,7 @@ Keen.saved_queries.get("saved-query-slug")
 # Get saved query with results
 Keen.saved_queries.get("saved-query-slug", results: true)
 
-# Update a saved query
+# Update a saved query, in this case to create a Cached Query
 saved_query_attributes = { refresh_rate: 14400 }
 Keen.saved_queries.update("saved-query-slug", saved_query_attributes)
 
@@ -385,7 +385,7 @@ You can use the scoped key created in Ruby for API requests from any client. Sco
 
 You can use access keys to restrict the functionality of a key you use with the Keen API. Access keys can also enrich events that you send.
 
-[Read up](https://keen.io/docs/api/#access-keys?s=gh-gem) on the full key body options.
+[Read up](https://keen.io/docs/api/?ruby#access-keys?s=gh-gem) on the full key body options.
 
 Create a key that automatically adds information to each event published with that key:
 
