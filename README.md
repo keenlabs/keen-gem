@@ -365,7 +365,7 @@ This is helpful for tracking email clickthroughs. See the [redirect documentatio
 
 #### Generating scoped keys
 
-Note, Scoped Keys are now *deprecated* in favor of [access keys](https://keen.io/docs/api/#access-keys?s=gh-gem).
+Note, Scoped Keys are now *deprecated* in favor of [Access Keys](https://keen.io/docs/api/#access-keys?s=gh-gem).
 
 A [scoped key](https://keen.io/docs/security/#scoped-key?s=gh-gem) is a string, generated with your API Key, that represents some encrypted authentication and query options.
 Use them to control what data queries have access to.
@@ -383,11 +383,9 @@ You can use the scoped key created in Ruby for API requests from any client. Sco
 
 #### Access Keys
 
-You can use access keys to restrict the functionality of a key you use with the Keen API. Access keys can also enrich events that you send.
+You can use [Access Keys](https://keen.io/docs/api/?ruby#access-keys) to restrict the functionality of a key you use with the Keen API. Access Keys can also enrich events that you send.
 
-[Read up](https://keen.io/docs/api/?ruby#access-keys?s=gh-gem) on the full key body options.
-
-Create a key that automatically adds information to each event published with that key:
+[Create](https://keen.io/docs/api/?ruby#creating-an-access-key) a key that automatically adds information to each event published with that key:
 
 ``` ruby
 key_body = {
@@ -403,11 +401,54 @@ key_body = {
   }
 }
 
-new_key = client.access_keys.create(key_body)
+new_key = Keen.access_keys.create(key_body)
 autofill_write_key = new_key["key"]
 ```
 
-You can `revoke` and `unrevoke` keys to disable or enable access. `all` will return all current keys for the project, while `get("key-value-here")` will return info for a single key. You can also `update` and `delete` keys.
+[List all](https://keen.io/docs/api/#list-all-access-keys) keys associated with a project.
+
+```
+Keen.access_keys.all
+```
+
+[Get info](https://keen.io/docs/api/#get-an-access-key) associated with a given key
+```
+access_key = '0000000000000000000000000000000000000000000000000000000000000000'
+Keen.access_keys.get(access_key)
+```
+
+[Update](https://keen.io/docs/api/#updating-an-access-key) a key. Information passed to this method will overwrite existing properties.
+
+```
+access_key = '0000000000000000000000000000000000000000000000000000000000000000'
+update_body = {
+  name: 'updated key',
+  is_active: false,
+  permitted: ['reads']
+}
+Keen.access_keys.update(access_key, update_body)
+```
+
+[Revoke](https://keen.io/docs/api/#revoking-an-access-key) a key. This will set the key's active flag to false, but keep it available to be unrevoked. If you want to permanently remove a key, use `delete`.
+
+```
+access_key = '0000000000000000000000000000000000000000000000000000000000000000'
+Keen.access_keys.revoke(access_key)
+```
+
+[Unrevoke](https://keen.io/docs/api/#un-revoking-an-access-key) a key. This will set a previously revoked key's active flag to true.
+
+```
+access_key = '0000000000000000000000000000000000000000000000000000000000000000'
+Keen.access_keys.unrevoke(access_key)
+```
+
+[Delete](https://keen.io/docs/api/#delete) a key. Once deleted, a key cannot be recovered. Consider `revoke` if you want to keep the key around but deactivate it.
+
+```
+access_key = '0000000000000000000000000000000000000000000000000000000000000000'
+Keen.access_keys.delete(access_key)
+```
 
 ### Additional options
 
@@ -462,9 +503,9 @@ If you want some bot protection, check out the [Voight-Kampff](https://github.co
 + Added a cli option that includes the Keen code
 
 ##### 1.1.0
-+ Add support for access keys
++ Add support for Access Keys
 + Move saved queries into the Keen namespace
-+ Deprecate scoped keys in favor of access keys
++ Deprecate scoped keys in favor of Access Keys
 
 ##### 1.0.0
 + Remove support for ruby 1.9.3
