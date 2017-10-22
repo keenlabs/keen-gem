@@ -33,14 +33,30 @@ module Keen
     def create(saved_query_name, saved_query_body)
       client.ensure_master_key!
 
+      saved_query_body = clear_nil_attributes(saved_query_body)
+
       response = Keen::HTTP::Sync.new(client.api_url, client.proxy_url, client.read_timeout, client.open_timeout).put(
         path: "#{saved_query_base_url}/#{saved_query_name}",
         headers: api_headers(client.master_key, "sync"),
-        body: saved_query_body
+        body: MultiJson.encode(saved_query_body)
       )
       client.process_response(response.code.to_i, response.body)
     end
-    alias_method :update, :create
+    alias_method :update_full, :create
+
+    def update(saved_query_name, update_body)
+      current_query = get saved_query_name
+      new_query = current_query.select { |key, val| %w(query_name refresh_rate query).include? key }
+      update_full saved_query_name, new_query.merge(update_body)
+    end
+
+    def cache(saved_query_name, cache_rate)
+      update saved_query_name, refresh_rate: cache_rate
+    end
+
+    def uncache(saved_query_name)
+      update saved_query_name, refresh_rate: 0
+    end
 
     def delete(saved_query_name)
       client.ensure_master_key!
@@ -78,6 +94,22 @@ module Keen
         "User-Agent" => user_agent,
         "Authorization" => authorization,
         "Keen-Sdk" => "ruby-#{Keen::VERSION}" }
+    end
+
+    # Remove any attributes with nil values in a saved query hash. The API will
+    # already assume missing attributes are nil
+    def clear_nil_attributes(hash)
+      hash.reject! do |key, value|
+        if value.nil?
+          return true
+        elsif value.is_a? Hash
+          value.reject! { |inner_key, inner_value| inner_value.nil? }
+        end
+
+        false
+      end
+
+      hash
     end
   end
 end

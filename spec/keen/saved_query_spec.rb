@@ -118,7 +118,7 @@ describe Keen do
       end
     end
 
-    describe "#update" do
+    describe "#update_full" do
       it "returns the created saved query when update is successful" do
         saved_query = {
           "refresh_rate" => 0,
@@ -139,7 +139,7 @@ describe Keen do
           saved_query_endpoint + "/#{saved_query[:query_name]}", 200, saved_query
         )
 
-        saved_query_response = client.saved_queries.update(saved_query[:query_name], saved_query)
+        saved_query_response = client.saved_queries.update_full(saved_query[:query_name], saved_query)
 
         expect(saved_query_response).to eq(saved_query)
       end
