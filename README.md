@@ -110,7 +110,7 @@ Let's assume you want to do a deeper analysis on the "purchases" event by day of
     })
 ```
 
-Other Data Enrichment add-ons are located in the [API reference docs](https://keen.io/docs/api/ruby#data-enrichment>).
+Other Data Enrichment add-ons are located in the [API reference docs](https://keen.io/docs/api/ruby#data-enrichment).
 
 ### Synchronous Publishing
 
