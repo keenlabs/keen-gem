@@ -51,21 +51,21 @@ Once your environment is properly configured, the `Keen` object is ready to go i
 
 ### Data Enrichment
 
-A data enrichment is a powerful add-on to enrich the data you're already streaming to Keen IO by pre-processing the data and adding helpful data properties. To activate add-ons, you simply add some new properties within the "keen" namespace in your events. Detailed documentation for the configuration of our add-ons is available `here <https://keen.io/docs/api/ruby#data-enrichment>`.
+A data enrichment is a powerful add-on to enrich the data you're already streaming to Keen IO by pre-processing the data and adding helpful data properties. To activate add-ons, you simply add some new properties within the "keen" namespace in your events. Detailed documentation for the configuration of our add-ons is available [here](https://keen.io/docs/api/ruby#data-enrichment).
 
-Here is an example of using the `URL parser <https://keen.io/docs/streams/data-enrichment-overview/#addon-url-parser>`:
+Here is an example of using the [URL parser](https://keen.io/docs/streams/data-enrichment-overview/#addon-url-parser):
 
 ```ruby
-    keen.add_event("requests", {
-        "page_url" : "http://my-website.com/cool/link?source=twitter&foo=bar/#title",
-        "keen" : {
-            "addons" : [
+    Keen.publish(:requests, {
+        :page_url => "http://my-website.com/cool/link?source=twitter&foo=bar/#title",
+        :keen => {
+            :addons => [
               {
-                "name" : "keen:url_parser",
-                "input" : {
-                    "url" : "page_url"
+                :name => "keen:url_parser",
+                :input => {
+                    :url => "page_url"
                 },
-                "output" : "parsed_page_url"
+                :output => "parsed_page_url"
               }
             ]
         }
@@ -75,38 +75,38 @@ Here is an example of using the `URL parser <https://keen.io/docs/streams/data-e
 Keen IO will parse the URL for you and that would equivalent to:
 
 ```ruby
-    keen.add_event("request", {
-        "page_url" : "http://my-website.com/cool/link?source=twitter&foo=bar/#title",
-        "parsed_page_url": {
-            "protocol" : "http",
-            "domain" : "my-website.com",
-            "path" : "/cool/link",
-            "anchor" : "title",
-            "query_string" : {
-                "source" : "twitter",
-                "foo" : "bar"
+    Keen.publish(:request, {
+        :page_url => "http://my-website.com/cool/link?source=twitter&foo=bar/#title",
+        :parsed_page_url => {
+            :protocol => "http",
+            :domain => "my-website.com",
+            :path => "/cool/link",
+            :anchor => "title",
+            :query_string => {
+                :source => "twitter",
+                :foo => "bar"
             }
         }
     })
 ```
 
-Here is another example of using the `Datetime parser <https://keen.io/docs/api/?shell#datetime-parser>`.
+Here is another example of using the [Datetime parser](https://keen.io/docs/api/?shell#datetime-parser).
 Let's assume you want to do a deeper analysis on the "purchases" event by day of the week (Monday, Tuesday, Wednesday, etc.) and other interesting Datetime components. You can use "keen.timestamp" property that is included in your event automatically.
 
 ```ruby
-    keen.add_event("purchases", {
-        "keen": {
-            "addons": [
+    Keen.publish(:purchases, {
+        :keen => {
+            :addons => [
               {
-                "name": "keen:date_time_parser",
-                "input": {
-                    "date_time" : "keen.timestamp"
+                :name => "keen:date_time_parser",
+                :input => {
+                    :date_time => "keen.timestamp"
                 },
-                "output": "timestamp_info"
+                :output => "timestamp_info"
               }
             ]
         },
-        "price": 500
+        :price => 500
     })
 ```
 
