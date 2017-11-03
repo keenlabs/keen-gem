@@ -252,25 +252,91 @@ Keen.count('purchases')
 
 You can manage your saved queries from the Keen ruby client.
 
+##### Create a saved query
 ```ruby
-# Create a saved query
-Keen.saved_queries.create("name", saved_query_attributes)
+saved_query_attributes = {
+    # NOTE : For now, refresh_rate must explicitly be set to 0 unless you
+    # intend to create a Cached Query.
+    refresh_rate: 0,
+    query: {
+        analysis_type: 'count',
+        event_collection: 'purchases',
+        timeframe: 'this_2_weeks',
+        filters: [{
+            property_name: 'price',
+            operator: 'gte',
+            property_value: 1.00
+        }]
+    }
+}
 
-# Get all saved queries
+Keen.saved_queries.create 'saved-query-name', saved_query_attributes
+```
+
+##### Get all saved queries
+```ruby
 Keen.saved_queries.all
+```
 
-# Get one saved query
-Keen.saved_queries.get("saved-query-slug")
+##### Get one saved query
+```ruby
+Keen.saved_queries.get 'saved-query-name'
+```
 
-# Get saved query with results
-Keen.saved_queries.get("saved-query-slug", results: true)
+##### Get saved query with results
+```ruby
+query_body = Keen.saved_queries.get('saved-query-name', true)
+query_body['result']
+```
 
-# Update a saved query, in this case to create a Cached Query
-saved_query_attributes = { refresh_rate: 14400 }
-Keen.saved_queries.update("saved-query-slug", saved_query_attributes)
+##### Updating a saved query
 
-# Delete a saved query
-Keen.saved_queries.delete("saved-query-slug")
+NOTE : Updating Saved Queries through the API requires sending the entire query
+definition. Any attribute not sent is interpreted as being cleared/removed. This
+means that properties set via another client, including the Projects Explorer
+Web UI, would be lost this way.
+
+The `update` function makes this easier by allowing client code to just specify
+the properties that need updating. To do this, it will retrieve the existing
+query definition first, which means there will be two HTTP requests. Use
+`update_full` in code that already has a full query definition that can
+reasonably be expected to be current.
+
+Update a saved query to now be a cached query with the minimum refresh rate of 4 hrs
+```ruby
+# using partial update:
+Keen.saved_queries.update 'saved-query-name', refresh_rate: 14400
+
+# using full update, if we've already fetched the query definition:
+saved_query_attributes['refresh_rate'] = 14400
+Keen.saved_queries.update_full('saved-query-name', update_attributes)
+```
+
+Update a saved query to a new resource name
+```ruby
+# using partial update:
+Keen.saved_queries.update 'saved-query-name', query_name: 'cached-query-name'
+
+# using full update, if we've already fetched the query definition or have it lying around
+# for whatever reason. We send 'refresh_rate' again, along with the entire definition, or else
+# it would be reset:
+saved_query_attributes['query_name'] = 'cached-query-name'
+Keen.saved_queries.update_full('saved-query-name', saved_query_attributes)
+```
+
+Cache a query
+```ruby
+Keen.saved_queries.cache 'saved-query-name', 14400
+```
+
+Uncache a query
+```ruby
+Keen.saved_queries.uncache 'saved-query-name'
+```
+
+Delete a saved query (use the new resource name since we just changed it)
+```ruby
+Keen.saved_queries.delete 'cached-query-name'
 ```
 
 ##### Getting Query URLs
