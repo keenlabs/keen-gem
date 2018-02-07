@@ -14,6 +14,10 @@ describe Keen::Client do
     "#{api_url}/#{api_version}/projects/#{project_id}/events/#{event_collection}#{filter_params ? "?filters=#{CGI.escape(MultiJson.encode(filter_params[:filters]))}" : ""}"
   end
 
+  def delete_property_url(event_collection, property)
+    "#{api_url}/#{api_version}/projects/#{project_id}/events/#{event_collection}/properties/#{property}"
+  end
+
   describe '#delete' do
     let(:event_collection) { :foodstuffs }
 
@@ -33,6 +37,18 @@ describe Keen::Client do
       url = delete_url(event_collection, filters)
       stub_keen_delete(url, 204)
       client.delete(event_collection, filters)
+      expect_keen_delete(url, "sync", master_key)
+    end
+  end
+
+  describe '#delete_property' do
+    let(:event_collection) { :foodstuffs }
+    let(:property) { :type }
+
+    it 'should delete a property' do
+      url = delete_property_url(event_collection, property)
+      stub_keen_delete(url, 204)
+      expect(client.delete_property(event_collection, property)).to be true
       expect_keen_delete(url, "sync", master_key)
     end
   end

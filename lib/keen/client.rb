@@ -106,9 +106,20 @@ module Keen
     private
 
     def api_event_collection_resource_path(event_collection)
-      encoded_collection_name = Addressable::URI.encode_component(event_collection.to_s)
-      encoded_collection_name.gsub! '/', '%2F'
+      encoded_collection_name = encode_parameter(event_collection)
       "/#{api_version}/projects/#{project_id}/events/#{encoded_collection_name}"
+    end
+
+    def api_event_collection_property_resource_path(event_collection, property)
+      encoded_collection_name = encode_parameter(event_collection)
+      encoded_property_name = encode_parameter(property)
+      "/#{api_version}/projects/#{project_id}/events/#{encoded_collection_name}/properties/#{encoded_property_name}"
+    end
+
+    def encode_parameter(parameter)
+      encoded_parameter = Addressable::URI.encode_component(parameter.to_s)
+      encoded_parameter.gsub! '/', '%2F'
+      encoded_parameter
     end
 
     def preprocess_params(params)

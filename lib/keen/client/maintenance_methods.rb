@@ -27,6 +27,28 @@ module Keen
         process_response(response.code, response_body)
       end
 
+      # Runs a delete a property query.
+      # See detailed documentation here:
+      # https://keen.io/docs/maintenance/#deleting-a-property
+      #
+      # @param event_collection
+      # @param property
+      def delete_property(event_collection, property)
+        ensure_project_id!
+        ensure_master_key!
+
+        begin
+          response = http_sync.delete(
+              :path => api_event_collection_property_resource_path(event_collection, property),
+              :headers => api_headers(self.master_key, "sync"))
+        rescue Exception => http_error
+          raise HttpError.new("Couldn't perform delete property #{property} of #{event_collection} on Keen IO: #{http_error.message}", http_error)
+        end
+
+        response_body = response.body ? response.body.chomp : ''
+        process_response(response.code, response_body)
+      end
+
       # Return list of collections for the configured project
       # See detailed documentation here:
       # https://keen.io/docs/api/reference/#event-resource
