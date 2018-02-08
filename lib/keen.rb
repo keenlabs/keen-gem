@@ -51,6 +51,7 @@ module Keen
 
     def_delegators :default_client,
                    :delete,
+                   :delete_property,
                    :event_collections,
                    :project_info,
                    :query_url,
