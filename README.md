@@ -355,6 +355,57 @@ Keen.query_url("median", "purchases", { :target_property => "price", :timeframe 
 # => "https://api.keen.io/3.0/projects/<project-id>/queries/median?target_property=price&event_collection=purchases"
 ```
 
+### Cached Datasets
+
+You can manage your cached datasets from the Keen ruby client.
+
+##### Create a cached dataset
+```ruby
+index_by = 'userId'
+query = {
+  "project_id" => "PROJECT ID",
+  "analysis_type" => "count",
+  "event_collection" => "purchases",
+  "filters" =>  [
+    {
+      "property_name" => "price",
+      "operator" => "gte",
+      "property_value" => 100
+    }
+  ],
+  "timeframe" => "this_500_days",
+  "interval" => "daily",
+  "group_by" => ["ip_geo_info.country"]
+}
+
+Keen.cached_datasets.create 'cached-dataset-name', index_by, query, 'My Dataset Display Name'
+```
+
+##### Query cached dataset's results
+```ruby
+response_json = Keen.cached_datasets.get_results('a-dataset-name', {
+  start: "2012-08-13T19:00:00.000Z",
+  end: "2013-09-20T19:00:00.000Z"
+ }, index_by_value)
+response_json['result']
+```
+
+##### Retrieve definitions of cached datasets
+```ruby
+Keen.cached_datasets.list
+Keen.cached_datasets.list(limit: 5, after_name: 'some-dataset')
+```
+
+##### Get a cached dataset's definition
+```ruby
+Keen.cached_datasets.get_definition 'a-dataset-name'
+```
+
+##### Delete a cached dataset
+```ruby
+Keen.cached_datasets.delete 'a-dataset-name'
+```
+
 ### Listing collections
 
 The Keen IO API let you get the event collections for the project set, it includes properties and their type. It also returns links to the collection resource.
