@@ -61,6 +61,10 @@ module Keen
       @saved_queries ||= SavedQueries.new(self)
     end
 
+    def cached_datasets
+      @cached_datasets ||= CachedDatasets.new(self)
+    end
+
     def access_keys
       @access_keys ||= AccessKeys.new(self)
     end

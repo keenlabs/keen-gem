@@ -4,6 +4,7 @@ require 'forwardable'
 require 'keen/access_keys'
 require 'keen/client'
 require 'keen/saved_queries'
+require 'keen/cached_datasets'
 require 'keen/scoped_key'
 
 module Keen
