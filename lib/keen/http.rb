@@ -62,23 +62,28 @@ module Keen
 
         @base_url = base_url
         @proxy_url, @proxy_type = options.values_at(:proxy_url, :proxy_type)
+
+        base_uri = URI.parse(@base_url)
+        @connection_options = base_uri.scheme == "https" ? { :tls => { :verify_peer => true } }
+                                                         : {}
       end
 
       def post(options)
         path, headers, body = options.values_at(
           :path, :headers, :body)
         uri = "#{@base_url}#{path}"
+
         if @proxy_url
           proxy_uri = URI.parse(@proxy_url)
-          connection_options = {:proxy =>
-                                    {:host => proxy_uri.host,
-                                     :port => proxy_uri.port,
-                                     :authorization => [proxy_uri.user, proxy_uri.password],
-                                     :type => @proxy_type || "http"}}
-          http_client = EventMachine::HttpRequest.new(uri, connection_options)
-        else
-          http_client = EventMachine::HttpRequest.new(uri)
+          @connection_options[:proxy] = {
+            :host => proxy_uri.host,
+            :port => proxy_uri.port,
+            :authorization => [proxy_uri.user, proxy_uri.password],
+            :type => @proxy_type || "http"
+          }
         end
+
+        http_client = EventMachine::HttpRequest.new(uri, @connection_options)
         http_client.post(
           :body => body,
           :head => headers
