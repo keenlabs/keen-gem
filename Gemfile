@@ -5,7 +5,7 @@ group :development, :test do
   gem 'em-http-request'
   gem 'em-synchrony', :require => false
   gem 'rspec', '~>3.5'
-  gem 'webmock', '<= 2.2'
+  gem 'webmock', '~> 3.12.1'
 end
 
 gemspec

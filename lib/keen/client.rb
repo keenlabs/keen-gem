@@ -3,6 +3,7 @@ require 'keen/version'
 require 'keen/client/publishing_methods'
 require 'keen/client/querying_methods'
 require 'keen/client/maintenance_methods'
+require 'keen/client/updating_methods'
 require 'keen/version'
 require 'openssl'
 require 'multi_json'
@@ -15,6 +16,7 @@ module Keen
     include Keen::Client::PublishingMethods
     include Keen::Client::QueryingMethods
     include Keen::Client::MaintenanceMethods
+    include Keen::Client::UpdatingMethods
 
     attr_accessor :project_id, :write_key, :read_key, :master_key, :api_url, :proxy_url, :proxy_type, :read_timeout, :log_queries, :open_timeout
 
@@ -73,7 +75,7 @@ module Keen
       case status_code.to_i
       when 200..201
         begin
-          return MultiJson.decode(response_body)
+          return response_body.present? ? MultiJson.decode(response_body) : {}
         rescue
           Keen.logger.warn("Invalid JSON for response code #{status_code}: #{response_body}")
           return {}

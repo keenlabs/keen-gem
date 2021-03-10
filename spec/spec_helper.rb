@@ -59,6 +59,10 @@ module Keen::SpecHelpers
     expect_keen_request(:post, url, MultiJson.encode(event_properties), sync_or_async_ua, write_key, extra_headers)
   end
 
+  def expect_keen_put(url, event_properties, sync_or_async_ua, master_key, extra_headers={})
+    expect_keen_request(:put, url, MultiJson.encode(event_properties), sync_or_async_ua, master_key, extra_headers)
+  end
+
   def expect_keen_delete(url, sync_or_async_ua, master_key, extra_headers={})
     expect_keen_request(:delete, url, "", sync_or_async_ua, master_key, extra_headers)
   end

@@ -4,3 +4,4 @@ tmp
 log
 *.gem
 Gemfile.lock
+.idea
