@@ -7,7 +7,7 @@ describe Keen::Client::UpdatingMethods do
   let(:master_key) { 'abcde' }
   let(:api_url) { 'https://unreal.keen.io' }
   let(:collection) { 'logins' }
-  let(:event_properties) do
+  let(:params) do
     {
       property_updates: [
         {
@@ -32,13 +32,13 @@ describe Keen::Client::UpdatingMethods do
   describe 'updating' do
     it 'should put using the collection and params' do
       stub_keen_put(api_event_collection_resource_url(api_url, collection), 200, {})
-      client.update(collection, event_properties)
-      expect_keen_put(api_event_collection_resource_url(api_url, collection), event_properties, 'update', master_key)
+      client.update(collection, params)
+      expect_keen_put(api_event_collection_resource_url(api_url, collection), params, 'update', master_key)
     end
 
     it 'should return the proper response' do
       stub_keen_put(api_event_collection_resource_url(api_url, collection), 200, {})
-      expect(client.update(collection, event_properties)).to eq({})
+      expect(client.update(collection, params)).to eq({})
     end
 
     it 'should raise an argument error if no event collection is specified' do
@@ -55,23 +55,23 @@ describe Keen::Client::UpdatingMethods do
 
     it 'should wrap exceptions' do
       stub_request(:put, api_event_collection_resource_url(api_url, collection)).to_timeout
-      e = nil
+      error = nil
       begin
-        client.update(collection, event_properties)
-      rescue Exception => e
-        e = e
+        client.update(collection, params)
+      rescue StandardError => e
+        error = e
       end
 
-      expect(e.class).to eq(Keen::HttpError)
-      expect(e.original_error).to be_kind_of(Timeout::Error)
-      expect(e.message).to eq('Keen IO Exception: HTTP update failure: execution expired')
+      expect(error.class).to eq(Keen::HttpError)
+      expect(error.original_error).to be_kind_of(Timeout::Error)
+      expect(error.message).to eq('Keen IO Exception: HTTP update failure: execution expired')
     end
 
     it 'should raise an exception if client has no project_id' do
       expect do
         Keen::Client.new(
           master_key: 'abcde'
-        ).update(collection, event_properties)
+        ).update(collection, params)
       end.to raise_error(Keen::ConfigurationError, 'Keen IO Exception: Project ID must be set')
     end
 
@@ -79,7 +79,7 @@ describe Keen::Client::UpdatingMethods do
       expect do
         Keen::Client.new(
           project_id: '12345'
-        ).update(collection, event_properties)
+        ).update(collection, params)
       end.to raise_error(Keen::ConfigurationError, 'Keen IO Exception: Master Key must be set for this operation')
     end
 
@@ -94,7 +94,119 @@ describe Keen::Client::UpdatingMethods do
 
       it 'should return the proper response' do
         stub_keen_put(api_event_collection_resource_url(api_url, collection), 200, {})
-        expect(client.update(collection, event_properties)).to eq({})
+        expect(client.update(collection, params)).to eq({})
+      end
+    end
+  end
+
+  describe 'batch_updating' do
+    let(:params) do
+      [
+        {
+          property_updates: [
+            {
+              property_name: 'user.age',
+              property_value: 55
+            }
+          ],
+          filters: [
+            {
+              property_name: 'user.age',
+              operator: 'lt',
+              property_value: 55
+            }
+          ],
+          timeframe: {
+            start: '2020-03-01T00:00:00.000Z'
+          }
+        },
+        {
+          property_updates: [
+            {
+              property_name: 'user.name',
+              property_value: 'John'
+            }
+          ],
+          filters: [
+            {
+              property_name: 'user.name',
+              operator: 'eq',
+              property_value: 'George'
+            }
+          ],
+          timeframe: {
+            start: '2020-03-01T00:00:00.000Z',
+            end: '2020-04-01T00:00:00.000Z'
+          }
+        }
+      ]
+    end
+
+    it 'should put using the collection and params' do
+      stub_keen_put(api_event_collection_resource_url(api_url, collection), 200, {})
+      client.update_batch(collection, params)
+      expect_keen_put(api_event_collection_resource_url(api_url, collection), params, 'update', master_key)
+    end
+
+    it 'should return the proper response' do
+      stub_keen_put(api_event_collection_resource_url(api_url, collection), 200, {})
+      expect(client.update_batch(collection, params)).to eq({})
+    end
+
+    it 'should raise an argument error if no event collection is specified' do
+      expect do
+        client.update_batch(nil, {})
+      end.to raise_error(ArgumentError)
+    end
+
+    it 'should raise an argument error if no properties are specified' do
+      expect do
+        client.update_batch(collection, nil)
+      end.to raise_error(ArgumentError)
+    end
+
+    it 'should wrap exceptions' do
+      stub_request(:put, api_event_collection_resource_url(api_url, collection)).to_timeout
+      error = nil
+      begin
+        client.update_batch(collection, params)
+      rescue StandardError => e
+        error = e
+      end
+
+      expect(error.class).to eq(Keen::HttpError)
+      expect(error.original_error).to be_kind_of(Timeout::Error)
+      expect(error.message).to eq('Keen IO Exception: HTTP update_batch failure: execution expired')
+    end
+
+    it 'should raise an exception if client has no project_id' do
+      expect do
+        Keen::Client.new(
+          master_key: 'abcde'
+        ).update_batch(collection, params)
+      end.to raise_error(Keen::ConfigurationError, 'Keen IO Exception: Project ID must be set')
+    end
+
+    it 'should raise an exception if client has no master_key' do
+      expect do
+        Keen::Client.new(
+          project_id: '12345'
+        ).update_batch(collection, params)
+      end.to raise_error(Keen::ConfigurationError, 'Keen IO Exception: Master Key must be set for this operation')
+    end
+
+    context 'when using proxy' do
+      let(:client) do
+        Keen::Client.new(project_id: project_id,
+                         master_key: master_key,
+                         api_url: api_url,
+                         proxy_url: 'http://localhost:8888',
+                         proxy_type: 'socks5')
+      end
+
+      it 'should return the proper response' do
+        stub_keen_put(api_event_collection_resource_url(api_url, collection), 200, {})
+        expect(client.update_batch(collection, params)).to eq({})
       end
     end
   end
