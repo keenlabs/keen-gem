@@ -50,9 +50,12 @@ module Keen
       def check_batch_request_data!(event_collection, params)
         check_even_collection(event_collection)
 
-        raise ArgumentError, 'The specified params are invalid. The body is not an array.' unless params.is_a? Array
+        unless params && params[:batch_update]&.is_a?(Array)
+          raise ArgumentError, "The specified params are invalid. Missing or invalid 'batch_update' in the body."
+        end
 
-        params.each do |update_params|
+
+        params[:batch_update].each do |update_params|
           check_update_body(update_params)
         end
       end

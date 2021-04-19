@@ -101,45 +101,47 @@ describe Keen::Client::UpdatingMethods do
 
   describe 'batch_updating' do
     let(:params) do
-      [
-        {
-          property_updates: [
-            {
-              property_name: 'user.age',
-              property_value: 55
+      {
+        batch_update: [
+          {
+            property_updates: [
+              {
+                property_name: 'user.age',
+                property_value: 55
+              }
+            ],
+            filters: [
+              {
+                property_name: 'user.age',
+                operator: 'lt',
+                property_value: 55
+              }
+            ],
+            timeframe: {
+              start: '2020-03-01T00:00:00.000Z'
             }
-          ],
-          filters: [
-            {
-              property_name: 'user.age',
-              operator: 'lt',
-              property_value: 55
+          },
+          {
+            property_updates: [
+              {
+                property_name: 'user.name',
+                property_value: 'John'
+              }
+            ],
+            filters: [
+              {
+                property_name: 'user.name',
+                operator: 'eq',
+                property_value: 'George'
+              }
+            ],
+            timeframe: {
+              start: '2020-03-01T00:00:00.000Z',
+              end: '2020-04-01T00:00:00.000Z'
             }
-          ],
-          timeframe: {
-            start: '2020-03-01T00:00:00.000Z'
           }
-        },
-        {
-          property_updates: [
-            {
-              property_name: 'user.name',
-              property_value: 'John'
-            }
-          ],
-          filters: [
-            {
-              property_name: 'user.name',
-              operator: 'eq',
-              property_value: 'George'
-            }
-          ],
-          timeframe: {
-            start: '2020-03-01T00:00:00.000Z',
-            end: '2020-04-01T00:00:00.000Z'
-          }
-        }
-      ]
+        ]
+      }
     end
 
     it 'should put using the collection and params' do
