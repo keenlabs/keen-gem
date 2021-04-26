@@ -145,14 +145,14 @@ describe Keen::Client::UpdatingMethods do
     end
 
     it 'should put using the collection and params' do
-      stub_keen_put(api_event_collection_resource_url(api_url, collection), 200, {})
+      stub_keen_put(api_event_collection_resource_url(api_url, collection), 204, {})
       client.update_batch(collection, params)
       expect_keen_put(api_event_collection_resource_url(api_url, collection), params, 'update', master_key)
     end
 
     it 'should return the proper response' do
-      stub_keen_put(api_event_collection_resource_url(api_url, collection), 200, {})
-      expect(client.update_batch(collection, params)).to eq({})
+      stub_keen_put(api_event_collection_resource_url(api_url, collection), 204, {})
+      expect(client.update_batch(collection, params)).to eq(true)
     end
 
     it 'should raise an argument error if no event collection is specified' do
@@ -207,8 +207,8 @@ describe Keen::Client::UpdatingMethods do
       end
 
       it 'should return the proper response' do
-        stub_keen_put(api_event_collection_resource_url(api_url, collection), 200, {})
-        expect(client.update_batch(collection, params)).to eq({})
+        stub_keen_put(api_event_collection_resource_url(api_url, collection), 204, {})
+        expect(client.update_batch(collection, params)).to eq(true)
       end
     end
   end
