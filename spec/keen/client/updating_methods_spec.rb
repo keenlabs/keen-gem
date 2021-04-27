@@ -155,6 +155,11 @@ describe Keen::Client::UpdatingMethods do
       expect(client.update_batch(collection, params)).to eq(true)
     end
 
+    it 'should not return HttpError when 504' do
+      stub_keen_put(api_event_collection_resource_url(api_url, collection), 504, {})
+      expect(client.update_batch(collection, params)).to eq(true)
+    end
+
     it 'should raise an argument error if no event collection is specified' do
       expect do
         client.update_batch(nil, {})

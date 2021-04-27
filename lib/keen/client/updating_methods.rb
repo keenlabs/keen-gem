@@ -85,7 +85,7 @@ module Keen
           headers: api_headers(master_key, 'update'),
           body: body
         )
-        process_response(response.code, response.body&.chomp)
+        process_response(response.code, response.body&.chomp, true)
       rescue Exception => e
         raise HttpError.new("HTTP #{error_method} failure: #{e.message}", e)
       end

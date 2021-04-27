@@ -71,7 +71,7 @@ module Keen
       @access_keys ||= AccessKeys.new(self)
     end
 
-    def process_response(status_code, response_body)
+    def process_response(status_code, response_body, update=false)
       case status_code.to_i
       when 200..201
         begin
@@ -88,6 +88,12 @@ module Keen
         raise AuthenticationError.new(response_body)
       when 404
         raise NotFoundError.new(response_body)
+      when 504
+        if update
+          return true
+        else
+          raise HttpError.new(response_body)
+        end
       else
         raise HttpError.new(response_body)
       end
