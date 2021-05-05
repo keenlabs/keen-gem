@@ -77,7 +77,7 @@ describe Keen::HTTP::Async do
             e = exception
           end
           e.class.should == Keen::HttpError
-          e.message.should == "Keen IO Exception: HTTP em-synchrony publish_async error: WebMock timeout error"
+          e.message.should == "Keen IO Exception: HTTP em-synchrony publish_async error: Errno::ETIMEDOUT"
           EM.stop
         }
       end
@@ -94,7 +94,7 @@ describe Keen::HTTP::Async do
             e = exception
           end
           e.class.should == Keen::HttpError
-          e.message.should == "Keen IO Exception: HTTP em-synchrony publish_async error: WebMock timeout error"
+          e.message.should == "Keen IO Exception: HTTP em-synchrony publish_async error: Errno::ETIMEDOUT"
           EM.stop
         }
       end

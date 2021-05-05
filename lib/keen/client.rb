@@ -75,7 +75,7 @@ module Keen
       case status_code.to_i
       when 200..201
         begin
-          return response_body.present? ? MultiJson.decode(response_body) : {}
+          return response_body.empty? ? {} : MultiJson.decode(response_body)
         rescue
           Keen.logger.warn("Invalid JSON for response code #{status_code}: #{response_body}")
           return {}

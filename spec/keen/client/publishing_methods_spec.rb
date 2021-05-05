@@ -201,7 +201,7 @@ describe Keen::Client::PublishingMethods do
             client.publish_async(collection, event_properties).errback { |error|
               begin
                 expect(error).to_not be_nil
-                expect(error.message).to eq("Keen IO Exception: HTTP publish_async failure: WebMock timeout error")
+                expect(error.message).to eq("Keen IO Exception: HTTP publish_async failure: Errno::ETIMEDOUT")
               ensure
                 EM.stop
               end
@@ -279,7 +279,7 @@ describe Keen::Client::PublishingMethods do
             client.publish_batch_async(events).errback { |error|
               begin
                 expect(error).to_not be_nil
-                expect(error.message).to eq("Keen IO Exception: HTTP publish_async failure: WebMock timeout error")
+                expect(error.message).to eq("Keen IO Exception: HTTP publish_async failure: Errno::ETIMEDOUT")
               ensure
                 EM.stop
               end
